@@ -90,6 +90,32 @@ class MessageParserTest {
     }
 
     @Nested
+    @DisplayName("parse() color palette replacement")
+    class ColorPaletteTests {
+
+        @Test
+        @DisplayName("should replace every color placeholder with its config tag")
+        void shouldReplaceColorPlaceholders() {
+            String raw = "{plain-color}a{brand-color}b{highlight-color}c{error-color}d";
+            Component result = parser.parse(raw, Map.of());
+            String serialized = MINI_MESSAGE.serialize(result);
+            assertTrue(serialized.contains("#b8d8e0"));
+            assertTrue(serialized.contains("#84b8db"));
+            assertTrue(serialized.contains("#ebf1f2"));
+            assertTrue(serialized.contains("#e0867e"));
+        }
+
+        @Test
+        @DisplayName("should follow palette changes without a parser rebuild")
+        void shouldFollowPaletteChanges() {
+            pluginConfig.getColors().setPlainColor("<red>");
+            Component result = parser.parse("{plain-color}Hello", Map.of());
+            String serialized = MINI_MESSAGE.serialize(result);
+            assertTrue(serialized.contains("red"));
+        }
+    }
+
+    @Nested
     @DisplayName("parse() bracket placeholder normalization")
     class BracketPlaceholderTests {
 
