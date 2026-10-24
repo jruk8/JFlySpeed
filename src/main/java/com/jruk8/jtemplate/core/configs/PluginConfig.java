@@ -52,7 +52,8 @@ public class PluginConfig extends OkaeriConfig {
             "Standalone root commands. Each toggle registers (or hides) its root command.",
             "The /jflyspeed subcommands always exist, so disabling a root keeps the",
             "feature available under /jflyspeed (alias /jf) only.",
-            "Toggles apply on restart; /jflyspeed reload does not re-register commands."
+            "Toggles apply on restart; /jflyspeed reload reports changed toggles",
+            "instead of re-registering commands."
     })
     private Commands commands = new Commands();
 

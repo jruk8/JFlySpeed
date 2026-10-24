@@ -3,6 +3,7 @@ package com.jruk8.jtemplate.core.commands.admin.reload;
 import com.jruk8.jtemplate.core.Reloader;
 import com.jruk8.jtemplate.core.commands.CommandContext;
 import com.jruk8.jtemplate.core.commands.SpeedPermissions;
+import com.jruk8.jtemplate.core.configs.PluginConfig;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -11,15 +12,21 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 /**
  * Reload subcommand that re-reads every config and re-opens storage and placeholders.
+ * <p>
+ * Paper registers Brigadier commands once during enable and offers no
+ * unregister API, so changed command toggles still need a restart; the
+ * command says so instead of pretending the toggles applied.
  */
 public class ReloadCommand {
 
     private final Reloader reloader;
     private final CommandContext ctx;
+    private final PluginConfig pluginConfig;
 
-    public ReloadCommand(Reloader reloader, CommandContext ctx) {
+    public ReloadCommand(Reloader reloader, CommandContext ctx, PluginConfig pluginConfig) {
         this.reloader = reloader;
         this.ctx = ctx;
+        this.pluginConfig = pluginConfig;
     }
 
     /**
@@ -37,13 +44,37 @@ public class ReloadCommand {
     }
 
     public void onReload(CommandSourceStack sender) {
+        boolean flyspeed = toggles().isFlyspeed();
+        boolean walkspeed = toggles().isWalkspeed();
+        boolean speed = toggles().isSpeed();
         long start = System.currentTimeMillis();
-        reloader.reloadAll();
+        boolean ok = reloader.reloadAll();
         long time = System.currentTimeMillis() - start;
-        ctx.success(
-                sender,
-                m -> m.getCore().getReloadSuccess(),
-                Placeholder.parsed("time", String.valueOf(time))
-        );
+        if (ok) {
+            ctx.sendReload(
+                    sender,
+                    m -> m.getCore().getReloadSuccess(),
+                    Placeholder.parsed("time", String.valueOf(time))
+            );
+        } else {
+            ctx.error(
+                    sender,
+                    m -> m.getCore().getReloadFailure(),
+                    Placeholder.parsed("time", String.valueOf(time))
+            );
+        }
+        if (togglesChanged(flyspeed, walkspeed, speed)) {
+            ctx.sendMessage(sender, m -> m.getCore().getReloadRestartRequired());
+        }
+    }
+
+    private PluginConfig.Commands toggles() {
+        return pluginConfig.getCommands();
+    }
+
+    private boolean togglesChanged(boolean flyspeed, boolean walkspeed, boolean speed) {
+        return toggles().isFlyspeed() != flyspeed
+                || toggles().isWalkspeed() != walkspeed
+                || toggles().isSpeed() != speed;
     }
 }

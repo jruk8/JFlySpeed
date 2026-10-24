@@ -45,7 +45,7 @@ public class VersionCommand {
         List<String> rawAuthors = pluginMeta.getAuthors();
         String authors = authorFormatter.formatAuthors(rawAuthors);
 
-        ctx.success(
+        ctx.sendVersion(
                 sender,
                 m -> m.getCore().getVersionSuccess(),
                 Placeholder.parsed("version", version),

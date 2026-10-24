@@ -82,10 +82,9 @@ class MessageParserTest {
         void shouldReplacePrefixPlaceholder() {
             String raw = "{prefix}Hello";
             Component result = parser.parse(raw, Map.of());
-            // The prefix from MessageConfig is "<gradient:#5e42f4:#b742f4>[JFlySpeed]</gradient> <gray>»</gray> "
             // After MiniMessage parsing, the result should contain the prefix text
             String resultString = PLAIN_TEXT.serialize(result);
-            assertTrue(resultString.contains("[JFlySpeed]"));
+            assertTrue(resultString.contains("[JFlyspeed]"));
         }
     }
 

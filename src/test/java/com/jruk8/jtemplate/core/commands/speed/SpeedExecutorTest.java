@@ -16,6 +16,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -62,9 +63,9 @@ class SpeedExecutorTest {
         assertEquals(Command.SINGLE_SUCCESS, result);
         verify(speeds).resetSpeed(self, SpeedType.FLY);
         verify(speeds).resetSpeed(other, SpeedType.FLY);
-        verify(ctx).success(eq(source), any(Function.class), any(TagResolver[].class));
-        verify(ctx).notify(eq(other), any(Function.class), any(TagResolver[].class));
-        verify(ctx, never()).notify(eq(self), any(Function.class), any(TagResolver[].class));
+        verify(ctx).sendReset(eq(source), any(Function.class), any(TagResolver[].class));
+        verify(ctx).notifyReset(eq(other), any(Function.class), any(TagResolver[].class));
+        verify(ctx, never()).notifyReset(eq(self), any(Function.class), any(TagResolver[].class));
     }
 
     @Test
@@ -78,8 +79,47 @@ class SpeedExecutorTest {
 
         assertEquals(Command.SINGLE_SUCCESS, result);
         verify(speeds).setSpeed(self, SpeedType.WALK, 7.0);
-        verify(ctx).success(eq(source), any(Function.class), any(TagResolver[].class));
-        verify(ctx, never()).notify(any(Player.class), any(Function.class), any(TagResolver[].class));
+        verify(ctx).sendSet(eq(source), any(Function.class), any(TagResolver[].class));
+        verify(ctx, never()).notifySet(any(Player.class), any(Function.class), any(TagResolver[].class));
+    }
+
+    @Test
+    @DisplayName("should send one summary for a single other target")
+    void shouldSendOtherSummaryForSingleTarget() {
+        var selfId = UUID.randomUUID();
+        Player self = player(selfId);
+        Player other = player(UUID.randomUUID());
+        when(other.getName()).thenReturn("Alex");
+        when(source.getSender()).thenReturn(self);
+
+        int result = executor().setSpeed(source, SpeedType.FLY, 8.0, List.of(other));
+
+        assertEquals(Command.SINGLE_SUCCESS, result);
+        var resolvers = forClass(TagResolver[].class);
+        verify(ctx).sendSet(eq(source), any(Function.class), resolvers.capture());
+        assertEquals(3, resolvers.getValue().length);
+        verify(ctx).notifySet(eq(other), any(Function.class), any(TagResolver[].class));
+    }
+
+    @Test
+    @DisplayName("should send the multi-target summary for several targets")
+    void shouldSendMultipleSummaryForSeveralTargets() {
+        var selfId = UUID.randomUUID();
+        Player self = player(selfId);
+        Player first = player(UUID.randomUUID());
+        Player second = player(UUID.randomUUID());
+        when(first.getName()).thenReturn("Alex");
+        when(second.getName()).thenReturn("Steve");
+        when(source.getSender()).thenReturn(self);
+
+        int result = executor().setSpeed(source, SpeedType.FLY, 8.0, List.of(first, second));
+
+        assertEquals(Command.SINGLE_SUCCESS, result);
+        var resolvers = forClass(TagResolver[].class);
+        verify(ctx).sendSet(eq(source), any(Function.class), resolvers.capture());
+        assertEquals(4, resolvers.getValue().length);
+        verify(ctx).notifySet(eq(first), any(Function.class), any(TagResolver[].class));
+        verify(ctx).notifySet(eq(second), any(Function.class), any(TagResolver[].class));
     }
 
     @Test
@@ -96,6 +136,6 @@ class SpeedExecutorTest {
         verify(speeds).resetSpeed(self, SpeedType.FLY);
         verify(speeds).resetSpeed(self, SpeedType.WALK);
         verify(ctx, times(2))
-                .success(eq(source), any(Function.class), any(TagResolver[].class));
+                .sendReset(eq(source), any(Function.class), any(TagResolver[].class));
     }
 }

@@ -54,7 +54,7 @@ public class CommandsRegistrar implements Bootstrap {
             var root = Commands.literal("jflyspeed");
             var commands = pluginConfig.getCommands();
             new UserCommandsRegistrar(root, commandContext, pluginMeta, commands).register();
-            new AdminCommandsRegistrar(root, commandContext, reloader).register();
+            new AdminCommandsRegistrar(root, commandContext, reloader, pluginConfig).register();
             new SpeedCommandsRegistrar(root, commandContext, speedExecutor).register();
             event.registrar().register(root.build(), "JFlySpeed commands", List.of("jf"));
             registerStandaloneRoots(event.registrar(), commands);

@@ -60,29 +60,101 @@ public record CommandContext(
     }
 
     /**
-     * Convenience method for sending a message resolved from config and playing a success sound.
+     * Sends a set-speed message to the executor and plays the neutral sound.
      * @param sender The command sender to send the message to and play the sound for.
      * @param messageSelector Function to select the message string from {@link MessagesConfig}.
      * @param resolvers The placeholder resolvers for the message.
      */
-    public void success(
+    public void sendSet(
             CommandSourceStack sender,
             Function<MessagesConfig, String> messageSelector,
             TagResolver... resolvers
     ) {
         messenger.send(sender.getSender(), messageSelector.apply(messages), resolvers);
-        playSuccess(sender);
+        soundPlayer.play(sender.getSender(), sounds.getNeutral());
     }
 
     /**
-     * Convenience method for sending a message and playing a success sound.
-     * @param sender The command sender to send the message to and play the sound for.
-     * @param rawMessage The raw message to send.
+     * Sends a set-speed message to an affected player and plays the neutral sound.
+     * @param target The recipient of the message and sound.
+     * @param messageSelector Function to select the message string from {@link MessagesConfig}.
      * @param resolvers The placeholder resolvers for the message.
      */
-    public void success(CommandSourceStack sender, String rawMessage, TagResolver... resolvers) {
-        messenger.send(sender.getSender(), rawMessage, resolvers);
-        playSuccess(sender);
+    public void notifySet(
+            CommandSender target,
+            Function<MessagesConfig, String> messageSelector,
+            TagResolver... resolvers
+    ) {
+        messenger.send(target, messageSelector.apply(messages), resolvers);
+        soundPlayer.play(target, sounds.getNeutral());
+    }
+
+    /**
+     * Sends a reset-speed message to the executor and plays the reset sound.
+     * @param sender The command sender to send the message to and play the sound for.
+     * @param messageSelector Function to select the message string from {@link MessagesConfig}.
+     * @param resolvers The placeholder resolvers for the message.
+     */
+    public void sendReset(
+            CommandSourceStack sender,
+            Function<MessagesConfig, String> messageSelector,
+            TagResolver... resolvers
+    ) {
+        messenger.send(sender.getSender(), messageSelector.apply(messages), resolvers);
+        soundPlayer.play(sender.getSender(), sounds.getReset());
+    }
+
+    /**
+     * Sends a reset-speed message to an affected player and plays the reset sound.
+     * @param target The recipient of the message and sound.
+     * @param messageSelector Function to select the message string from {@link MessagesConfig}.
+     * @param resolvers The placeholder resolvers for the message.
+     */
+    public void notifyReset(
+            CommandSender target,
+            Function<MessagesConfig, String> messageSelector,
+            TagResolver... resolvers
+    ) {
+        messenger.send(target, messageSelector.apply(messages), resolvers);
+        soundPlayer.play(target, sounds.getReset());
+    }
+
+    /**
+     * Sends a reload message to the executor and plays the reload sound.
+     * @param sender The command sender to send the message to and play the sound for.
+     * @param messageSelector Function to select the message string from {@link MessagesConfig}.
+     * @param resolvers The placeholder resolvers for the message.
+     */
+    public void sendReload(
+            CommandSourceStack sender,
+            Function<MessagesConfig, String> messageSelector,
+            TagResolver... resolvers
+    ) {
+        messenger.send(sender.getSender(), messageSelector.apply(messages), resolvers);
+        soundPlayer.play(sender.getSender(), sounds.getReload());
+    }
+
+    /**
+     * Sends a version message to the executor and plays the neutral sound.
+     * @param sender The command sender to send the message to and play the sound for.
+     * @param messageSelector Function to select the message string from {@link MessagesConfig}.
+     * @param resolvers The placeholder resolvers for the message.
+     */
+    public void sendVersion(
+            CommandSourceStack sender,
+            Function<MessagesConfig, String> messageSelector,
+            TagResolver... resolvers
+    ) {
+        messenger.send(sender.getSender(), messageSelector.apply(messages), resolvers);
+        soundPlayer.play(sender.getSender(), sounds.getNeutral());
+    }
+
+    /**
+     * Plays the help sound for the executor.
+     * @param sender The command sender to play the sound for.
+     */
+    public void playHelp(CommandSourceStack sender) {
+        soundPlayer.play(sender.getSender(), sounds.getHelp());
     }
 
     /**
@@ -97,7 +169,7 @@ public record CommandContext(
             TagResolver... resolvers
     ) {
         messenger.send(sender.getSender(), messageSelector.apply(messages), resolvers);
-        playError(sender);
+        soundPlayer.play(sender.getSender(), sounds.getError());
     }
 
     /**
@@ -108,7 +180,7 @@ public record CommandContext(
      */
     public void error(CommandSourceStack sender, String rawMessage, TagResolver... resolvers) {
         messenger.send(sender.getSender(), rawMessage, resolvers);
-        playError(sender);
+        soundPlayer.play(sender.getSender(), sounds.getError());
     }
 
     /**
@@ -135,26 +207,4 @@ public record CommandContext(
         messenger.send(sender.getSender(), rawMessage, resolvers);
     }
 
-    /**
-     * Sends a message resolved from config to a plain sender (e.g. an affected player) and plays a success sound.
-     * @param target The recipient of the message and sound.
-     * @param messageSelector Function to select the message string from {@link MessagesConfig}.
-     * @param resolvers The placeholder resolvers for the message.
-     */
-    public void notify(
-            CommandSender target,
-            Function<MessagesConfig, String> messageSelector,
-            TagResolver... resolvers
-    ) {
-        messenger.send(target, messageSelector.apply(messages), resolvers);
-        soundPlayer.play(target, sounds.getSuccessSound());
-    }
-
-    public void playSuccess(CommandSourceStack sender) {
-        soundPlayer.play(sender.getSender(), sounds.getSuccessSound());
-    }
-
-    public void playError(CommandSourceStack sender) {
-        soundPlayer.play(sender.getSender(), sounds.getErrorSound());
-    }
 }

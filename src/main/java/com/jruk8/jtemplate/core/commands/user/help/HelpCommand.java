@@ -51,7 +51,7 @@ public class HelpCommand {
     }
 
     private void showHelp(CommandSourceStack sender, String query) {
-        ctx.playSuccess(sender);
+        ctx.playHelp(sender);
         ctx.sendMessage(sender, m -> m.getCore().getHelpHeader());
         HelpEntry.matching(entries(), query).stream()
                 .filter(entry -> entry.visibleTo(sender.getSender()))

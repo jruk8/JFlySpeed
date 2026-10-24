@@ -2,7 +2,7 @@ package com.jruk8.jtemplate.core.commands.speed;
 
 import com.jruk8.jtemplate.core.commands.CommandContext;
 import com.jruk8.jtemplate.core.commands.SpeedPermissions;
-import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
@@ -25,20 +25,23 @@ public final class SpeedArgumentNodes {
 
     /**
      * Builds the {@code <value> [targets]} branch that sets one speed channel.
+     * <p>
+     * The value is parsed as a string so non-numeric input gets the
+     * plugin's own invalid message instead of Brigadier's default error.
      *
      * @param type which speed channel to set
      * @param ctx the shared command services
      * @param exec the executor applying the change
      * @return the value argument node with an optional targets child
      */
-    public static RequiredArgumentBuilder<CommandSourceStack, Double> valueArgument(
+    public static RequiredArgumentBuilder<CommandSourceStack, String> valueArgument(
             SpeedType type,
             CommandContext ctx,
             SpeedExecutor exec
     ) {
-        return Commands.argument("value", DoubleArgumentType.doubleArg())
+        return Commands.argument("value", StringArgumentType.word())
                 .executes(context -> {
-                    Double scale = validatedScale(context.getSource(), getValue(context), ctx);
+                    Double scale = parsedScale(context.getSource(), getValue(context), ctx);
                     if (scale == null) {
                         return 0;
                     }
@@ -48,7 +51,7 @@ public final class SpeedArgumentNodes {
                 .then(Commands.argument("targets", ArgumentTypes.players())
                         .suggests(targetSuggestions())
                         .executes(context -> {
-                            Double scale = validatedScale(context.getSource(), getValue(context), ctx);
+                            Double scale = parsedScale(context.getSource(), getValue(context), ctx);
                             if (scale == null) {
                                 return 0;
                             }
@@ -128,16 +131,25 @@ public final class SpeedArgumentNodes {
         };
     }
 
-    private static double getValue(com.mojang.brigadier.context.CommandContext<CommandSourceStack> context) {
-        return DoubleArgumentType.getDouble(context, "value");
+    private static String getValue(com.mojang.brigadier.context.CommandContext<CommandSourceStack> context) {
+        return StringArgumentType.getString(context, "value");
     }
 
-    private static Double validatedScale(CommandSourceStack source, double scale, CommandContext ctx) {
+    private static Double parsedScale(CommandSourceStack source, String input, CommandContext ctx) {
+        double scale;
+        try {
+            scale = Double.parseDouble(input);
+        } catch (NumberFormatException invalid) {
+            ctx.error(source,
+                    m -> m.getSpeed().getInvalid(),
+                    Placeholder.parsed("input", input));
+            return null;
+        }
         if (SpeedValues.isValid(scale)) {
             return scale;
         }
         ctx.error(source,
-                m -> m.getSpeed().getInvalidSpeed(),
+                m -> m.getSpeed().getOutOfRange(),
                 Placeholder.parsed("input", SpeedValues.format(scale)));
         return null;
     }

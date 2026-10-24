@@ -34,7 +34,7 @@ public final class TargetSelector {
         if (source.getSender() instanceof Player player) {
             return Optional.of(List.of(player));
         }
-        ctx.error(source, m -> m.getSpeed().getConsoleRequiresTarget());
+        ctx.error(source, m -> m.getSpeed().getConsoleNeedsTarget());
         return Optional.empty();
     }
 
@@ -44,17 +44,23 @@ public final class TargetSelector {
      * @param source the command source
      * @param selector the parsed selector argument
      * @param ctx the shared command services
-     * @return the resolved players, or empty when the sender lacks permission (error already sent)
-     * @throws CommandSyntaxException when the selector matches no players (surfaced by Brigadier)
+     * @return the resolved players, or empty when resolution fails or the sender lacks
+     *         permission (an error is already sent in both cases)
      */
     public static Optional<List<Player>> fromSelector(
             CommandSourceStack source,
             PlayerSelectorArgumentResolver selector,
             CommandContext ctx
-    ) throws CommandSyntaxException {
-        List<Player> targets = selector.resolve(source);
+    ) {
+        List<Player> targets;
+        try {
+            targets = selector.resolve(source);
+        } catch (CommandSyntaxException unmatched) {
+            ctx.error(source, m -> m.getSpeed().getNoTargets());
+            return Optional.empty();
+        }
         if (targetsOthers(source, targets) && !source.getSender().hasPermission(SpeedPermissions.OTHER)) {
-            ctx.error(source, m -> m.getSpeed().getMissingOtherPermission());
+            ctx.error(source, m -> m.getSpeed().getNoPermission());
             return Optional.empty();
         }
         return Optional.of(targets);

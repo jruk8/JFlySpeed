@@ -1,19 +1,22 @@
 package com.jruk8.jtemplate.core.sounds;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * Handles the resolution and playback of namespaced Bukkit sounds.
+ * Handles the resolution and playback of namespaced sounds.
  * <p>
  * Acts as a bridge between {@link SoundsConfig.Sound} definitions and
- * Bukkit's sound registry/playback API. Unknown or invalid sound keys
- * are logged and skipped rather than throwing.
+ * Adventure's sound API. Unknown or invalid sound keys are logged and
+ * skipped rather than throwing.
  */
 public final class SoundPlayer {
 
@@ -29,10 +32,10 @@ public final class SoundPlayer {
     }
 
     /**
-     * Plays the given sound to a recipient at their own location, if enabled.
+     * Plays the given sound to a recipient, if enabled.
      * <p>
-     * Sounds require a location to play; senders that are not a {@link Player}
-     * (e.g. console) are silently ignored.
+     * Sounds require a player to hear them; senders that are not a
+     * {@link Player} (e.g. console) are silently ignored.
      *
      * @param sender the recipient of the sound; if null or not a {@link Player}, the operation is ignored
      * @param sound  the sound definition to play; if null or disabled, the operation is ignored
@@ -45,7 +48,7 @@ public final class SoundPlayer {
     }
 
     /**
-     * Plays the given sound to a player at their own location, if enabled.
+     * Plays the given sound to a player, if enabled.
      *
      * @param player the recipient of the sound; if null, operation is ignored
      * @param sound  the sound definition to play; if null or disabled, operation is ignored
@@ -55,16 +58,16 @@ public final class SoundPlayer {
             return;
         }
 
-        org.bukkit.Sound bukkitSound = resolveSound(sound.getSound());
-        if (bukkitSound == null) {
+        Sound cue = resolveCue(sound);
+        if (cue == null) {
             return;
         }
 
-        player.playSound(player.getLocation(), bukkitSound, sound.getVolume(), sound.getPitch());
+        player.playSound(cue);
     }
 
     /**
-     * Plays the given sound to every online player, at each player's own location, if enabled.
+     * Plays the given sound to every online player, if enabled.
      *
      * @param sound the sound definition to play; if null or disabled, operation is ignored
      */
@@ -73,40 +76,44 @@ public final class SoundPlayer {
             return;
         }
 
-        org.bukkit.Sound bukkitSound = resolveSound(sound.getSound());
-        if (bukkitSound == null) {
+        Sound cue = resolveCue(sound);
+        if (cue == null) {
             return;
         }
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.playSound(player.getLocation(), bukkitSound, sound.getVolume(), sound.getPitch());
+            player.playSound(cue);
         }
     }
 
     /**
-     * Resolves a raw namespaced sound key (e.g. {@code "block.note_block.pling"} or
-     * {@code "minecraft:block.note_block.pling"}) against Bukkit's sound registry.
+     * Resolves a {@link SoundsConfig.Sound} definition to an Adventure cue.
      *
-     * @param key the raw sound key from a {@link SoundsConfig.Sound} definition
-     * @return the resolved {@link org.bukkit.Sound}, or {@code null} if the key is invalid or unknown
+     * @param sound the sound definition to resolve
+     * @return the Adventure sound, or {@code null} if the key is invalid or unknown
      */
-    private org.bukkit.Sound resolveSound(String key) {
+    private Sound resolveCue(SoundsConfig.Sound sound) {
+        String key = sound.getSound();
         if (key == null || key.isBlank()) {
             logger.warning("Sound key is null or empty.");
             return null;
         }
 
-        NamespacedKey namespacedKey = NamespacedKey.fromString(key.toLowerCase());
+        NamespacedKey namespacedKey = NamespacedKey.fromString(key.toLowerCase(Locale.ROOT));
         if (namespacedKey == null) {
             logger.warning("Invalid sound key: '" + key + "'");
             return null;
         }
-
-        org.bukkit.Sound bukkitSound = Registry.SOUNDS.get(namespacedKey);
-        if (bukkitSound == null) {
+        if (Registry.SOUNDS.get(namespacedKey) == null) {
             logger.warning("Unknown sound key: '" + key + "'");
+            return null;
         }
 
-        return bukkitSound;
+        return Sound.sound(
+                Key.key(namespacedKey.asString()),
+                Sound.Source.MASTER,
+                sound.getVolume(),
+                sound.getPitch()
+        );
     }
 }
