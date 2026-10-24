@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Builds the shared {@code <value>|reset [targets]} argument tails used by
@@ -56,8 +57,9 @@ public final class SpeedArgumentNodes {
     }
 
     /**
-     * Builds the {@code <value> [targets]} branch that sets both speed
-     * channels at once, so it requires both the fly and walk permissions.
+     * Builds the {@code <value> [targets]} branch that sets the executor's
+     * current speed channel: fly while flying, walk otherwise. Console must
+     * name the mode explicitly instead.
      *
      * @param ctx the shared command services
      * @param exec the executor applying the change
@@ -65,20 +67,21 @@ public final class SpeedArgumentNodes {
      * @param suggestions the configured value completion defaults
      * @return the value argument node with an optional targets child
      */
-    public static RequiredArgumentBuilder<CommandSourceStack, String> bothValueArgument(
+    public static RequiredArgumentBuilder<CommandSourceStack, String> autoValueArgument(
             CommandContext ctx,
             SpeedExecutor exec,
             CommandUsageTracker tracker,
             List<Double> suggestions
     ) {
         return valueNode(
-                (source, scale, targets) -> {
-                    trackBothUse(source, tracker);
-                    return exec.setBoth(source, scale, targets);
-                },
+                (source, scale, targets) -> inferType(source, ctx)
+                        .map(type -> {
+                            trackUse(source, type, tracker);
+                            return exec.setSpeed(source, type, scale, targets);
+                        })
+                        .orElse(0),
                 ctx,
-                suggestions)
-                .requires(CommandContext.requiresPermission(SpeedPermissions.FLY, SpeedPermissions.WALK));
+                suggestions);
     }
 
     private static RequiredArgumentBuilder<CommandSourceStack, String> valueNode(
@@ -231,6 +234,20 @@ public final class SpeedArgumentNodes {
                     var targets = TargetSelector.fromSelector(context.getSource(), selector, ctx);
                     return targets.map(list -> action.run(context.getSource(), list)).orElse(0);
                 });
+    }
+
+    private static Optional<SpeedType> inferType(CommandSourceStack source, CommandContext ctx) {
+        if (!(source.getSender() instanceof Player player)) {
+            ctx.error(source, m -> m.getSpeed().getConsoleNeedsMode(), Map.of());
+            return Optional.empty();
+        }
+        SpeedType type = player.isFlying() ? SpeedType.FLY : SpeedType.WALK;
+        if (!source.getSender().hasPermission(type.getPermission())) {
+            var tags = Map.of("type", type.getKey(), "permission", type.getPermission());
+            ctx.error(source, m -> m.getSpeed().getNoModePermission(), tags);
+            return Optional.empty();
+        }
+        return Optional.of(type);
     }
 
     private static SuggestionProvider<CommandSourceStack> valueSuggestions(List<Double> configured) {

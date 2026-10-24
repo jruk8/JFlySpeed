@@ -12,13 +12,13 @@ import java.util.List;
 /**
  * Unified speed command: {@code /speed [<value>|fly|walk|reset] ...}.
  * <p>
- * A bare value sets both channels at once; {@code fly}/{@code walk} pick
- * one channel explicitly. The both-channels branches ({@code <value>} and
- * {@code reset}) require both the fly and walk permissions. Running the
- * command with no arguments resets the executor's own speeds for every
- * permitted channel. The same node is registered as the standalone
- * {@code /speed} root and as the {@code speed} subcommand of
- * {@code /jflyspeed}.
+ * A bare value sets the executor's current channel (fly while flying,
+ * walk otherwise); {@code fly}/{@code walk} pick the channel explicitly.
+ * {@code reset} resets both channels at once, so it requires both the fly
+ * and walk permissions. Running the command with no arguments resets the
+ * executor's own speeds for every permitted channel. The same node is
+ * registered as the standalone {@code /speed} root and as the
+ * {@code speed} subcommand of {@code /jflyspeed}.
  */
 public class SpeedCommand {
 
@@ -52,7 +52,7 @@ public class SpeedCommand {
                 .then(flyBranch())
                 .then(walkBranch())
                 .then(resetBranch())
-                .then(SpeedArgumentNodes.bothValueArgument(ctx, exec, tracker, suggestions));
+                .then(SpeedArgumentNodes.autoValueArgument(ctx, exec, tracker, suggestions));
     }
 
     private LiteralArgumentBuilder<CommandSourceStack> flyBranch() {

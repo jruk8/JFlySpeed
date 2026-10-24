@@ -47,23 +47,6 @@ public class SpeedExecutor {
     }
 
     /**
-     * Sets both speed channels for the targets.
-     *
-     * @param source the command source
-     * @param scale the user-facing value (0 to 10)
-     * @param targets the resolved target players
-     * @return {@link Command#SINGLE_SUCCESS}
-     */
-    public int setBoth(CommandSourceStack source, double scale, List<Player> targets) {
-        for (Player target : targets) {
-            speeds.setSpeed(target, SpeedType.FLY, scale);
-            speeds.setSpeed(target, SpeedType.WALK, scale);
-        }
-        sendBothSetFeedback(source, targets, SpeedValues.format(scale));
-        return Command.SINGLE_SUCCESS;
-    }
-
-    /**
      * Resets one speed channel for the targets.
      *
      * @param source the command source
@@ -129,29 +112,6 @@ public class SpeedExecutor {
             if (!isSender(source, target)) {
                 var tags = setTags(type, value, target, olds);
                 ctx.notifySet(target, withWas(m -> m.getSpeed().getSetTarget(), target, olds, updated), tags);
-            }
-        }
-    }
-
-    private void sendBothSetFeedback(CommandSourceStack source, List<Player> targets, String value) {
-        if (isSelfOnly(source, targets)) {
-            ctx.sendSet(source, m -> m.getSpeed().getSetBoth(), Map.of("value", value));
-            return;
-        }
-        var targetsValue = targetNames(targets);
-        if (targets.size() == 1) {
-            var tags = Map.of("value", value, "targets", targetsValue);
-            ctx.sendSet(source, m -> m.getSpeed().getSetBothOther(), tags);
-        } else {
-            var tags = Map.of(
-                    "value", value,
-                    "targets", targetsValue,
-                    "count", String.valueOf(targets.size()));
-            ctx.sendSet(source, m -> m.getSpeed().getSetBothMultiple(), tags);
-        }
-        for (Player target : targets) {
-            if (!isSender(source, target)) {
-                ctx.notifySet(target, m -> m.getSpeed().getSetBoth(), Map.of("value", value));
             }
         }
     }

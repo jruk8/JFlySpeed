@@ -144,10 +144,6 @@ brackets are raw MiniMessage, and `\n` breaks the line:
 - `speed.setTarget` / `speed.resetTarget` - notification sent to each
   affected player (use `{type}`, `{value}` and `{old}` for sets; `{mode}`
   and `{old}` for resets).
-- `speed.setBoth` - both-channels set, to yourself and to each
-  affected player (use `{value}`).
-- `speed.setBothOther` / `speed.setBothMultiple` - both-channels
-  set summaries (use `{value}`, `{targets}` and `{count}` for several).
 - `speed.wasSuffix` - ` (was {old})` suffix appended to single-channel
   set and reset messages (use `{old}`, rounded to one decimal). Sets show
   it only when the rounded old value differs from the new one.
@@ -160,6 +156,10 @@ brackets are raw MiniMessage, and `\n` breaks the line:
   Values outside the 0–10 scale are clamped silently instead of erroring.
 - `speed.consoleNeedsTarget` - console ran a speed command without a
   target.
+- `speed.consoleNeedsMode` - console ran `/speed` with a value instead
+  of an explicit `fly`/`walk` mode.
+- `speed.noModePermission` - the sender lacks the permission for the
+  channel `/speed <value>` inferred (use `{type}` and `{permission}`).
 - `fly.setSelf` / `fly.setTarget` - fly mode changed, to yourself and to
   each affected player (use `{mode}`, `on` or `off`).
 - `fly.setOther` / `fly.setMultiple` - summary for the sender when other

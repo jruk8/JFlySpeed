@@ -75,7 +75,7 @@ public class HelpCommand {
                 new HelpEntry("/jfs walkspeed [<speed>|reset] [targets]",
                         "Sets walk speed (0-10, empty resets).", SpeedPermissions.WALK),
                 new HelpEntry("/jfs speed <speed> [targets]",
-                        "Sets both speeds (0-10, needs both permissions).",
+                        "Sets speed for your current mode (0-10).",
                         SpeedPermissions.FLY, SpeedPermissions.WALK),
                 new HelpEntry("/jfs speed fly|walk [<speed>|reset] [targets]",
                         "Sets one speed (0-10, empty resets).",

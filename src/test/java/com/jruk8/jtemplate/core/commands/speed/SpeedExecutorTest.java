@@ -191,46 +191,6 @@ class SpeedExecutorTest {
     }
 
     @Test
-    @DisplayName("should set both channels via setBoth()")
-    void shouldSetBothChannels() {
-        var selfId = UUID.randomUUID();
-        Player self = player(selfId);
-        when(source.getSender()).thenReturn(self);
-
-        int result = executor().setBoth(source, 6.0, List.of(self));
-
-        assertEquals(Command.SINGLE_SUCCESS, result);
-        verify(speeds).setSpeed(self, SpeedType.FLY, 6.0);
-        verify(speeds).setSpeed(self, SpeedType.WALK, 6.0);
-        var placeholders = forClass(Map.class);
-        verify(ctx, times(1)).sendSet(eq(source), any(Function.class), placeholders.capture());
-        assertEquals("6", placeholders.getValue().get("value"));
-        verify(ctx, never()).notifySet(eq(self), any(Function.class), any(Map.class));
-    }
-
-    @Test
-    @DisplayName("should summarize once and notify others on a both set")
-    void shouldSummarizeBothSetOnce() {
-        var selfId = UUID.randomUUID();
-        Player self = player(selfId);
-        Player other = player(UUID.randomUUID());
-        when(self.getName()).thenReturn("Steve");
-        when(other.getName()).thenReturn("Alex");
-        when(source.getSender()).thenReturn(self);
-
-        int result = executor().setBoth(source, 6.0, List.of(self, other));
-
-        assertEquals(Command.SINGLE_SUCCESS, result);
-        var placeholders = forClass(Map.class);
-        verify(ctx, times(1)).sendSet(eq(source), any(Function.class), placeholders.capture());
-        assertEquals("6", placeholders.getValue().get("value"));
-        assertEquals("Steve, Alex", placeholders.getValue().get("targets"));
-        assertEquals("2", placeholders.getValue().get("count"));
-        verify(ctx, never()).notifySet(eq(self), any(Function.class), any(Map.class));
-        verify(ctx, times(1)).notifySet(eq(other), any(Function.class), any(Map.class));
-    }
-
-    @Test
     @DisplayName("should reset both channels via resetBoth()")
     void shouldResetBothChannels() {
         var selfId = UUID.randomUUID();

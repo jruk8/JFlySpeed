@@ -44,7 +44,7 @@
 | --- | --- |
 | `/flyspeed [<speed>\|reset] [targets]` | Set or reset fly speed (aliases `/fspeed`, `/fs`). |
 | `/walkspeed [<speed>\|reset] [targets]` | Set or reset walk speed (aliases `/wspeed`, `/ws`). |
-| `/speed <speed> [targets]` | Set both fly and walk speed. |
+| `/speed <speed> [targets]` | Set speed for your current mode (flying → fly, else walk). |
 | `/speed fly\|walk [<speed>\|reset] [targets]` | Set or reset one speed channel. |
 | `/speed reset [targets]` | Reset both fly and walk speed. |
 | `/fly [[on\|off] [targets]]` | Toggle or set fly mode. |

@@ -10,7 +10,7 @@ three speed commands additionally exist as standalone roots (`/flyspeed`,
 | --- | --- | --- |
 | `/flyspeed [<speed>\|reset] [targets]` | Set or reset fly speed (aliases `/fspeed`, `/fs`). | `jflyspeed.flyspeed` |
 | `/walkspeed [<speed>\|reset] [targets]` | Set or reset walk speed (aliases `/wspeed`, `/ws`). | `jflyspeed.walkspeed` |
-| `/speed <speed> [targets]` | Set both fly and walk speed. | `jflyspeed.flyspeed` + `jflyspeed.walkspeed` |
+| `/speed <speed> [targets]` | Set speed for your current mode (flying → fly, else walk). | the inferred channel's node |
 | `/speed fly\|walk [<speed>\|reset] [targets]` | Set or reset one speed channel. | `jflyspeed.flyspeed` / `jflyspeed.walkspeed` |
 | `/speed reset [targets]` | Reset both fly and walk speed. | `jflyspeed.flyspeed` + `jflyspeed.walkspeed` |
 | `/fly [[on\|off] [targets]]` | Toggle or set fly mode. | `jflyspeed.fly` |
@@ -27,7 +27,7 @@ Examples:
 /fly                        # toggle your own fly mode
 /fly off @a                 # disable fly mode for everyone
 /flyspeed                   # same: no arguments resets your own speed
-/speed 5                    # set your fly and walk speed to 5
+/speed 5                    # set your fly or walk speed to 5, whichever fits your current mode
 /speed fly 5 @a             # set everyone's fly speed to 5
 /jfs speed walk reset Steve # reset Steve's walk speed
 /speed reset @p             # reset the nearest player's fly and walk speed
@@ -42,8 +42,12 @@ Examples:
   a target. A selector matching nobody reports an error instead of failing
   silently. Targeting anyone but yourself needs `jflyspeed.other` plus the
   relevant speed permission.
-- **`/speed <speed>`** and **`/speed reset`** act on both channels at
-  once, so they need both `jflyspeed.flyspeed` and `jflyspeed.walkspeed`.
+- **`/speed reset`** resets both channels at once, so it needs both
+  `jflyspeed.flyspeed` and `jflyspeed.walkspeed`.
+- **`/speed <speed>`** picks the channel from your current mode — flying
+  means fly speed, anything else means walk speed — and needs that
+  channel's permission. Console has no mode, so it must name `fly` or
+  `walk` explicitly.
 - **No arguments** resets your own speed: `/flyspeed` and `/walkspeed`
   reset their channel, `/speed fly` and `/speed walk` reset theirs, and
   bare `/speed` resets every channel you hold the permission for (both
