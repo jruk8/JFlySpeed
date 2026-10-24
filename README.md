@@ -1,6 +1,6 @@
 <div align="center">
 
-![JFlySpeed banner](docs/assets/banner-1280x640.png)
+![JFlySpeed banner](https://raw.githubusercontent.com/jruk8/JFlySpeed/main/docs/assets/banner-1280x640.png)
 
 <h3>JFlySpeed is an easy-to-use fly and walk speed plugin for 26.x Paper servers.</h3>
 
@@ -50,7 +50,7 @@
 
 An omitted target means yourself; console must always name one. `reset`
 restores the configured defaults. Full table and examples live in
-[commands.md](docs/commands.md).
+[commands.md](https://github.com/jruk8/JFlySpeed/blob/main/docs/commands.md).
 
 # Permissions
 
@@ -76,7 +76,7 @@ First start generates `config.yml`, `messages.yml` and `sounds.yml` in
 - `messages.yml` / `sounds.yml` » every message and the sound played
   for each feedback event.
 
-Every value is documented in [configuration.md](docs/configuration.md).
+Every value is documented in [configuration.md](https://github.com/jruk8/JFlySpeed/blob/main/docs/configuration.md).
 
 # Build
 
@@ -96,6 +96,6 @@ Every value is documented in [configuration.md](docs/configuration.md).
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](https://github.com/jruk8/JFlySpeed/blob/main/CONTRIBUTING.md).
 
-&copy; 2026 jruk8. Licensed under [AGPL-3.0](LICENSE).
+&copy; 2026 jruk8. Licensed under [AGPL-3.0](https://github.com/jruk8/JFlySpeed/blob/main/LICENSE).
