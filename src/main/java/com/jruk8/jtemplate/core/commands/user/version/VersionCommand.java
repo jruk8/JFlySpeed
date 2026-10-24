@@ -9,9 +9,9 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.configuration.PluginMeta;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Version subcommand that displays the plugin version and authors.
@@ -57,8 +57,7 @@ public class VersionCommand {
         ctx.sendVersion(
                 sender,
                 m -> m.getCore().getVersionSuccess(),
-                Placeholder.parsed("version", version),
-                Placeholder.parsed("authors", authors)
+                Map.of("version", version, "authors", authors)
         );
         if (sender.getSender().hasPermission(SpeedPermissions.RELOAD)) {
             updateChecks.pendingUpdate().ifPresent(update -> sendUpdateNotice(sender, update));
@@ -66,13 +65,11 @@ public class VersionCommand {
     }
 
     private void sendUpdateNotice(CommandSourceStack sender, UpdateAvailable update) {
-        ctx.sendMessage(
-                sender,
-                m -> m.getCore().getUpdateAvailable(),
-                Placeholder.parsed("latest", update.latest()),
-                Placeholder.parsed("current", update.current()),
-                Placeholder.parsed("url", update.url()),
-                Placeholder.parsed("modrinth-url", update.modrinthUrl())
-        );
+        var tags = Map.of(
+                "latest", update.latest(),
+                "current", update.current(),
+                "url", update.url(),
+                "modrinth-url", update.modrinthUrl());
+        ctx.sendMessage(sender, m -> m.getCore().getUpdateAvailable(), tags);
     }
 }

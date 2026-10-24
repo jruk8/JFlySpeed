@@ -5,8 +5,6 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -179,17 +177,23 @@ class MessageParserTest {
     }
 
     @Nested
-    @DisplayName("parse() with TagResolvers")
-    class TagResolverTests {
+    @DisplayName("parse() newline escapes")
+    class NewlineTests {
 
         @Test
-        @DisplayName("should apply MiniMessage tag resolvers")
-        void shouldApplyTagResolvers() {
-            String raw = "Time: <time>";
-            TagResolver resolver = Placeholder.parsed("time", "100");
-            Component result = parser.parse(raw, Map.of(), resolver);
-            String resultString = PLAIN_TEXT.serialize(result);
-            assertTrue(resultString.contains("100"));
+        @DisplayName("should convert backslash-n escapes to real newlines")
+        void shouldConvertNewlineEscapes() {
+            Component result = parser.parse("one\\ntwo", Map.of());
+            assertEquals("one\ntwo", PLAIN_TEXT.serialize(result));
+        }
+
+        @Test
+        @DisplayName("should resolve color tags inside placeholder values")
+        void shouldResolveColorsInValues() {
+            Component result = parser.parse("Hi {name}", Map.of("name", "{hl}Steve"));
+            String serialized = MINI_MESSAGE.serialize(result);
+            assertTrue(serialized.contains("#ebf1f2"));
+            assertTrue(PLAIN_TEXT.serialize(result).contains("Steve"));
         }
     }
 }

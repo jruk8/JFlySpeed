@@ -3,8 +3,6 @@ package com.jruk8.jtemplate.core.commands.speed;
 import com.jruk8.jtemplate.core.commands.CommandContext;
 import com.mojang.brigadier.Command;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -87,22 +85,26 @@ public class SpeedExecutor {
             SpeedType type,
             String value
     ) {
-        var typeTag = Placeholder.parsed("type", type.getKey());
-        var valueTag = Placeholder.parsed("value", value);
+        var placeholders = Map.of("type", type.getKey(), "value", value);
         if (isSelfOnly(source, targets)) {
-            ctx.sendSet(source, m -> m.getSpeed().getSetSelf(), typeTag, valueTag);
+            ctx.sendSet(source, m -> m.getSpeed().getSetSelf(), placeholders);
             return;
         }
-        var targetsTag = Placeholder.parsed("targets", targetNames(targets));
+        var targetsValue = targetNames(targets);
         if (targets.size() == 1) {
-            ctx.sendSet(source, m -> m.getSpeed().getSetOther(), typeTag, valueTag, targetsTag);
+            var other = Map.of("type", type.getKey(), "value", value, "targets", targetsValue);
+            ctx.sendSet(source, m -> m.getSpeed().getSetOther(), other);
         } else {
-            var countTag = Placeholder.parsed("count", String.valueOf(targets.size()));
-            ctx.sendSet(source, m -> m.getSpeed().getSetMultiple(), typeTag, valueTag, countTag, targetsTag);
+            var multiple = Map.of(
+                    "type", type.getKey(),
+                    "value", value,
+                    "targets", targetsValue,
+                    "count", String.valueOf(targets.size()));
+            ctx.sendSet(source, m -> m.getSpeed().getSetMultiple(), multiple);
         }
         for (Player target : targets) {
             if (!isSender(source, target)) {
-                ctx.notifySet(target, m -> m.getSpeed().getSetTarget(), typeTag, valueTag);
+                ctx.notifySet(target, m -> m.getSpeed().getSetTarget(), placeholders);
             }
         }
     }
@@ -113,46 +115,49 @@ public class SpeedExecutor {
             SpeedType type,
             Map<UUID, String> olds
     ) {
-        var mode = Map.of("mode", type.getKey());
         if (isSelfOnly(source, targets)) {
             Player self = targets.getFirst();
-            ctx.sendReset(source, m -> m.getSpeed().getResetSelf(), mode, oldTag(self, olds));
+            ctx.sendReset(source, m -> m.getSpeed().getResetSelf(), resetTags(type, self, olds));
             return;
         }
-        var targetsTag = Placeholder.parsed("targets", targetNames(targets));
         if (targets.size() == 1) {
             Player other = targets.getFirst();
-            ctx.sendReset(source, m -> m.getSpeed().getResetOther(), mode, targetsTag, oldTag(other, olds));
+            var tags = new HashMap<>(resetTags(type, other, olds));
+            tags.put("targets", targetNames(targets));
+            ctx.sendReset(source, m -> m.getSpeed().getResetOther(), tags);
         } else {
-            var countTag = Placeholder.parsed("count", String.valueOf(targets.size()));
-            ctx.sendReset(source, m -> m.getSpeed().getResetMultiple(), mode, targetsTag, countTag);
+            var tags = Map.of(
+                    "mode", type.getKey(),
+                    "targets", targetNames(targets),
+                    "count", String.valueOf(targets.size()));
+            ctx.sendReset(source, m -> m.getSpeed().getResetMultiple(), tags);
         }
         for (Player target : targets) {
             if (!isSender(source, target)) {
-                ctx.notifyReset(target, m -> m.getSpeed().getResetTarget(), mode, oldTag(target, olds));
+                ctx.notifyReset(target, m -> m.getSpeed().getResetTarget(), resetTags(type, target, olds));
             }
         }
     }
 
-    private static TagResolver oldTag(Player target, Map<UUID, String> olds) {
-        return Placeholder.parsed("old", olds.getOrDefault(target.getUniqueId(), "?"));
+    private static Map<String, String> resetTags(SpeedType type, Player target, Map<UUID, String> olds) {
+        return Map.of("mode", type.getKey(), "old", olds.getOrDefault(target.getUniqueId(), "?"));
     }
 
     private void sendBothFeedback(CommandSourceStack source, List<Player> targets) {
         if (isSelfOnly(source, targets)) {
-            ctx.sendReset(source, m -> m.getSpeed().getResetBoth());
+            ctx.sendReset(source, m -> m.getSpeed().getResetBoth(), Map.of());
             return;
         }
-        var targetsTag = Placeholder.parsed("targets", targetNames(targets));
+        var targetsValue = targetNames(targets);
         if (targets.size() == 1) {
-            ctx.sendReset(source, m -> m.getSpeed().getResetBothOther(), targetsTag);
+            ctx.sendReset(source, m -> m.getSpeed().getResetBothOther(), Map.of("targets", targetsValue));
         } else {
-            var countTag = Placeholder.parsed("count", String.valueOf(targets.size()));
-            ctx.sendReset(source, m -> m.getSpeed().getResetBothMultiple(), targetsTag, countTag);
+            var tags = Map.of("targets", targetsValue, "count", String.valueOf(targets.size()));
+            ctx.sendReset(source, m -> m.getSpeed().getResetBothMultiple(), tags);
         }
         for (Player target : targets) {
             if (!isSender(source, target)) {
-                ctx.notifyReset(target, m -> m.getSpeed().getResetBoth());
+                ctx.notifyReset(target, m -> m.getSpeed().getResetBoth(), Map.of());
             }
         }
     }

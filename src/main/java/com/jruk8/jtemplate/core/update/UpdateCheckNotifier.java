@@ -3,9 +3,10 @@ package com.jruk8.jtemplate.core.update;
 import com.jruk8.jtemplate.core.commands.SpeedPermissions;
 import com.jruk8.jtemplate.core.messages.MessagesConfig;
 import com.jruk8.jtemplate.core.messages.Messenger;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.Map;
 
 /**
  * Sends update notices to players holding {@code jflyspeed.reload}.
@@ -41,13 +42,11 @@ public final class UpdateCheckNotifier {
         if (player == null || update == null || !player.hasPermission(SpeedPermissions.RELOAD)) {
             return;
         }
-        messenger.send(
-                player,
-                messages.getCore().getUpdateAvailable(),
-                Placeholder.parsed("latest", update.latest()),
-                Placeholder.parsed("current", update.current()),
-                Placeholder.parsed("url", update.url()),
-                Placeholder.parsed("modrinth-url", update.modrinthUrl())
-        );
+        var tags = Map.of(
+                "latest", update.latest(),
+                "current", update.current(),
+                "url", update.url(),
+                "modrinth-url", update.modrinthUrl());
+        messenger.send(player, messages.getCore().getUpdateAvailable(), tags);
     }
 }

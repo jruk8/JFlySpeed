@@ -4,18 +4,23 @@ import com.jruk8.jtemplate.core.configs.PluginConfig;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 
 import java.util.Map;
 
 /**
  * Handles the raw-string -> Component pipeline:
- * 1. Internal {bracket} placeholders ({prefix}, {time}, etc.)
- * 2. Color palette placeholders ({plain}, ...) from config.yml
- * 3. PlaceholderAPI %percent% placeholders (%player_name%, etc.)
- * 4. Adventure TagResolvers
- * 5. MiniMessage formatting
+ * 1. Internal {prefix} placeholder
+ * 2. Runtime {bracket} placeholders ({mode}, {old}, etc.)
+ * 3. Color palette placeholders ({plain}, ...) from config.yml
+ * 4. PlaceholderAPI %percent% placeholders (%player_name%, etc.)
+ * 5. Backslash-n escapes -> real newlines
+ * 6. MiniMessage formatting
+ * <p>
+ * Plugin placeholders always use {braces}. Angle brackets are reserved
+ * for raw MiniMessage: anything in &lt;&gt; passes through to step 6
+ * untouched, so literal brackets in messages must be escaped
+ * ({@code \<br>} renders a literal {@code <br>}).
  */
 public final class MessageParser {
 
@@ -29,7 +34,7 @@ public final class MessageParser {
         this.messagesConfig = messagesConfig;
     }
 
-    public Component parse(String rawString, Map<String, String> stringPlaceholders, TagResolver... resolvers) {
+    public Component parse(String rawString, Map<String, String> stringPlaceholders) {
         if (rawString == null || rawString.isEmpty()) {
             return Component.text("");
         }
@@ -39,7 +44,7 @@ public final class MessageParser {
         // 1. Replace internal {prefix}
         text = text.replace("{prefix}", messagesConfig.getPrefix());
 
-        // 2. Replace custom internal {bracket} string placeholders
+        // 2. Replace runtime {bracket} placeholders
         if (stringPlaceholders != null && !stringPlaceholders.isEmpty()) {
             for (Map.Entry<String, String> entry : stringPlaceholders.entrySet()) {
                 String key = entry.getKey();
@@ -59,9 +64,12 @@ public final class MessageParser {
             text = PlaceholderAPI.setPlaceholders(null, text);
         }
 
-        // 5. Build final Component: MiniMessage parses the string AND applies
-        // any extra TagResolvers passed in
-        return MINI_MESSAGE.deserialize(text, resolvers);
+        // 5. Backslash-n escapes become real newlines (single-quoted and
+        // plain YAML scalars keep them literal, unlike double-quoted ones)
+        text = text.replace("\\n", "\n");
+
+        // 6. MiniMessage parses the string; <tags> are MiniMessage's own
+        return MINI_MESSAGE.deserialize(text);
     }
 
     private String resolveColors(String text) {

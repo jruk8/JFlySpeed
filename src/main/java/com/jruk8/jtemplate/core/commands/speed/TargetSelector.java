@@ -8,6 +8,7 @@ import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSele
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -34,7 +35,7 @@ public final class TargetSelector {
         if (source.getSender() instanceof Player player) {
             return Optional.of(List.of(player));
         }
-        ctx.error(source, m -> m.getSpeed().getConsoleNeedsTarget());
+        ctx.error(source, m -> m.getSpeed().getConsoleNeedsTarget(), Map.of());
         return Optional.empty();
     }
 
@@ -57,15 +58,15 @@ public final class TargetSelector {
         try {
             targets = selector.resolve(source);
         } catch (CommandSyntaxException unmatched) {
-            ctx.error(source, m -> m.getSpeed().getNoTargets());
+            ctx.error(source, m -> m.getSpeed().getNoTargets(), Map.of());
             return Optional.empty();
         }
         if (targets.isEmpty()) {
-            ctx.error(source, m -> m.getSpeed().getNoTargets());
+            ctx.error(source, m -> m.getSpeed().getNoTargets(), Map.of());
             return Optional.empty();
         }
         if (targetsOthers(source, targets) && !source.getSender().hasPermission(SpeedPermissions.OTHER)) {
-            ctx.error(source, m -> m.getSpeed().getNoPermission());
+            ctx.error(source, m -> m.getSpeed().getNoPermission(), Map.of());
             return Optional.empty();
         }
         return Optional.of(targets);

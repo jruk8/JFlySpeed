@@ -11,11 +11,11 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -243,15 +243,13 @@ public final class SpeedArgumentNodes {
 
     private static Optional<SpeedType> inferType(CommandSourceStack source, CommandContext ctx) {
         if (!(source.getSender() instanceof Player player)) {
-            ctx.error(source, m -> m.getSpeed().getConsoleNeedsMode());
+            ctx.error(source, m -> m.getSpeed().getConsoleNeedsMode(), Map.of());
             return Optional.empty();
         }
         SpeedType type = player.isFlying() ? SpeedType.FLY : SpeedType.WALK;
         if (!source.getSender().hasPermission(type.getPermission())) {
-            ctx.error(source,
-                    m -> m.getSpeed().getNoModePermission(),
-                    Placeholder.parsed("type", type.getKey()),
-                    Placeholder.parsed("permission", type.getPermission()));
+            var tags = Map.of("type", type.getKey(), "permission", type.getPermission());
+            ctx.error(source, m -> m.getSpeed().getNoModePermission(), tags);
             return Optional.empty();
         }
         return Optional.of(type);
@@ -301,15 +299,11 @@ public final class SpeedArgumentNodes {
         try {
             scale = Double.parseDouble(input);
         } catch (NumberFormatException invalid) {
-            ctx.error(source,
-                    m -> m.getSpeed().getInvalid(),
-                    Placeholder.parsed("input", input));
+            ctx.error(source, m -> m.getSpeed().getInvalid(), Map.of("input", input));
             return null;
         }
         if (!Double.isFinite(scale)) {
-            ctx.error(source,
-                    m -> m.getSpeed().getInvalid(),
-                    Placeholder.parsed("input", input));
+            ctx.error(source, m -> m.getSpeed().getInvalid(), Map.of("input", input));
             return null;
         }
         return SpeedValues.clampScale(scale);

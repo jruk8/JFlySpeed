@@ -3,7 +3,6 @@ package com.jruk8.jtemplate.core.commands.speed;
 import com.jruk8.jtemplate.core.commands.CommandContext;
 import com.mojang.brigadier.Command;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,10 +62,13 @@ class SpeedExecutorTest {
         assertEquals(Command.SINGLE_SUCCESS, result);
         verify(speeds).resetSpeed(self, SpeedType.FLY);
         verify(speeds).resetSpeed(other, SpeedType.FLY);
-        verify(ctx).sendReset(eq(source), any(Function.class), any(Map.class), any(TagResolver[].class));
-        verify(ctx).notifyReset(eq(other), any(Function.class), any(Map.class), any(TagResolver[].class));
-        verify(ctx, never())
-                .notifyReset(eq(self), any(Function.class), any(Map.class), any(TagResolver[].class));
+        var placeholders = forClass(Map.class);
+        verify(ctx).sendReset(eq(source), any(Function.class), placeholders.capture());
+        assertEquals("fly", placeholders.getValue().get("mode"));
+        assertEquals("Steve, Alex", placeholders.getValue().get("targets"));
+        assertEquals("2", placeholders.getValue().get("count"));
+        verify(ctx).notifyReset(eq(other), any(Function.class), any(Map.class));
+        verify(ctx, never()).notifyReset(eq(self), any(Function.class), any(Map.class));
     }
 
     @Test
@@ -82,10 +84,9 @@ class SpeedExecutorTest {
         assertEquals(Command.SINGLE_SUCCESS, result);
         verify(speeds).resetSpeed(self, SpeedType.WALK);
         var placeholders = forClass(Map.class);
-        var resolvers = forClass(TagResolver[].class);
-        verify(ctx).sendReset(eq(source), any(Function.class), placeholders.capture(), resolvers.capture());
+        verify(ctx).sendReset(eq(source), any(Function.class), placeholders.capture());
         assertEquals("walk", placeholders.getValue().get("mode"));
-        assertEquals(1, resolvers.getValue().length);
+        assertEquals("5", placeholders.getValue().get("old"));
     }
 
     @Test
@@ -99,8 +100,11 @@ class SpeedExecutorTest {
 
         assertEquals(Command.SINGLE_SUCCESS, result);
         verify(speeds).setSpeed(self, SpeedType.WALK, 7.0);
-        verify(ctx).sendSet(eq(source), any(Function.class), any(TagResolver[].class));
-        verify(ctx, never()).notifySet(any(Player.class), any(Function.class), any(TagResolver[].class));
+        var placeholders = forClass(Map.class);
+        verify(ctx).sendSet(eq(source), any(Function.class), placeholders.capture());
+        assertEquals("walk", placeholders.getValue().get("type"));
+        assertEquals("7", placeholders.getValue().get("value"));
+        verify(ctx, never()).notifySet(any(Player.class), any(Function.class), any(Map.class));
     }
 
     @Test
@@ -115,10 +119,12 @@ class SpeedExecutorTest {
         int result = executor().setSpeed(source, SpeedType.FLY, 8.0, List.of(other));
 
         assertEquals(Command.SINGLE_SUCCESS, result);
-        var resolvers = forClass(TagResolver[].class);
-        verify(ctx).sendSet(eq(source), any(Function.class), resolvers.capture());
-        assertEquals(3, resolvers.getValue().length);
-        verify(ctx).notifySet(eq(other), any(Function.class), any(TagResolver[].class));
+        var placeholders = forClass(Map.class);
+        verify(ctx).sendSet(eq(source), any(Function.class), placeholders.capture());
+        assertEquals("fly", placeholders.getValue().get("type"));
+        assertEquals("8", placeholders.getValue().get("value"));
+        assertEquals("Alex", placeholders.getValue().get("targets"));
+        verify(ctx).notifySet(eq(other), any(Function.class), any(Map.class));
     }
 
     @Test
@@ -135,11 +141,12 @@ class SpeedExecutorTest {
         int result = executor().setSpeed(source, SpeedType.FLY, 8.0, List.of(first, second));
 
         assertEquals(Command.SINGLE_SUCCESS, result);
-        var resolvers = forClass(TagResolver[].class);
-        verify(ctx).sendSet(eq(source), any(Function.class), resolvers.capture());
-        assertEquals(4, resolvers.getValue().length);
-        verify(ctx).notifySet(eq(first), any(Function.class), any(TagResolver[].class));
-        verify(ctx).notifySet(eq(second), any(Function.class), any(TagResolver[].class));
+        var placeholders = forClass(Map.class);
+        verify(ctx).sendSet(eq(source), any(Function.class), placeholders.capture());
+        assertEquals("2", placeholders.getValue().get("count"));
+        assertEquals("Alex, Steve", placeholders.getValue().get("targets"));
+        verify(ctx).notifySet(eq(first), any(Function.class), any(Map.class));
+        verify(ctx).notifySet(eq(second), any(Function.class), any(Map.class));
     }
 
     @Test
@@ -155,8 +162,8 @@ class SpeedExecutorTest {
         verify(speeds).resetSpeed(self, SpeedType.FLY);
         verify(speeds).resetSpeed(self, SpeedType.WALK);
         verify(ctx, times(1))
-                .sendReset(eq(source), any(Function.class), any(TagResolver[].class));
-        verify(ctx, never()).notifyReset(eq(self), any(Function.class), any(TagResolver[].class));
+                .sendReset(eq(source), any(Function.class), any(Map.class));
+        verify(ctx, never()).notifyReset(eq(self), any(Function.class), any(Map.class));
     }
 
     @Test
@@ -172,9 +179,9 @@ class SpeedExecutorTest {
 
         assertEquals(Command.SINGLE_SUCCESS, result);
         verify(ctx, times(1))
-                .sendReset(eq(source), any(Function.class), any(TagResolver[].class));
-        verify(ctx, never()).notifyReset(eq(self), any(Function.class), any(TagResolver[].class));
+                .sendReset(eq(source), any(Function.class), any(Map.class));
+        verify(ctx, never()).notifyReset(eq(self), any(Function.class), any(Map.class));
         verify(ctx, times(1))
-                .notifyReset(eq(other), any(Function.class), any(TagResolver[].class));
+                .notifyReset(eq(other), any(Function.class), any(Map.class));
     }
 }

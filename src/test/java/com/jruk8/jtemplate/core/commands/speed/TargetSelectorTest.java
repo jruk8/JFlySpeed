@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,7 +64,7 @@ class TargetSelectorTest {
 
         assertTrue(targets.isEmpty());
         var captor = ArgumentCaptor.forClass(Function.class);
-        verify(ctx).error(eq(source), captor.capture());
+        verify(ctx).error(eq(source), captor.capture(), any(Map.class));
         assertEquals("none", selectedMessage(captor.getValue()));
     }
 
@@ -75,7 +76,7 @@ class TargetSelectorTest {
         var targets = TargetSelector.fromSelector(source, selector, ctx);
 
         assertTrue(targets.isEmpty());
-        verify(ctx).error(eq(source), any(Function.class));
+        verify(ctx).error(eq(source), any(Function.class), any(Map.class));
     }
 
     @Test
@@ -101,7 +102,7 @@ class TargetSelectorTest {
         var targets = TargetSelector.fromSelector(source, selector, ctx);
 
         assertTrue(targets.isEmpty());
-        verify(ctx).error(eq(source), any(Function.class));
+        verify(ctx).error(eq(source), any(Function.class), any(Map.class));
     }
 
     @Test

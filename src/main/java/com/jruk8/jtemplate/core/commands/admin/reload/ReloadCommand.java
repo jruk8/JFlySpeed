@@ -8,7 +8,8 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
+import java.util.Map;
 
 /**
  * Reload subcommand that re-reads every config and re-opens storage and placeholders.
@@ -54,17 +55,17 @@ public class ReloadCommand {
             ctx.sendReload(
                     sender,
                     m -> m.getCore().getReloadSuccess(),
-                    Placeholder.parsed("time", String.valueOf(time))
+                    Map.of("time", String.valueOf(time))
             );
         } else {
             ctx.error(
                     sender,
                     m -> m.getCore().getReloadFailure(),
-                    Placeholder.parsed("time", String.valueOf(time))
+                    Map.of("time", String.valueOf(time))
             );
         }
         if (togglesChanged(flyspeed, walkspeed, speed)) {
-            ctx.sendMessage(sender, m -> m.getCore().getReloadRestartRequired());
+            ctx.sendMessage(sender, m -> m.getCore().getReloadRestartRequired(), Map.of());
         }
     }
 

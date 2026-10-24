@@ -7,10 +7,10 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Help subcommand that lists the plugin's commands, optionally filtered by a search query.
@@ -24,12 +24,20 @@ public class HelpCommand {
     private final boolean flyspeedRoot;
     private final boolean walkspeedRoot;
     private final boolean speedRoot;
+    private final String version;
 
-    public HelpCommand(CommandContext ctx, boolean flyspeedRoot, boolean walkspeedRoot, boolean speedRoot) {
+    public HelpCommand(
+            CommandContext ctx,
+            boolean flyspeedRoot,
+            boolean walkspeedRoot,
+            boolean speedRoot,
+            String version
+    ) {
         this.ctx = ctx;
         this.flyspeedRoot = flyspeedRoot;
         this.walkspeedRoot = walkspeedRoot;
         this.speedRoot = speedRoot;
+        this.version = version;
     }
 
     /**
@@ -52,14 +60,13 @@ public class HelpCommand {
 
     private void showHelp(CommandSourceStack sender, String query) {
         ctx.playHelp(sender);
-        ctx.sendMessage(sender, m -> m.getCore().getHelpHeader());
+        ctx.sendMessage(sender, m -> m.getCore().getHelpHeader(), Map.of("version", version));
         HelpEntry.matching(entries(), query).stream()
                 .filter(entry -> entry.visibleTo(sender.getSender()))
                 .forEach(entry -> ctx.sendMessage(
                         sender,
                         m -> m.getCore().getHelpEntryFormat(),
-                        Placeholder.parsed("syntax", entry.syntax()),
-                        Placeholder.parsed("description", entry.description())
+                        Map.of("syntax", entry.syntax(), "description", entry.description())
                 ));
     }
 

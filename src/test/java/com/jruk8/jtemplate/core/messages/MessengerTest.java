@@ -1,7 +1,6 @@
 package com.jruk8.jtemplate.core.messages;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -69,50 +67,33 @@ class MessengerTest {
         @Test
         @DisplayName("should parse and send with string placeholders")
         void shouldParseAndSendWithStringPlaceholders() {
-            String rawMessage = "<prefix>Hello {player}";
+            String rawMessage = "{prefix}Hello {player}";
             Map<String, String> placeholders = Map.of("player", "Steve");
             Component parsed = Component.text("Hello Steve");
 
-            when(messageParser.parse(eq(rawMessage), eq(placeholders), any(TagResolver[].class)))
+            when(messageParser.parse(eq(rawMessage), eq(placeholders)))
                 .thenReturn(parsed);
 
             messenger.send(sender, rawMessage, placeholders);
 
             verify(messageParser, times(1))
-                .parse(eq(rawMessage), eq(placeholders), any(TagResolver[].class));
-            verify(sender, times(1)).sendMessage(parsed);
-        }
-
-        @Test
-        @DisplayName("should parse and send with resolvers only")
-        void shouldParseAndSendWithResolversOnly() {
-            String rawMessage = "<prefix>Hello";
-            TagResolver resolver = TagResolver.resolver();
-            Component parsed = Component.text("Hello");
-
-            when(messageParser.parse(eq(rawMessage), eq(Map.of()), any(TagResolver[].class)))
-                .thenReturn(parsed);
-
-            messenger.send(sender, rawMessage, resolver);
-
-            verify(messageParser, times(1))
-                .parse(eq(rawMessage), eq(Map.of()), any(TagResolver[].class));
+                .parse(eq(rawMessage), eq(placeholders));
             verify(sender, times(1)).sendMessage(parsed);
         }
 
         @Test
         @DisplayName("should parse and send with no placeholders")
         void shouldParseAndSendWithNoPlaceholders() {
-            String rawMessage = "<prefix>Hello";
+            String rawMessage = "{prefix}Hello";
             Component parsed = Component.text("Hello");
 
-            when(messageParser.parse(eq(rawMessage), eq(Map.of()), any(TagResolver[].class)))
+            when(messageParser.parse(eq(rawMessage), eq(Map.of())))
                 .thenReturn(parsed);
 
             messenger.send(sender, rawMessage);
 
             verify(messageParser, times(1))
-                .parse(eq(rawMessage), eq(Map.of()), any(TagResolver[].class));
+                .parse(eq(rawMessage), eq(Map.of()));
             verify(sender, times(1)).sendMessage(parsed);
         }
     }
