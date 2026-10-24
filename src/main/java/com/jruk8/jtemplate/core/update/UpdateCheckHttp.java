@@ -1,0 +1,18 @@
+package com.jruk8.jtemplate.core.update;
+
+import java.util.Optional;
+
+/**
+ * Fetches releases from the update host. Blocking: call off the main thread.
+ */
+public interface UpdateCheckHttp {
+
+    /**
+     * Fetches the newest release for a project slug.
+     *
+     * @param slug the project slug on the update host
+     * @return the newest release, or empty when none is published
+     * @throws Exception when the request or response fails
+     */
+    Optional<ModrinthRelease> fetchLatest(String slug) throws Exception;
+}
