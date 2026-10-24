@@ -3,20 +3,20 @@
 PlaceholderAPI support is handled by the `core.placeholders` module. When
 PlaceholderAPI is installed and `placeholders.enabled` is true, the plugin
 registers an expansion using the configured `placeholders.identifier`
-(default `jtemplate`). The expansion is re-registered on `/jtemplate reload`
+(default `jflyspeed`). The expansion is re-registered on `/jflyspeed reload`
 so config changes apply immediately, and unregistered when the plugin
 disables.
 
-## Template Placeholders
+## Usage Placeholders
 
 | Placeholder | Type | Description |
 | --- | --- | --- |
-| `%jtemplate_authors_command_uses%` | INTEGER | Number of times the player has executed `/jtemplate authors`. |
-| `%jtemplate_authors_command_uses_global%` | INTEGER | Server-wide total number of `/jtemplate authors` executions. |
+| `%jflyspeed_authors_command_uses%` | INTEGER | Number of times the player has executed `/jflyspeed version`. |
+| `%jflyspeed_authors_command_uses_global%` | INTEGER | Server-wide total number of `/jflyspeed version` executions. |
 
 The count is recorded whenever a player runs a command matching
-`placeholders.labels` + `placeholders.command` (e.g. `/jtemplate authors` or
-`/jt authors`). Counts are stored in the SQLite database, so they survive
+`placeholders.labels` + `placeholders.command` (e.g. `/jflyspeed version` or
+`/jf version`). Counts are stored in the SQLite database, so they survive
 restarts and are separate per player.
 
 ## Configuration
@@ -24,11 +24,11 @@ restarts and are separate per player.
 ```yaml
 placeholders:
   enabled: true
-  identifier: jtemplate
-  command: authors
+  identifier: jflyspeed
+  command: version
   labels:
-    - jtemplate
-    - jt
+    - jflyspeed
+    - jf
 ```
 
 ## Adding Your Own Placeholders

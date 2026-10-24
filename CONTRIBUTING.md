@@ -37,7 +37,7 @@ cause non-zero PowerShell pipeline results, so check stdout for
   Lombok `@Getter`/`@Setter`; sub-config objects are nested classes inside the
   parent config. Configs are loaded by `ConfigRegistrar` and reloaded via
   `Reloader`.
-- Commands use Incendo Cloud annotations (`org.incendo.cloud.annotations`).
+- Commands are Paper-native Brigadier nodes (`Commands.literal`/`Commands.argument`) exposing `node()`, registered via `LifecycleEvents.COMMANDS`.
 - Placeholders use PlaceholderAPI 2.11.x (`PlaceholderExpansion.onRequest`).
 - Storage is raw JDBC against SQLite; the runtime driver is provided by the
   server (the plugin only declares it as `compileOnly`/`testImplementation`)

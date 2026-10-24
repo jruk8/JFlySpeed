@@ -8,34 +8,28 @@
 
 ## Installation
 
-1. Build the plugin (`.\gradlew.bat build`) or download a release jar.
+1. Build the plugin (`.\\gradlew.bat build`) or download a release jar.
 2. Place the jar in your server's `plugins/` folder.
 3. Restart the server. The plugin generates `config.yml`, `messages.yml` and
-   `sounds.yml` in `plugins/JTemplate/` and creates the SQLite database
-   `jtemplate.db`.
+   `sounds.yml` in `plugins/JFlySpeed/` and creates the SQLite database
+   `jflyspeed.db`.
 4. (Optional) Install [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
    to use the placeholders.
 
 ## Your First Commands
 
 ```text
-/jtemplate help
-/jtemplate authors
-/jtemplate reload
+/jflyspeed help
+/flyspeed 7
+/speed walk reset @a
+/jflyspeed version
 ```
 
-`/jt` is a built-in alias for `/jtemplate`. The template placeholders count
-how often `/jtemplate authors` is executed (per player and globally). Run it a
-couple of times, install PlaceholderAPI, and try
-`%jtemplate_authors_command_uses%` in a scoreboard or chat.
-
-## Starting a New Plugin from the Template
-
-1. Find & replace project-wide: `jtemplate` to *yourname* and `JTemplate` to
-   *YourName* (packages, commands, placeholder identifiers, database name,
-   docs). Then update `gradle.properties` and `settings.gradle`.
-2. Delete or adapt the template modules you do not need; see
-   [Extending the template](api.md) for what plugs in where.
+`/jf` is a built-in alias for `/jflyspeed`. Speeds use the 0–10 scale (see
+the README); `reset` restores the configured defaults. The placeholders
+count how often `/jflyspeed version` is executed (per player and globally):
+run it a couple of times, install PlaceholderAPI, and try
+`%jflyspeed_authors_command_uses%` in a scoreboard or chat.
 
 ## Next Steps
 

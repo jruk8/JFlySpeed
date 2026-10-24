@@ -1,18 +1,69 @@
 ![Banner](docs/assets/banner-1280x640.png)
-# JPaperTemplate
+# JFlySpeed
 
-A clean, buildable starting point for **Paper plugins** using Java 25, Gradle
+Fly and walk speed control for **Paper** servers, built with Java 25, Gradle
 and the [jruk8 plugin-conventions](https://github.com/jruk8/plugin-conventions).
 
-It intentionally ships as a small, working plugin — commands, configs, sounds,
-messages, PlaceholderAPI placeholders and SQLite storage — so you can see the
-intended architecture in action and extend it, or delete parts you do not need.
+Players set speeds on a friendly **0–10 scale** (`/flyspeed 7`), admins can
+target anyone with vanilla selectors (`/speed fly 5 @a`), and every message,
+default and root command is configurable.
 
 ## Requirements
 
 - **Java 25**
 - **Paper 26.2+**
-- [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) — only needed for the `%jtemplate_...%` placeholders
+- [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) — only needed for the `%jflyspeed_...%` placeholders
+
+## Commands
+
+| Command | Description |
+| --- | --- |
+| `/flyspeed <speed\|reset> [targets]` | Set or reset your (or others') fly speed. |
+| `/walkspeed <speed\|reset> [targets]` | Set or reset your (or others') walk speed. |
+| `/speed fly\|walk <speed\|reset> [targets]` | Set or reset one speed channel. |
+| `/speed reset [targets]` | Reset both fly and walk speed. |
+| `/jflyspeed <subcommand>` | Same commands under one root (alias `/jf`): `flyspeed`, `walkspeed`, `speed`, `reload`, `help`, `version`. |
+
+Each of `/flyspeed`, `/walkspeed` and `/speed` can be disabled in
+`config.yml`; the `/jflyspeed` subcommands always exist, so disabling a root
+keeps the feature available under `/jflyspeed` only (e.g. `/jf speed fly 5
+@a`). Root toggles apply on restart.
+
+## The 0–10 speed scale
+
+Players never touch Bukkit's `-1..1` range. Speeds are entered on a 0–10
+scale, converted linearly (`bukkit = scale / 5 - 1`):
+
+| Scale | Bukkit | Notes |
+| --- | --- | --- |
+| `0` | `-1` | Full reverse |
+| `5` | `0` | Stand still |
+| `5.5` | `0.1` | Vanilla fly default (`reset`) |
+| `6` | `0.2` | Vanilla walk default (`reset`) |
+| `10` | `1` | Full speed |
+
+Values outside 0–10 are rejected with an error. `reset` restores the
+configured defaults (`speed.default-fly-speed`, `speed.default-walk-speed`).
+
+Targets accept vanilla selectors (`@p`, `@a`, `@r`, `@s`) and player names;
+an omitted selector means yourself, and console must always name a target.
+Speeds are applied straight to the player (`setFlySpeed`/`setWalkSpeed`) and
+are not persisted — they behave exactly like vanilla across relogs.
+
+## Permissions
+
+| Permission | Description | Default |
+| --- | --- | --- |
+| `jflyspeed.flyspeed` | Change fly speed. | OP |
+| `jflyspeed.walkspeed` | Change walk speed. | OP |
+| `jflyspeed.other` | Target other players (needs the matching speed permission too). | OP |
+| `jflyspeed.reload` | Use `/jflyspeed reload`. | OP |
+| `jflyspeed.version` | Use `/jflyspeed version`. | Everyone |
+
+Targeting others needs `jflyspeed.other` plus the relevant speed permission;
+a selector resolving only to yourself (e.g. `@s`) needs just the speed
+permission. `/speed reset` resets both channels, so it needs both
+`jflyspeed.flyspeed` and `jflyspeed.walkspeed`.
 
 ## Module overview
 
@@ -22,12 +73,12 @@ plugs it into the plugin.
 
 | Package | Purpose |
 | --- | --- |
-| `core.commands` | Incendo Cloud commands (`/jtemplate`, alias `/jt`): `help`, `authors`, `reload`. |
+| `core.commands` | Brigadier commands (`/jflyspeed`, alias `/jf`, plus standalone roots). |
 | `core.configs` | okaeri-configs setup that loads `config.yml`, `messages.yml`, `sounds.yml`. |
 | `core.messages` | MiniMessage / Legacy message parsing and dispatching. |
 | `core.sounds` | Config-driven sound playback. |
-| `core.placeholders` | PlaceholderAPI expansion template that counts command executions. |
-| `core.storage` | Generic SQLite key/value storage (`jtemplate.db`). |
+| `core.placeholders` | PlaceholderAPI expansion that counts command executions. |
+| `core.storage` | Generic SQLite key/value storage (`jflyspeed.db`). |
 
 ## Build, test, checkstyle
 
@@ -45,21 +96,6 @@ Style rules enforced by checkstyle:
 - No star imports
 - Files are capped at 750 lines — keep classes small
 
-## Start a new plugin
-
-1. **Find & replace the name everywhere.** Do a project-wide find & replace of
-   `jtemplate` → *yourname* and `JTemplate` → *YourName* (covers the base
-   package, command labels, placeholder identifiers, the default database name
-   and this documentation). Optionally rename the `com/jruk8/jtemplate`
-   folders to match.
-2. Update `gradle.properties`: `pluginGroup` (base package), `pluginName`,
-   `pluginMain` (fully qualified main class), `pluginAuthor`,
-   `pluginDescription`, `pluginWebsite` and optionally `paperApiVersion`.
-3. Update `rootProject.name` in `settings.gradle`.
-4. Tweak the message prefix in `MessagesConfig` (`core/messages`) if desired.
-5. Delete the template bits you do not need — see
-   [Extending the template](docs/api.md) for what plugs in where.
-
 ## Documentation
 
 - [Getting Started](docs/getting-started.md)
@@ -67,7 +103,7 @@ Style rules enforced by checkstyle:
 - [Permissions](docs/permissions.md)
 - [Configuration](docs/configuration.md)
 - [Placeholders](docs/placeholders.md)
-- [Extending the template (API)](docs/api.md)
+- [Extending the plugin (API)](docs/api.md)
 
 ## Contributing
 
