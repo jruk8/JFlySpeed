@@ -1,56 +1,57 @@
-![Banner](docs/assets/banner-1280x640.png)
-# JFlySpeed
+<div align="center">
 
-Fly and walk speed control for **Paper** servers, built with Java 25, Gradle
-and the [jruk8 plugin-conventions](https://github.com/jruk8/plugin-conventions).
+![JFlyspeed banner](docs/assets/banner-1280x640.png)
 
-Players set speeds on a friendly **0–10 scale** (`/flyspeed 7`), admins can
-target anyone with vanilla selectors (`/speed fly 5 @a`), and every message,
-default and root command is configurable.
+<h3>JFlyspeed is an easy-to-use fly and walk speed plugin for 26.x Paper servers.</h3>
 
-## Requirements
+### [Wiki](https://jruk8.github.io/JFlyspeed/) · [GitHub](https://github.com/jruk8/JFlyspeed)
 
-- **Java 25**
-- **Paper 26.2+**
-- [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) — only needed for the `%jflyspeed_...%` placeholders
+</div>
 
-## Commands
+# Quick Start 🚀
+
+1. Drop the jar into `plugins/` and restart the server.
+2. Run **`/flyspeed 7`**.
+
+**That's it!** Your fly speed is set on a friendly 0–10 scale. Try
+`/walkspeed 6 Steve`, `/speed fly reset @a`, or `/jf help` for the rest.
+
+# Features
+
+- **0–10 speed scale** » Players type `/flyspeed 7`, converted linearly to
+  Bukkit's `-1..1` range; out-of-range values are rejected with an error.
+- **Vanilla selectors** » `@p`, `@a`, `@r`, `@s` plus player names, with
+  custom tab completion (selectors first, your own name first).
+- **Flexible roots** » `/flyspeed`, `/walkspeed` and `/speed` can each be
+  toggled independently; `/jflyspeed` (alias `/jf`) always works.
+- **Reloadable** » `/jflyspeed reload` re-reads every config and re-opens
+  storage and placeholders without a restart.
+- **Also for serious deployment** » MiniMessage messages, config-driven
+  sounds, PlaceholderAPI placeholders, SQLite counters, and an async
+  Modrinth update checker.
+
+### Requirements
+
+- Server Software » [Paper 26.2+](https://papermc.io/downloads/paper)
+- Java Version » **Java 25**
+- Dependencies » **None** (PlaceholderAPI is optional, only for the
+  `%jflyspeed_...%` placeholders)
+
+# Commands
 
 | Command | Description |
 | --- | --- |
-| `/flyspeed <speed\|reset> [targets]` | Set or reset your (or others') fly speed. |
-| `/walkspeed <speed\|reset> [targets]` | Set or reset your (or others') walk speed. |
+| `/flyspeed <speed\|reset> [targets]` | Set or reset fly speed. |
+| `/walkspeed <speed\|reset> [targets]` | Set or reset walk speed. |
 | `/speed fly\|walk <speed\|reset> [targets]` | Set or reset one speed channel. |
 | `/speed reset [targets]` | Reset both fly and walk speed. |
-| `/jflyspeed <subcommand>` | Same commands under one root (alias `/jf`): `flyspeed`, `walkspeed`, `speed`, `reload`, `help`, `version`. |
+| `/jflyspeed <help\|version\|reload>` | Help, version, and config reload (alias `/jf`). |
 
-Each of `/flyspeed`, `/walkspeed` and `/speed` can be disabled in
-`config.yml`; the `/jflyspeed` subcommands always exist, so disabling a root
-keeps the feature available under `/jflyspeed` only (e.g. `/jf speed fly 5
-@a`). Root toggles apply on restart.
+An omitted target means yourself; console must always name one. `reset`
+restores the configured defaults. Full table and examples live in
+[commands.md](docs/commands.md).
 
-## The 0–10 speed scale
-
-Players never touch Bukkit's `-1..1` range. Speeds are entered on a 0–10
-scale, converted linearly (`bukkit = scale / 5 - 1`):
-
-| Scale | Bukkit | Notes |
-| --- | --- | --- |
-| `0` | `-1` | Full reverse |
-| `5` | `0` | Stand still |
-| `5.5` | `0.1` | Vanilla fly default (`reset`) |
-| `6` | `0.2` | Vanilla walk default (`reset`) |
-| `10` | `1` | Full speed |
-
-Values outside 0–10 are rejected with an error. `reset` restores the
-configured defaults (`speed.default-fly-speed`, `speed.default-walk-speed`).
-
-Targets accept vanilla selectors (`@p`, `@a`, `@r`, `@s`) and player names;
-an omitted selector means yourself, and console must always name a target.
-Speeds are applied straight to the player (`setFlySpeed`/`setWalkSpeed`) and
-are not persisted — they behave exactly like vanilla across relogs.
-
-## Permissions
+# Permissions
 
 | Permission | Description | Default |
 | --- | --- | --- |
@@ -60,54 +61,40 @@ are not persisted — they behave exactly like vanilla across relogs.
 | `jflyspeed.reload` | Use `/jflyspeed reload`. | OP |
 | `jflyspeed.version` | Use `/jflyspeed version`. | Everyone |
 
-Targeting others needs `jflyspeed.other` plus the relevant speed permission;
-a selector resolving only to yourself (e.g. `@s`) needs just the speed
-permission. `/speed reset` resets both channels, so it needs both
-`jflyspeed.flyspeed` and `jflyspeed.walkspeed`.
+# Configuration
 
-## Module overview
+First start generates `config.yml`, `messages.yml` and `sounds.yml` in
+`plugins/JFlyspeed/`:
 
-Everything lives under `com.jruk8.jtemplate.core` in small, self-contained
-packages. Each module owns its config class, its services and a registrar that
-plugs it into the plugin.
+- `speed` » default fly/walk speeds restored by `reset`.
+- `commands` » the `/flyspeed`, `/walkspeed`, `/speed` root toggles
+  (restart to apply).
+- `colors` » the shared message color palette.
+- `update-checker` » the async Modrinth update check (console log,
+  join notice, `/version` line).
+- `messages.yml` / `sounds.yml` » every message and the sound played
+  for each feedback event.
 
-| Package | Purpose |
-| --- | --- |
-| `core.commands` | Brigadier commands (`/jflyspeed`, alias `/jf`, plus standalone roots). |
-| `core.configs` | okaeri-configs setup that loads `config.yml`, `messages.yml`, `sounds.yml`. |
-| `core.messages` | MiniMessage / Legacy message parsing and dispatching. |
-| `core.sounds` | Config-driven sound playback. |
-| `core.placeholders` | PlaceholderAPI expansion that counts command executions. |
-| `core.storage` | Generic SQLite key/value storage (`jflyspeed.db`). |
-| `core.update` | Async Modrinth update checker (console + join + `/version` notices). |
+Every value is documented in [configuration.md](docs/configuration.md).
 
-## Build, test, checkstyle
+# Build
 
 ```shell
 ./gradlew build            # macOS/Linux
 .\gradlew.bat build        # Windows
 ```
 
-`build` runs the tests (`src/test/java` mirrors the main package layout) and
-both checkstyle tasks. The plugin jar is written to `build/libs/`.
+`build` runs the tests and both checkstyle tasks; the jar lands in
+`build/libs/`. Built with Java 25 and the
+[jruk8 plugin-conventions](https://github.com/jruk8/plugin-conventions).
 
-Style rules enforced by checkstyle:
+### Links
 
-- Methods are limited to 45 lines, lines to 120 chars
-- No star imports
-- Files are capped at 750 lines — keep classes small
-
-## Documentation
-
-- [Getting Started](docs/getting-started.md)
-- [Commands](docs/commands.md)
-- [Permissions](docs/permissions.md)
-- [Configuration](docs/configuration.md)
-- [Placeholders](docs/placeholders.md)
-- [Extending the plugin (API)](docs/api.md)
+- [Documentation](https://jruk8.github.io/JFlyspeed/)
+- [GitHub](https://github.com/jruk8/JFlyspeed)
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-&copy; 2026 jruk8. Licensed under [GPL-3.0](LICENSE).
+&copy; 2026 jruk8. Licensed under [AGPL-3.0](LICENSE).
