@@ -44,8 +44,9 @@ public final class TargetSelector {
      * @param source the command source
      * @param selector the parsed selector argument
      * @param ctx the shared command services
-     * @return the resolved players, or empty when resolution fails or the sender lacks
-     *         permission (an error is already sent in both cases)
+     * @return the resolved players, or empty when resolution fails, resolves to
+     *         nobody, or the sender lacks permission (an error is already sent in
+     *         all cases)
      */
     public static Optional<List<Player>> fromSelector(
             CommandSourceStack source,
@@ -56,6 +57,10 @@ public final class TargetSelector {
         try {
             targets = selector.resolve(source);
         } catch (CommandSyntaxException unmatched) {
+            ctx.error(source, m -> m.getSpeed().getNoTargets());
+            return Optional.empty();
+        }
+        if (targets.isEmpty()) {
             ctx.error(source, m -> m.getSpeed().getNoTargets());
             return Optional.empty();
         }
