@@ -79,6 +79,7 @@ First start generates `config.yml`, `messages.yml` and `sounds.yml` in
 - `commands` » the `/flyspeed`, `/walkspeed`, `/speed` root toggles
   (restart to apply).
 - `colors` » the shared message color palette.
+- `metrics` » anonymous bStats statistics (restart to apply).
 - `messages.yml` / `sounds.yml` » every message and the sound played
   for each feedback event.
 

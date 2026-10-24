@@ -45,6 +45,8 @@ colors:
   brandColor: '<#84b8db>'
   highlightColor: '<#ebf1f2>'
   errorColor: '<#415ad9>'
+metrics:
+  enabled: true
 ```
 
 ### `updateChecker`
@@ -101,6 +103,12 @@ The message color palette. Every `messages.yml` entry uses these via
 `{plain}`, `{brand}`, `{hl}` and `{error}`, resolved when the message is
 rendered — editing a color and reloading is enough, the messages
 themselves never hardcode colors.
+
+### `metrics`
+
+- `enabled` - sends anonymous usage statistics via bStats (open-source,
+  no personal data or IP addresses). Read once at startup: disabling it
+  needs a server restart to take effect.
 
 ## messages.yml
 

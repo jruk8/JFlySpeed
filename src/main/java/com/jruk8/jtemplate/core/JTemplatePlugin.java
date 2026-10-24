@@ -69,8 +69,9 @@ public final class JTemplatePlugin extends JavaPlugin {
         // Initialize commands
         setupCommands(reloader, configRegistrar, messenger, soundPlayer, updateChecker, usageTracker);
 
-        // Initialize bStats
-        var metricsBootstrap = new MetricsBootstrap(this);
+        // Initialize bStats unless anonymous statistics are disabled
+        boolean metricsEnabled = configRegistrar.getPluginConfig().getMetrics().isEnabled();
+        var metricsBootstrap = new MetricsBootstrap(this, metricsEnabled);
         metricsBootstrap.register();
     }
 

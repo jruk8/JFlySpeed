@@ -61,6 +61,12 @@ public class PluginConfig extends OkaeriConfig {
     })
     private Colors colors = new Colors();
 
+    @Comment({
+            "Anonymous usage statistics via bStats (open-source, no personal data or IP addresses).",
+            "Requires a server restart to take effect."
+    })
+    private Metrics metrics = new Metrics();
+
     @Getter
     @Setter
     @SuppressWarnings("FieldMayBeFinal")
@@ -138,6 +144,15 @@ public class PluginConfig extends OkaeriConfig {
 
         @Comment("MiniMessage color tag for errors, used via {error}.")
         private String errorColor = "<#415ad9>";
+    }
+
+    @Getter
+    @Setter
+    @SuppressWarnings("FieldMayBeFinal")
+    public static class Metrics extends OkaeriConfig {
+
+        @Comment("Send anonymous statistics to bStats.")
+        private boolean enabled = true;
     }
 
     @Getter

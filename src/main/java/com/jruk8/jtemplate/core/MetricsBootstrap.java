@@ -7,13 +7,19 @@ public class MetricsBootstrap implements Bootstrap {
 
     private static final int PLUGIN_ID = 34924;
     private final JavaPlugin plugin;
+    private final boolean enabled;
 
-    public MetricsBootstrap(JavaPlugin plugin) {
+    public MetricsBootstrap(JavaPlugin plugin, boolean enabled) {
         this.plugin = plugin;
+        this.enabled = enabled;
     }
 
     @Override
     public void register() {
-        new Metrics(plugin, PLUGIN_ID);
+        // Read once at startup: bStats cannot be toggled at runtime, so the
+        // config flag takes effect on server restart.
+        if (enabled) {
+            new Metrics(plugin, PLUGIN_ID);
+        }
     }
 }
