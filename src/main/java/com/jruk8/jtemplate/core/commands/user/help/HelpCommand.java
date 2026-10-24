@@ -81,7 +81,8 @@ public class HelpCommand {
                 new HelpEntry("/jflyspeed speed fly|walk <speed|reset> [targets]",
                         "Sets one speed (0-10, empty resets).",
                         SpeedPermissions.FLY, SpeedPermissions.WALK),
-                new HelpEntry("/jflyspeed speed <speed> [targets]", "Sets speed for your current mode (0-10).",
+                new HelpEntry("/jflyspeed speed <speed> [targets]",
+                        "Sets both speeds (0-10, needs both permissions).",
                         SpeedPermissions.FLY, SpeedPermissions.WALK),
                 new HelpEntry("/jflyspeed speed reset [targets]", "Resets both speeds (needs both permissions).",
                         SpeedPermissions.FLY, SpeedPermissions.WALK),
@@ -96,7 +97,7 @@ public class HelpCommand {
                     SpeedPermissions.WALK));
         }
         if (speedRoot) {
-            entries.add(new HelpEntry("/speed <speed> [targets]", "Sets speed for your current mode (0-10).",
+            entries.add(new HelpEntry("/speed <speed> [targets]", "Sets both speeds (0-10, needs both permissions).",
                     SpeedPermissions.FLY, SpeedPermissions.WALK));
             entries.add(new HelpEntry("/speed fly|walk|reset ...", "Sets one speed, or resets both (empty resets own).",
                     SpeedPermissions.FLY, SpeedPermissions.WALK));

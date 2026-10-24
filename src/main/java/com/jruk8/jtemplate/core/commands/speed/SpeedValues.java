@@ -107,4 +107,14 @@ public final class SpeedValues {
         }
         return String.valueOf(scale);
     }
+
+    /**
+     * Formats a previous scale value for the was-suffix, rounded to one decimal.
+     *
+     * @param scale the value to format
+     * @return {@code "5"} for {@code 5.04}, {@code "5.1"} for {@code 5.05}
+     */
+    public static String formatWas(double scale) {
+        return format(Math.round(scale * 10.0) / 10.0);
+    }
 }

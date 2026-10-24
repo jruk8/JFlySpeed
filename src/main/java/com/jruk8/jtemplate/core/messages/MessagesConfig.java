@@ -12,10 +12,10 @@ import lombok.Setter;
  * {plain} for body text, {brand} for headers and the brand name, {hl} for
  * numbers, player names and similar values, {error} for errors. Speed
  * commands insert runtime values through {bracket} placeholders: {mode},
- * {type}, {value}, {old}, {targets}, {count}, {input}, {permission},
- * {version}, {authors}, {time}, {syntax}, {description}, {latest},
- * {current}, {url} and {modrinth-url}. Angle brackets are reserved for
- * raw MiniMessage, and \n breaks the line.
+ * {type}, {value}, {old}, {targets}, {count}, {input}, {version},
+ * {authors}, {time}, {syntax}, {description}, {latest}, {current},
+ * {url} and {modrinth-url}. Angle brackets are reserved for raw
+ * MiniMessage, and \n breaks the line.
  */
 @Getter
 @Setter
@@ -81,21 +81,33 @@ public class MessagesConfig extends OkaeriConfig {
         @Comment("Sent to each affected player when their speed is set (use {type} and {value})")
         private String setTarget = "{prefix}{plain}Your {type} speed is now {hl}{value}{plain}.";
 
+        @Comment("Sent when both speeds are set, to yourself and to each affected player (use {value})")
+        private String setBoth = "{prefix}{plain}Your speeds are now {hl}{value}{plain}.";
+
+        @Comment("Sent to the sender when one other player's speeds are set (use {value} and {targets})")
+        private String setBothOther = "{prefix}{plain}Set speeds to {hl}{value}{plain} "
+                + "for {hl}{targets}{plain}.";
+
+        @Comment("Sent to the sender when several players' speeds are set (use {value}, {count} and {targets})")
+        private String setBothMultiple = "{prefix}{plain}Set speeds to {hl}{value}{plain} "
+                + "for {hl}{count}{plain} players: {hl}{targets}{plain}.";
+
+        @Comment("Suffix appended to set and reset messages to show the previous value (use {old})")
+        private String wasSuffix = " (was {hl}{old}{plain})";
+
         @Comment("Sent to yourself when your speed is reset (use {mode} and {old})")
-        private String resetSelf = "{prefix}{plain}Your {mode} speed was reset back to {hl}1{plain} "
-                + "(was {hl}{old}{plain}).";
+        private String resetSelf = "{prefix}{plain}Your {mode} speed was reset back to {hl}1{plain}.";
 
         @Comment("Sent to the sender when one other player's speed is reset (use {mode}, {targets} and {old})")
         private String resetOther = "{prefix}{plain}Reset {mode} speed back to {hl}1{plain} "
-                + "for {hl}{targets}{plain} (was {hl}{old}{plain}).";
+                + "for {hl}{targets}{plain}.";
 
         @Comment("Sent to the sender when several players' speeds are reset (use {mode}, {count} and {targets})")
         private String resetMultiple = "{prefix}{plain}Reset {mode} speed back to {hl}1{plain} "
                 + "for {hl}{count}{plain} players: {hl}{targets}{plain}.";
 
         @Comment("Sent to each affected player when their speed is reset (use {mode} and {old})")
-        private String resetTarget = "{prefix}{plain}Your {mode} speed was reset back to {hl}1{plain} "
-                + "(was {hl}{old}{plain}).";
+        private String resetTarget = "{prefix}{plain}Your {mode} speed was reset back to {hl}1{plain}.";
 
         @Comment("Sent when both speeds are reset, to yourself and to each affected player")
         private String resetBoth = "{prefix}{plain}Your speeds were reset back to {hl}1{plain}.";
@@ -122,14 +134,6 @@ public class MessagesConfig extends OkaeriConfig {
         @Comment("Sent when targeting others without the jflyspeed.other permission")
         private String noPermission = "{prefix}{error}You need the jflyspeed.other permission "
                 + "to target other players.";
-
-        @Comment("Sent when console runs /speed with a value instead of an explicit mode")
-        private String consoleNeedsMode = "{prefix}{error}Console must specify a mode. "
-                + "Usage: /speed fly|walk \\<speed> [targets]";
-
-        @Comment("Sent when the sender lacks the inferred channel permission (use {type} and {permission})")
-        private String noModePermission = "{prefix}{error}You need the {permission} permission "
-                + "to change your {type} speed.";
     }
 
     @Comment("Prefix prepended to every message, trailing space included")

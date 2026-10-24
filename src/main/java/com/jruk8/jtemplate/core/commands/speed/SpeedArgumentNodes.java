@@ -16,8 +16,6 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Builds the shared {@code <value>|reset [targets]} argument tails used by
@@ -48,13 +46,18 @@ public final class SpeedArgumentNodes {
             CommandUsageTracker tracker,
             List<Double> suggestions
     ) {
-        return valueArgument(source -> Optional.of(type), ctx, exec, tracker, suggestions);
+        return valueNode(
+                (source, scale, targets) -> {
+                    trackUse(source, type, tracker);
+                    return exec.setSpeed(source, type, scale, targets);
+                },
+                ctx,
+                suggestions);
     }
 
     /**
-     * Builds the {@code <value> [targets]} branch that sets the executor's
-     * current speed channel: fly while flying, walk otherwise. Console must
-     * name the mode explicitly instead.
+     * Builds the {@code <value> [targets]} branch that sets both speed
+     * channels at once, so it requires both the fly and walk permissions.
      *
      * @param ctx the shared command services
      * @param exec the executor applying the change
@@ -62,58 +65,47 @@ public final class SpeedArgumentNodes {
      * @param suggestions the configured value completion defaults
      * @return the value argument node with an optional targets child
      */
-    public static RequiredArgumentBuilder<CommandSourceStack, String> autoValueArgument(
+    public static RequiredArgumentBuilder<CommandSourceStack, String> bothValueArgument(
             CommandContext ctx,
             SpeedExecutor exec,
             CommandUsageTracker tracker,
             List<Double> suggestions
     ) {
-        return valueArgument(source -> inferType(source, ctx), ctx, exec, tracker, suggestions);
+        return valueNode(
+                (source, scale, targets) -> {
+                    trackBothUse(source, tracker);
+                    return exec.setBoth(source, scale, targets);
+                },
+                ctx,
+                suggestions)
+                .requires(CommandContext.requiresPermission(SpeedPermissions.FLY, SpeedPermissions.WALK));
     }
 
-    private static RequiredArgumentBuilder<CommandSourceStack, String> valueArgument(
-            Function<CommandSourceStack, Optional<SpeedType>> types,
+    private static RequiredArgumentBuilder<CommandSourceStack, String> valueNode(
+            ValueAction action,
             CommandContext ctx,
-            SpeedExecutor exec,
-            CommandUsageTracker tracker,
             List<Double> suggestions
     ) {
         return Commands.argument("value", StringArgumentType.word())
                 .suggests(valueSuggestions(suggestions))
                 .executes(context -> {
-                    var type = types.apply(context.getSource());
-                    if (type.isEmpty()) {
-                        return 0;
-                    }
                     Double scale = parsedScale(context.getSource(), getValue(context), ctx);
                     if (scale == null) {
                         return 0;
                     }
-                    SpeedType channel = type.get();
                     var targets = TargetSelector.self(context.getSource(), ctx);
-                    return targets.map(list -> {
-                        trackUse(context.getSource(), channel, tracker);
-                        return exec.setSpeed(context.getSource(), channel, scale, list);
-                    }).orElse(0);
+                    return targets.map(list -> action.apply(context.getSource(), scale, list)).orElse(0);
                 })
                 .then(Commands.argument("targets", ArgumentTypes.players())
                         .suggests(targetSuggestions())
                         .executes(context -> {
-                            var type = types.apply(context.getSource());
-                            if (type.isEmpty()) {
-                                return 0;
-                            }
                             Double scale = parsedScale(context.getSource(), getValue(context), ctx);
                             if (scale == null) {
                                 return 0;
                             }
-                            SpeedType channel = type.get();
                             var selector = context.getArgument("targets", PlayerSelectorArgumentResolver.class);
                             var targets = TargetSelector.fromSelector(context.getSource(), selector, ctx);
-                            return targets.map(list -> {
-                                trackUse(context.getSource(), channel, tracker);
-                                return exec.setSpeed(context.getSource(), channel, scale, list);
-                            }).orElse(0);
+                            return targets.map(list -> action.apply(context.getSource(), scale, list)).orElse(0);
                         }));
     }
 
@@ -241,20 +233,6 @@ public final class SpeedArgumentNodes {
                 });
     }
 
-    private static Optional<SpeedType> inferType(CommandSourceStack source, CommandContext ctx) {
-        if (!(source.getSender() instanceof Player player)) {
-            ctx.error(source, m -> m.getSpeed().getConsoleNeedsMode(), Map.of());
-            return Optional.empty();
-        }
-        SpeedType type = player.isFlying() ? SpeedType.FLY : SpeedType.WALK;
-        if (!source.getSender().hasPermission(type.getPermission())) {
-            var tags = Map.of("type", type.getKey(), "permission", type.getPermission());
-            ctx.error(source, m -> m.getSpeed().getNoModePermission(), tags);
-            return Optional.empty();
-        }
-        return Optional.of(type);
-    }
-
     private static SuggestionProvider<CommandSourceStack> valueSuggestions(List<Double> configured) {
         return (context, builder) -> {
             for (String candidate : ValueSuggestions.suggest(configured, builder.getRemainingLowerCase())) {
@@ -292,6 +270,11 @@ public final class SpeedArgumentNodes {
 
     private static String getValue(com.mojang.brigadier.context.CommandContext<CommandSourceStack> context) {
         return StringArgumentType.getString(context, "value");
+    }
+
+    @FunctionalInterface
+    private interface ValueAction {
+        int apply(CommandSourceStack source, double scale, List<Player> targets);
     }
 
     private static Double parsedScale(CommandSourceStack source, String input, CommandContext ctx) {

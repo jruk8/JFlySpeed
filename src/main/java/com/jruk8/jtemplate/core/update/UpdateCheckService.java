@@ -67,6 +67,6 @@ public final class UpdateCheckService {
     }
 
     private static String modrinthPageUrl() {
-        return "https://modrinth.com/plugin/" + MODRINTH_SLUG;
+        return "https://modrinth.com/project/" + MODRINTH_SLUG;
     }
 }

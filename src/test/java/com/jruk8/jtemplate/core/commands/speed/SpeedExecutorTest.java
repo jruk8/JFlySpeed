@@ -1,6 +1,7 @@
 package com.jruk8.jtemplate.core.commands.speed;
 
 import com.jruk8.jtemplate.core.commands.CommandContext;
+import com.jruk8.jtemplate.core.messages.MessagesConfig;
 import com.mojang.brigadier.Command;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -147,6 +149,85 @@ class SpeedExecutorTest {
         assertEquals("Alex, Steve", placeholders.getValue().get("targets"));
         verify(ctx).notifySet(eq(first), any(Function.class), any(Map.class));
         verify(ctx).notifySet(eq(second), any(Function.class), any(Map.class));
+    }
+
+    @Test
+    @DisplayName("should append the was-suffix on a set when the old value differs")
+    void shouldShowWasSuffixOnChangedSet() {
+        var selfId = UUID.randomUUID();
+        Player self = player(selfId);
+        when(source.getSender()).thenReturn(self);
+        when(speeds.currentScale(self, SpeedType.FLY)).thenReturn(2.0);
+
+        int result = executor().setSpeed(source, SpeedType.FLY, 7.0, List.of(self));
+
+        assertEquals(Command.SINGLE_SUCCESS, result);
+        var selector = forClass(Function.class);
+        var placeholders = forClass(Map.class);
+        verify(ctx).sendSet(eq(source), selector.capture(), placeholders.capture());
+        assertEquals("2", placeholders.getValue().get("old"));
+        @SuppressWarnings("unchecked")
+        Function<MessagesConfig, String> fn = (Function<MessagesConfig, String>) selector.getValue();
+        assertTrue(fn.apply(new MessagesConfig()).contains("(was"));
+    }
+
+    @Test
+    @DisplayName("should hide the was-suffix on a set when the rounded old value matches")
+    void shouldHideWasSuffixOnUnchangedSet() {
+        var selfId = UUID.randomUUID();
+        Player self = player(selfId);
+        when(source.getSender()).thenReturn(self);
+        when(speeds.currentScale(self, SpeedType.FLY)).thenReturn(7.04);
+
+        int result = executor().setSpeed(source, SpeedType.FLY, 7.0, List.of(self));
+
+        assertEquals(Command.SINGLE_SUCCESS, result);
+        var selector = forClass(Function.class);
+        verify(ctx).sendSet(eq(source), selector.capture(), any(Map.class));
+        @SuppressWarnings("unchecked")
+        Function<MessagesConfig, String> fn = (Function<MessagesConfig, String>) selector.getValue();
+        var messages = new MessagesConfig();
+        assertEquals(messages.getSpeed().getSetSelf(), fn.apply(messages));
+    }
+
+    @Test
+    @DisplayName("should set both channels via setBoth()")
+    void shouldSetBothChannels() {
+        var selfId = UUID.randomUUID();
+        Player self = player(selfId);
+        when(source.getSender()).thenReturn(self);
+
+        int result = executor().setBoth(source, 6.0, List.of(self));
+
+        assertEquals(Command.SINGLE_SUCCESS, result);
+        verify(speeds).setSpeed(self, SpeedType.FLY, 6.0);
+        verify(speeds).setSpeed(self, SpeedType.WALK, 6.0);
+        var placeholders = forClass(Map.class);
+        verify(ctx, times(1)).sendSet(eq(source), any(Function.class), placeholders.capture());
+        assertEquals("6", placeholders.getValue().get("value"));
+        verify(ctx, never()).notifySet(eq(self), any(Function.class), any(Map.class));
+    }
+
+    @Test
+    @DisplayName("should summarize once and notify others on a both set")
+    void shouldSummarizeBothSetOnce() {
+        var selfId = UUID.randomUUID();
+        Player self = player(selfId);
+        Player other = player(UUID.randomUUID());
+        when(self.getName()).thenReturn("Steve");
+        when(other.getName()).thenReturn("Alex");
+        when(source.getSender()).thenReturn(self);
+
+        int result = executor().setBoth(source, 6.0, List.of(self, other));
+
+        assertEquals(Command.SINGLE_SUCCESS, result);
+        var placeholders = forClass(Map.class);
+        verify(ctx, times(1)).sendSet(eq(source), any(Function.class), placeholders.capture());
+        assertEquals("6", placeholders.getValue().get("value"));
+        assertEquals("Steve, Alex", placeholders.getValue().get("targets"));
+        assertEquals("2", placeholders.getValue().get("count"));
+        verify(ctx, never()).notifySet(eq(self), any(Function.class), any(Map.class));
+        verify(ctx, times(1)).notifySet(eq(other), any(Function.class), any(Map.class));
     }
 
     @Test

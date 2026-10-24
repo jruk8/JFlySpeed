@@ -74,5 +74,14 @@ class SpeedValuesTest {
             assertEquals("5", SpeedValues.format(5.0));
             assertEquals("5.5", SpeedValues.format(5.5));
         }
+
+        @Test
+        @DisplayName("should round previous values to one decimal for the was-suffix")
+        void shouldFormatWasToOneDecimal() {
+            assertEquals("5", SpeedValues.formatWas(5.04));
+            assertEquals("5.1", SpeedValues.formatWas(5.05));
+            assertEquals("10", SpeedValues.formatWas(9.99));
+            assertEquals("0", SpeedValues.formatWas(0.04));
+        }
     }
 }
