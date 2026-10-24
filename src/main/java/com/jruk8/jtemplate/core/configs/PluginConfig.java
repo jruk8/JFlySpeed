@@ -13,18 +13,26 @@ import java.util.List;
 @Setter
 @SuppressWarnings("FieldMayBeFinal")
 @Header({
-        "################################",
-        "#         Plugin Config        #",
-        "################################",
+        "#      ██╗ ███████╗██╗     ██╗   ██╗███████╗██████╗ ███████╗███████╗██████╗",
+        "#      ██║ ██╔════╝██║     ╚██╗ ██╔╝██╔════╝██╔══██╗██╔════╝██╔════╝██╔══██╗",
+        "#      ██║ █████╗  ██║      ╚████╔╝ ███████╗██████╔╝█████╗  █████╗  ██║  ██║",
+        "# ██   ██║ ██╔══╝  ██║       ╚██╔╝  ╚════██║██╔═══╝ ██╔══╝  ██╔══╝  ██║  ██║",
+        "# ╚█████╔╝ ██║     ███████╗   ██║   ███████║██║     ███████╗███████╗██████╔╝",
+        "#  ╚════╝  ╚═╝     ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚══════╝╚══════╝╚═════╝",
+        "",
+        "# 🏃‍♂️ A lightweight plugin for /flyspeed and /walkspeed.",
         ""
 })
 public class PluginConfig extends OkaeriConfig {
 
+    @Comment("GitHub update checker settings.")
+    private UpdateChecker updateChecker = new UpdateChecker();
+
     @Comment({
-            "Extra labels for the /jflyspeed root command (shortcuts like /jf).",
+            "Extra labels for the /jflyspeed root command (shortcuts like /jfs).",
             "Applies on restart, like the command toggles below."
     })
-    private List<String> aliases = List.of("jf");
+    private List<String> aliases = List.of("jfs", "jf");
 
     @Comment({
             "SQLite storage settings.",
@@ -52,9 +60,6 @@ public class PluginConfig extends OkaeriConfig {
             "{error}. Values are MiniMessage color tags."
     })
     private Colors colors = new Colors();
-
-    @Comment("GitHub update checker settings.")
-    private UpdateChecker updateChecker = new UpdateChecker();
 
     @Getter
     @Setter
