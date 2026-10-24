@@ -20,7 +20,7 @@ import java.util.Set;
 public class SpeedCommandsRegistrar implements Bootstrap {
 
     private static final Set<String> HUB_COMMANDS = Set.of(
-            "flyspeed", "walkspeed", "speed", "reload", "help", "version");
+            "flyspeed", "walkspeed", "speed", "fly", "reload", "help", "version");
 
     private final LiteralArgumentBuilder<CommandSourceStack> root;
     private final CommandContext ctx;
@@ -28,6 +28,7 @@ public class SpeedCommandsRegistrar implements Bootstrap {
     private final CommandUsageTracker tracker;
     private final PluginConfig.Commands commands;
     private final List<Double> suggestions;
+    private final FlyExecutor flyExec;
 
     public SpeedCommandsRegistrar(
             LiteralArgumentBuilder<CommandSourceStack> root,
@@ -35,7 +36,8 @@ public class SpeedCommandsRegistrar implements Bootstrap {
             SpeedExecutor speedExecutor,
             CommandUsageTracker tracker,
             PluginConfig.Commands commands,
-            List<Double> suggestions
+            List<Double> suggestions,
+            FlyExecutor flyExecutor
     ) {
         this.root = root;
         this.ctx = commandContext;
@@ -43,6 +45,7 @@ public class SpeedCommandsRegistrar implements Bootstrap {
         this.tracker = tracker;
         this.commands = commands;
         this.suggestions = suggestions;
+        this.flyExec = flyExecutor;
     }
 
     @Override
@@ -59,6 +62,11 @@ public class SpeedCommandsRegistrar implements Bootstrap {
             root.then(walk.node(alias));
         }
         root.then(new SpeedCommand(ctx, exec, tracker, suggestions).node());
+        var flyMode = new FlyCommand(ctx, flyExec);
+        root.then(flyMode.node("fly"));
+        for (String alias : hubAliases(commands.getFly().getAliases(), used)) {
+            root.then(flyMode.node(alias));
+        }
     }
 
     private List<String> hubAliases(List<String> configured, Set<String> used) {

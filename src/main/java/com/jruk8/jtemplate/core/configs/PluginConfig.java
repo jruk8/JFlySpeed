@@ -100,13 +100,16 @@ public class PluginConfig extends OkaeriConfig {
     public static class Commands extends OkaeriConfig {
 
         @Comment("Standalone /flyspeed root command and its extra labels.")
-        private Channel flyspeed = new Channel(List.of("fspeed", "fs", "fly"));
+        private Channel flyspeed = new Channel(List.of("fspeed", "fs"));
 
         @Comment("Standalone /walkspeed root command and its extra labels.")
-        private Channel walkspeed = new Channel(List.of("wspeed", "ws", "walk"));
+        private Channel walkspeed = new Channel(List.of("wspeed", "ws"));
 
         @Comment("Standalone /speed root command.")
         private Channel speed = new Channel(List.of());
+
+        @Comment("Standalone /fly root command and its extra labels.")
+        private Channel fly = new Channel(List.of());
     }
 
     @Getter

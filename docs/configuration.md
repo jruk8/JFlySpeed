@@ -30,14 +30,15 @@ commands:
     aliases:
       - fspeed
       - fs
-      - fly
   walkspeed:
     enabled: true
     aliases:
       - wspeed
       - ws
-      - walk
   speed:
+    enabled: true
+    aliases: []
+  fly:
     enabled: true
     aliases: []
 colors:
@@ -159,6 +160,12 @@ brackets are raw MiniMessage, and `\n` breaks the line:
   Values outside the 0–10 scale are clamped silently instead of erroring.
 - `speed.consoleNeedsTarget` - console ran a speed command without a
   target.
+- `fly.setSelf` / `fly.setTarget` - fly mode changed, to yourself and to
+  each affected player (use `{mode}`, `on` or `off`).
+- `fly.setOther` / `fly.setMultiple` - summary for the sender when other
+  players are targeted (use `{mode}`, `{targets}` and `{count}` for
+  several).
+- `fly.consoleNeedsTarget` - console ran a fly command without a target.
 
 Messages can embed PlaceholderAPI placeholders (`%player_name%`) when
 PlaceholderAPI is installed.

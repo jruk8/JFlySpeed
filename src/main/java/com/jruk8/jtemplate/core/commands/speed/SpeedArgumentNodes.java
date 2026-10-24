@@ -93,7 +93,7 @@ public final class SpeedArgumentNodes {
                     if (scale == null) {
                         return 0;
                     }
-                    var targets = TargetSelector.self(context.getSource(), ctx);
+                    var targets = TargetSelector.self(context.getSource(), ctx, m -> m.getSpeed().getConsoleNeedsTarget());
                     return targets.map(list -> action.apply(context.getSource(), scale, list)).orElse(0);
                 })
                 .then(Commands.argument("targets", ArgumentTypes.players())
@@ -126,7 +126,7 @@ public final class SpeedArgumentNodes {
             SpeedExecutor exec,
             CommandUsageTracker tracker
     ) {
-        return TargetSelector.self(source, ctx)
+        return TargetSelector.self(source, ctx, m -> m.getSpeed().getConsoleNeedsTarget())
                 .map(list -> {
                     trackUse(source, type, tracker);
                     return exec.resetSpeed(source, type, list);
@@ -153,7 +153,7 @@ public final class SpeedArgumentNodes {
     ) {
         boolean fly = source.getSender().hasPermission(SpeedPermissions.FLY);
         boolean walk = source.getSender().hasPermission(SpeedPermissions.WALK);
-        return TargetSelector.self(source, ctx)
+        return TargetSelector.self(source, ctx, m -> m.getSpeed().getConsoleNeedsTarget())
                 .map(list -> {
                     if (fly && walk) {
                         trackBothUse(source, tracker);
@@ -201,7 +201,7 @@ public final class SpeedArgumentNodes {
             CommandUsageTracker tracker
     ) {
         return Commands.literal("reset")
-                .executes(context -> TargetSelector.self(context.getSource(), ctx)
+                .executes(context -> TargetSelector.self(context.getSource(), ctx, m -> m.getSpeed().getConsoleNeedsTarget())
                         .map(list -> {
                             trackBothUse(context.getSource(), tracker);
                             return exec.resetBoth(context.getSource(), list);

@@ -8,11 +8,12 @@ three speed commands additionally exist as standalone roots (`/flyspeed`,
 
 | Command | Description | Permission |
 | --- | --- | --- |
-| `/flyspeed [<speed>\|reset] [targets]` | Set or reset fly speed (aliases `/fspeed`, `/fs`, `/fly`). | `jflyspeed.flyspeed` |
-| `/walkspeed [<speed>\|reset] [targets]` | Set or reset walk speed (aliases `/wspeed`, `/ws`, `/walk`). | `jflyspeed.walkspeed` |
+| `/flyspeed [<speed>\|reset] [targets]` | Set or reset fly speed (aliases `/fspeed`, `/fs`). | `jflyspeed.flyspeed` |
+| `/walkspeed [<speed>\|reset] [targets]` | Set or reset walk speed (aliases `/wspeed`, `/ws`). | `jflyspeed.walkspeed` |
 | `/speed <speed> [targets]` | Set both fly and walk speed. | `jflyspeed.flyspeed` + `jflyspeed.walkspeed` |
 | `/speed fly\|walk [<speed>\|reset] [targets]` | Set or reset one speed channel. | `jflyspeed.flyspeed` / `jflyspeed.walkspeed` |
 | `/speed reset [targets]` | Reset both fly and walk speed. | `jflyspeed.flyspeed` + `jflyspeed.walkspeed` |
+| `/fly [[on\|off] [targets]]` | Toggle or set fly mode. | `jflyspeed.fly` |
 | `/jflyspeed help [query]` | Shows the in-game command list. | — (entries are permission-filtered) |
 | `/jflyspeed version` | Shows the plugin version and authors (plus a pending update notice for `jflyspeed.reload` holders). | `jflyspeed.version` |
 | `/jflyspeed reload` | Reloads all configuration files. | `jflyspeed.reload` |
@@ -21,8 +22,10 @@ Examples:
 
 ```text
 /flyspeed 7                 # set your own fly speed to 7
-/fly 7                      # same, via the alias
+/fs 7                       # same, via the alias
 /jfs flyspeed reset         # reset your own fly speed to the default
+/fly                        # toggle your own fly mode
+/fly off @a                 # disable fly mode for everyone
 /flyspeed                   # same: no arguments resets your own speed
 /speed 5                    # set your fly and walk speed to 5
 /speed fly 5 @a             # set everyone's fly speed to 5
@@ -45,9 +48,14 @@ Examples:
   reset their channel, `/speed fly` and `/speed walk` reset theirs, and
   bare `/speed` resets every channel you hold the permission for (both
   when permitted, otherwise just the one).
-- **Aliases** (`/fspeed`, `/fs`, `/fly`, `/wspeed`, `/ws`, `/walk`) work
-  as standalone roots while their channel's root is enabled, and always
-  under `/jflyspeed` (e.g. `/jfs fly 5`). They are configurable — see
+- **`/fly`** toggles fly mode: bare it flips your own, `on`/`off` sets
+  it explicitly, and a selector applies either to others (needs
+  `jflyspeed.other` plus `jflyspeed.fly`, like the speed commands).
+  Toggling a group turns everyone off when all can already fly, otherwise
+  everyone on.
+- **Aliases** (`/fspeed`, `/fs`, `/wspeed`, `/ws`) work as standalone
+  roots while their channel's root is enabled, and always under
+  `/jflyspeed` (e.g. `/jfs fs 5`). They are configurable — see
   [configuration.md](configuration.md).
 - **Tab completion** on `[targets]` lists the selectors first, then online
   player names with your own name first, filtered by what you already typed.

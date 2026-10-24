@@ -28,6 +28,9 @@ permissions:
   jflyspeed.walkspeed:
     description: Change walk speed via walkspeed and speed walk.
     default: op
+  jflyspeed.fly:
+    description: Toggle fly mode via fly.
+    default: op
   jflyspeed.reload:
     description: Reload the JFlySpeed configuration.
     default: op

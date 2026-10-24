@@ -2,6 +2,7 @@ package com.jruk8.jtemplate.core.commands.speed;
 
 import com.jruk8.jtemplate.core.commands.CommandContext;
 import com.jruk8.jtemplate.core.commands.SpeedPermissions;
+import com.jruk8.jtemplate.core.messages.MessagesConfig;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Resolves which players a speed command acts on.
@@ -29,13 +31,18 @@ public final class TargetSelector {
      *
      * @param source the command source
      * @param ctx the shared command services
+     * @param consoleMessage selects the error sent when the sender is not a player
      * @return the executor alone, or empty when the sender is not a player (error already sent)
      */
-    public static Optional<List<Player>> self(CommandSourceStack source, CommandContext ctx) {
+    public static Optional<List<Player>> self(
+            CommandSourceStack source,
+            CommandContext ctx,
+            Function<MessagesConfig, String> consoleMessage
+    ) {
         if (source.getSender() instanceof Player player) {
             return Optional.of(List.of(player));
         }
-        ctx.error(source, m -> m.getSpeed().getConsoleNeedsTarget(), Map.of());
+        ctx.error(source, consoleMessage, Map.of());
         return Optional.empty();
     }
 

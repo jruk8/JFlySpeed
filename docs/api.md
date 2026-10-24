@@ -89,7 +89,7 @@ If you do not need PAPI in your plugin:
 | Package | Key classes |
 | --- | --- |
 | `core.commands` | `CommandsRegistrar`, `UserCommandsRegistrar`, `AdminCommandsRegistrar`, `SpeedCommandsRegistrar`, `CommandContext` |
-| `core.commands.speed` | `FlySpeedCommand`, `WalkSpeedCommand`, `SpeedCommand`, `SpeedArgumentNodes`, `SpeedService`, `SpeedExecutor`, `SpeedValues`, `SpeedType`, `TargetSelector`, `SelectorSuggestions`, `ValueSuggestions` |
+| `core.commands.speed` | `FlySpeedCommand`, `WalkSpeedCommand`, `SpeedCommand`, `FlyCommand`, `SpeedArgumentNodes`, `SpeedService`, `SpeedExecutor`, `FlyExecutor`, `SpeedValues`, `SpeedType`, `TargetSelector`, `SelectorSuggestions`, `ValueSuggestions` |
 | `core.configs` | `ConfigRegistrar`, `PluginConfig` |
 | `core.messages` | `MessageBootstrap`, `Messenger`, `MessageParser` |
 | `core.sounds` | `SoundPlayer`, `SoundsConfig` |

@@ -136,6 +136,31 @@ public class MessagesConfig extends OkaeriConfig {
                 + "Usage: /\\<command> \\<speed> \\<target>";
     }
 
+    @Getter
+    @Setter
+    @SuppressWarnings("FieldMayBeFinal")
+    public static class FlyMessages extends OkaeriConfig {
+
+        @Comment("Sent to yourself when your fly mode changes (use {mode})")
+        private String setSelf = "{prefix}{plain}Set fly mode {hl}{mode}{plain}.";
+
+        @Comment("Sent to the sender when one other player's fly mode changes (use {mode} and {targets})")
+        private String setOther = "{prefix}{plain}Set fly mode {hl}{mode}{plain} "
+                + "for {hl}{targets}{plain}.";
+
+        @Comment("Sent to the sender when several players' fly mode changes "
+                + "(use {mode}, {count} and {targets})")
+        private String setMultiple = "{prefix}{plain}Set fly mode {hl}{mode}{plain} "
+                + "for {hl}{count}{plain} players: {hl}{targets}{plain}.";
+
+        @Comment("Sent to each affected player when their fly mode changes (use {mode})")
+        private String setTarget = "{prefix}{plain}Set fly mode {hl}{mode}{plain}.";
+
+        @Comment("Sent when console runs a fly command without a target selector")
+        private String consoleNeedsTarget = "{prefix}{error}Console must specify a target. "
+                + "Usage: /fly [on|off] \\<target>";
+    }
+
     @Comment("Prefix prepended to every message, trailing space included")
     private String prefix = "<#a6a6a6>[<gradient:#8fdde3:#84b8db><bold>J</bold>FlySpeed</gradient>]</#a6a6a6> ";
 
@@ -144,4 +169,7 @@ public class MessagesConfig extends OkaeriConfig {
 
     @Comment("Speed command messages")
     private SpeedMessages speed = new SpeedMessages();
+
+    @Comment("Fly mode command messages")
+    private FlyMessages fly = new FlyMessages();
 }

@@ -19,6 +19,12 @@ public final class SpeedPermissions {
     public static final String WALK = "jflyspeed.walkspeed";
 
     /**
+     * Toggle fly mode. Required for {@code fly}, on self or (with
+     * {@link #OTHER}) on others.
+     */
+    public static final String FLY_MODE = "jflyspeed.fly";
+
+    /**
      * Target other players with the speed commands. Never sufficient on its own: changing
      * someone else's fly speed needs {@link #FLY} plus this node.
      */

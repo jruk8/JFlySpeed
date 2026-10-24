@@ -4,6 +4,8 @@ import com.jruk8.jtemplate.core.Bootstrap;
 import com.jruk8.jtemplate.core.Reloader;
 import com.jruk8.jtemplate.core.commands.SpeedPermissions;
 import com.jruk8.jtemplate.core.commands.admin.AdminCommandsRegistrar;
+import com.jruk8.jtemplate.core.commands.speed.FlyCommand;
+import com.jruk8.jtemplate.core.commands.speed.FlyExecutor;
 import com.jruk8.jtemplate.core.commands.speed.FlySpeedCommand;
 import com.jruk8.jtemplate.core.commands.speed.SpeedCommand;
 import com.jruk8.jtemplate.core.commands.speed.SpeedCommandsRegistrar;
@@ -38,7 +40,7 @@ import java.util.Set;
 public class CommandsRegistrar implements Bootstrap {
 
     private static final Set<String> RESERVED_ROOTS = Set.of(
-            "jflyspeed", "flyspeed", "walkspeed", "speed");
+            "jflyspeed", "flyspeed", "walkspeed", "speed", "fly");
 
     private final LifecycleEventManager<Plugin> lifecycle;
     private final Reloader reloader;
@@ -87,7 +89,8 @@ public class CommandsRegistrar implements Bootstrap {
             new UserCommandsRegistrar(root, commandContext, pluginMeta, updateChecks, help).register();
             new AdminCommandsRegistrar(root, commandContext, reloader, pluginConfig).register();
             new SpeedCommandsRegistrar(
-                    root, commandContext, speedExecutor, usageTracker, commands, suggestions).register();
+                    root, commandContext, speedExecutor, usageTracker, commands, suggestions,
+                    new FlyExecutor(commandContext)).register();
             event.registrar().register(root.build(), "JFlySpeed commands", hubAliases);
             registerStandaloneRoots(event.registrar(), commands, suggestions, hubAliases);
         });
@@ -139,6 +142,13 @@ public class CommandsRegistrar implements Bootstrap {
                             .node().build(),
                     "JFlySpeed speed command",
                     List.of());
+        }
+        if (commands.getFly().isEnabled()) {
+            registrar.register(
+                    new FlyCommand(commandContext, new FlyExecutor(commandContext))
+                            .node("fly").build(),
+                    "JFlySpeed fly command",
+                    channelAliases(commands.getFly().getAliases(), hubAliases));
         }
     }
 }

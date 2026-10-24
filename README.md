@@ -42,11 +42,12 @@
 
 | Command | Description |
 | --- | --- |
-| `/flyspeed [<speed>\|reset] [targets]` | Set or reset fly speed (aliases `/fspeed`, `/fs`, `/fly`). |
-| `/walkspeed [<speed>\|reset] [targets]` | Set or reset walk speed (aliases `/wspeed`, `/ws`, `/walk`). |
+| `/flyspeed [<speed>\|reset] [targets]` | Set or reset fly speed (aliases `/fspeed`, `/fs`). |
+| `/walkspeed [<speed>\|reset] [targets]` | Set or reset walk speed (aliases `/wspeed`, `/ws`). |
 | `/speed <speed> [targets]` | Set both fly and walk speed. |
 | `/speed fly\|walk [<speed>\|reset] [targets]` | Set or reset one speed channel. |
 | `/speed reset [targets]` | Reset both fly and walk speed. |
+| `/fly [[on\|off] [targets]]` | Toggle or set fly mode. |
 | `/jflyspeed <help\|version\|reload>` | Help, version, and config reload (alias `/jfs`). |
 
 An omitted target means yourself; console must always name one. No
@@ -62,6 +63,7 @@ defaults (`1`, `2`, `5`, `10`). Full table and examples live in
 | `jflyspeed.flyspeed` | Change fly speed. | OP |
 | `jflyspeed.walkspeed` | Change walk speed. | OP |
 | `jflyspeed.other` | Target other players (needs the matching speed permission too). | OP |
+| `jflyspeed.fly` | Toggle fly mode. | OP |
 | `jflyspeed.reload` | Use `/jflyspeed reload`. | OP |
 | `jflyspeed.help` | Use `/jflyspeed help` (entries are permission-filtered). | Everyone |
 | `jflyspeed.version` | Use `/jflyspeed version`. | Everyone |

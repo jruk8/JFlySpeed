@@ -48,6 +48,7 @@ public class ReloadCommand {
         boolean flyspeed = toggles().getFlyspeed().isEnabled();
         boolean walkspeed = toggles().getWalkspeed().isEnabled();
         boolean speed = toggles().getSpeed().isEnabled();
+        boolean fly = toggles().getFly().isEnabled();
         long start = System.currentTimeMillis();
         boolean ok = reloader.reloadAll();
         long time = System.currentTimeMillis() - start;
@@ -64,7 +65,7 @@ public class ReloadCommand {
                     Map.of("time", String.valueOf(time))
             );
         }
-        if (togglesChanged(flyspeed, walkspeed, speed)) {
+        if (togglesChanged(flyspeed, walkspeed, speed, fly)) {
             ctx.sendMessage(sender, m -> m.getCore().getReloadRestartRequired(), Map.of());
         }
     }
@@ -73,9 +74,10 @@ public class ReloadCommand {
         return pluginConfig.getCommands();
     }
 
-    private boolean togglesChanged(boolean flyspeed, boolean walkspeed, boolean speed) {
+    private boolean togglesChanged(boolean flyspeed, boolean walkspeed, boolean speed, boolean fly) {
         return toggles().getFlyspeed().isEnabled() != flyspeed
                 || toggles().getWalkspeed().isEnabled() != walkspeed
-                || toggles().getSpeed().isEnabled() != speed;
+                || toggles().getSpeed().isEnabled() != speed
+                || toggles().getFly().isEnabled() != fly;
     }
 }

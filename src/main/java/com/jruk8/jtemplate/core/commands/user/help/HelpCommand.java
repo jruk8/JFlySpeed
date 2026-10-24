@@ -83,6 +83,8 @@ public class HelpCommand {
                 new HelpEntry("/jfs speed reset [targets]",
                         "Resets both speeds (needs both permissions).",
                         SpeedPermissions.FLY, SpeedPermissions.WALK),
+                new HelpEntry("/jfs fly [on|off] [targets]",
+                        "Toggles fly mode (empty toggles).", SpeedPermissions.FLY_MODE),
                 new HelpEntry("/jfs reload", "Reloads the plugin configuration.", SpeedPermissions.RELOAD));
     }
 }
