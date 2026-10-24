@@ -1,4 +1,15 @@
 # Changelog
+## [1.3.0] - 2026-10-24
+
+### Documentation
+
+- Many docs-related changes
+
+
+### Miscellaneous
+
+- Update for v1.2.0 [skip ci]
+
 ## [1.2.0] - 2026-10-24
 
 ### Features
