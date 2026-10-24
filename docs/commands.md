@@ -1,9 +1,13 @@
+---
+icon: material/console
+---
+
 # Commands
 
 All commands are available under `/jflyspeed` and its aliases (`/jfs`,
 `/jf`). Running the root with no arguments shows the help listing. The
 three speed commands additionally exist as standalone roots (`/flyspeed`,
-`/walkspeed`, `/speed`) unless disabled in `config.yml` — see
+`/walkspeed`, `/speed`) unless disabled in `config.yml`; see
 [configuration.md](configuration.md).
 
 | Command | Description | Permission |
@@ -14,7 +18,7 @@ three speed commands additionally exist as standalone roots (`/flyspeed`,
 | `/speed fly\|walk [<speed>\|reset] [targets]` | Set or reset one speed channel. | `jflyspeed.flyspeed` / `jflyspeed.walkspeed` |
 | `/speed reset [targets]` | Reset both fly and walk speed. | `jflyspeed.flyspeed` + `jflyspeed.walkspeed` |
 | `/fly [[on\|off] [targets]]` | Toggle or set fly mode. | `jflyspeed.fly` |
-| `/jflyspeed help [query]` | Shows the in-game command list. | — (entries are permission-filtered) |
+| `/jflyspeed help [query]` | Shows the in-game command list. | Permission-filtered entries |
 | `/jflyspeed version` | Shows the plugin version and authors (plus a pending update notice for `jflyspeed.reload` holders). | `jflyspeed.version` |
 | `/jflyspeed reload` | Reloads all configuration files. | `jflyspeed.reload` |
 
@@ -33,9 +37,9 @@ Examples:
 /speed reset @p             # reset the nearest player's fly and walk speed
 ```
 
-- **`<speed>`** is a number on the 0–10 scale, where `1.0` is vanilla
+- **`<speed>`** is a number on the 0-10 scale, where `1.0` is vanilla
   normal speed and `0.0` is frozen (see the README).
-  Non-numeric input is rejected with an error; values outside 0–10 are
+  Non-numeric input is rejected with an error; values outside 0-10 are
   clamped silently. **`reset`** restores the configured default instead.
 - **`[targets]`** accepts vanilla selectors (`@p`, `@a`, `@r`, `@s`) and
   player names. An omitted selector means yourself; console must always name
@@ -44,8 +48,8 @@ Examples:
   relevant speed permission.
 - **`/speed reset`** resets both channels at once, so it needs both
   `jflyspeed.flyspeed` and `jflyspeed.walkspeed`.
-- **`/speed <speed>`** picks the channel from your current mode — flying
-  means fly speed, anything else means walk speed — and needs that
+- **`/speed <speed>`** picks the channel from your current mode: flying
+  means fly speed, anything else means walk speed, and needs that
   channel's permission. Console has no mode, so it must name `fly` or
   `walk` explicitly.
 - **No arguments** resets your own speed: `/flyspeed` and `/walkspeed`
@@ -59,7 +63,7 @@ Examples:
   everyone on.
 - **Aliases** (`/fspeed`, `/fs`, `/wspeed`, `/ws`) work as standalone
   roots while their channel's root is enabled, and always under
-  `/jflyspeed` (e.g. `/jfs fs 5`). They are configurable — see
+  `/jflyspeed` (e.g. `/jfs fs 5`). They are configurable; see
   [configuration.md](configuration.md).
 - **Tab completion** on `[targets]` lists the selectors first, then online
   player names with your own name first, filtered by what you already typed.
@@ -71,25 +75,8 @@ Examples:
 - **`reload`** re-reads `config.yml`, `messages.yml` and `sounds.yml`, then
   reopens the SQLite database, re-registers the placeholders with the new
   settings, and re-runs the update check. A failed reload reports an error
-  instead of success. It does not re-register commands: Paper offers no
-  unregister API, so changed root toggles apply on restart and `reload`
-  says so when it detects a change.
+  instead of success. Changes to command roots and aliases take effect
+  after a restart; `reload` reports when a restart is needed.
 
-Speeds are applied straight to the player and are not persisted — they behave
-exactly like vanilla across relogs and restarts.
-
-## Adding a Command
-
-1. Create a command class in a new subpackage of `core.commands` (e.g.
-   `core.commands.user.fun`) exposing a `node()` method that returns a
-   `LiteralArgumentBuilder<CommandSourceStack>` built with Paper's
-   `Commands.literal(...)` / `Commands.argument(...)`, with `requires(...)`
-   for its permissions.
-2. Register it in the matching registrar (`UserCommandsRegistrar`,
-   `AdminCommandsRegistrar` or `SpeedCommandsRegistrar`) with
-   `root.then(new MyCommand(...).node())`, injecting only the services it
-   needs (commonly `CommandContext`).
-3. Add the permission to `paper-plugin.yml` and document the command in
-   [permissions.md](permissions.md).
-
-See [api.md](api.md) for the full walkthrough.
+Speeds are applied to the player and are not persisted, matching vanilla
+behavior across relogs and restarts.

@@ -1,3 +1,7 @@
+---
+icon: material/rocket-launch
+---
+
 ![Banner](assets/banner-1280x640.png)
 # Getting Started
 
@@ -8,7 +12,7 @@
 
 ## Installation
 
-1. Build the plugin (`.\\gradlew.bat build`) or download a release jar.
+1. Download the latest JFlySpeed release jar.
 2. Place the jar in your server's `plugins/` folder.
 3. Restart the server. The plugin generates `config.yml`, `messages.yml` and
    `sounds.yml` in `plugins/JFlySpeed/` and creates the SQLite database
@@ -25,9 +29,10 @@
 /jflyspeed version
 ```
 
-`/jfs` is the main alias for `/jflyspeed` (`/jf` also works). Speeds use the 0–10 scale (see
-the README); `reset` restores the configured defaults. The placeholders
-count your speed command executions: run a few commands, install
+`/jfs` is the main alias for `/jflyspeed` (`/jf` also works). Speeds use the
+0-10 scale (see the [commands page](commands.md)); `reset` restores the
+configured defaults. The placeholders count your speed command executions:
+run a few commands, install
 PlaceholderAPI, and try `%jf_uses%` in a scoreboard or chat.
 
 ## Next Steps

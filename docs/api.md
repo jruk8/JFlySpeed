@@ -1,4 +1,8 @@
-# Extending the Plugin
+---
+icon: material/puzzle
+---
+
+# Plugin API
 
 This page explains where new code plugs in. Every module follows the same
 shape: a package under `com.jruk8.jtemplate.core`, its own config class (or
@@ -81,7 +85,7 @@ If you do not need PAPI in your plugin:
 1. Delete the `core.placeholders` package.
 2. Remove the usage tracker wiring in `JTemplatePlugin`
    (`setupStorageAndPlaceholders()` and the `CommandsRegistrar` argument).
-3. Remove `PlaceholderAPI` from `paper-plugin.yml` (`dependencies`) -- or keep
+3. Remove `PlaceholderAPI` from `paper-plugin.yml` (`dependencies`), or keep
    it if your messages use `%otherplugin_...%` placeholders.
 
 ## Modules Reference

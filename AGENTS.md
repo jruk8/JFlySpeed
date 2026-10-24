@@ -84,6 +84,11 @@ created once and injected.
 8. **Minimal, consistent changes.** No new dependencies without maintainer
    approval, no duplicated logic, no drive-by refactors. A fix lands at
    the root cause across every case it implies, not at the symptom.
+9. **Punctuation.** Never use the em dash character. Replace double hyphens
+   or hyphens used as dash separators with suitable punctuation. For list
+   labels followed by explanations, use `»`, for example:
+   `- 0-10 speed scale » \`1.0\` is vanilla normal.` Keep ordinary hyphens
+   in terms, ranges, and Markdown list markers.
 
 ## 4. Before you finish a task
 

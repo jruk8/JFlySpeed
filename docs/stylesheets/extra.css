@@ -1,12 +1,12 @@
-/* JFlySpeed brand colors. Header uses the darker shade, tabs keep the signature hex. */
+/* JFlySpeed blue palette. Hue follows #84b8db while each shade keeps its original saturation and brightness. */
 :root {
-  --md-primary-fg-color: #c05d4d;
-  --md-primary-fg-color--light: #e89583;
-  --md-primary-fg-color--dark: #de7766;
+  --md-primary-fg-color: #4d92c0;
+  --md-primary-fg-color--light: #83bfe8;
+  --md-primary-fg-color--dark: #66aede;
   --md-primary-bg-color: #fff;
   --md-primary-bg-color--light: hsla(0, 0%, 100%, .7);
-  --md-accent-fg-color: #de7766;
-  --md-accent-fg-color--transparent: rgba(222, 119, 102, .1);
+  --md-accent-fg-color: #66aede;
+  --md-accent-fg-color--transparent: rgba(102, 174, 222, .1);
   --md-accent-bg-color: #fff;
   --md-accent-bg-color--light: hsla(0, 0%, 100%, .7);
 }
@@ -85,6 +85,27 @@
 }
 .md-source__subheader {
   opacity: .75;
+}
+
+/* Keep both source links together and place search after them in the header. */
+@media screen and (min-width: 60em) {
+  .md-header__source {
+    display: flex;
+    order: 1;
+    width: 20.5rem;
+    max-width: 20.5rem;
+  }
+  .md-header__inner > form[data-md-component="palette"] {
+    order: 2;
+  }
+  .md-header__inner > label[for="__search"],
+  .md-header__inner > .md-search {
+    order: 3;
+  }
+  .md-header__source .md-source {
+    flex: 1 1 0;
+    min-width: 0;
+  }
 }
 
 /* Empty slots keep a 16:9 frame until real screenshots land. */

@@ -2,6 +2,7 @@
 /build/
 /out/
 /.gradle/
+/site/
 
 # Gradle wrapper cache/runtime downloads
 /gradle/wrapper/dists/

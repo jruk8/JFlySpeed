@@ -1,13 +1,17 @@
+---
+icon: material/key
+---
+
 # Permissions
 
 All permissions are declared in `paper-plugin.yml`.
 
 | Permission | Description | Default |
 | --- | --- | --- |
-| `jflyspeed.flyspeed` | Change fly speed (`flyspeed`, `speed fly`), on self or — with `jflyspeed.other` — on others. | OP |
-| `jflyspeed.walkspeed` | Change walk speed (`walkspeed`, `speed walk`), on self or — with `jflyspeed.other` — on others. | OP |
+| `jflyspeed.flyspeed` | Change fly speed (`flyspeed`, `speed fly`), on self; with `jflyspeed.other`, also on others. | OP |
+| `jflyspeed.walkspeed` | Change walk speed (`walkspeed`, `speed walk`), on self; with `jflyspeed.other`, also on others. | OP |
 | `jflyspeed.other` | Target other players with the speed and fly commands. Never sufficient on its own: changing someone else's fly speed needs `jflyspeed.flyspeed` plus this node. | OP |
-| `jflyspeed.fly` | Toggle fly mode (`fly`), on self or — with `jflyspeed.other` — on others. | OP |
+| `jflyspeed.fly` | Toggle fly mode (`fly`), on self; with `jflyspeed.other`, also on others. | OP |
 | `jflyspeed.reload` | Use `/jflyspeed reload`. | OP |
 | `jflyspeed.help` | Use `/jflyspeed help`. | Everyone |
 | `jflyspeed.version` | Use `/jflyspeed version`. | Everyone |
