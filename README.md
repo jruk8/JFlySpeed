@@ -1,10 +1,10 @@
 <div align="center">
 
-![JFlyspeed banner](docs/assets/banner-1280x640.png)
+![JFlySpeed banner](docs/assets/banner-1280x640.png)
 
-<h3>JFlyspeed is an easy-to-use fly and walk speed plugin for 26.x Paper servers.</h3>
+<h3>JFlySpeed is an easy-to-use fly and walk speed plugin for 26.x Paper servers.</h3>
 
-### [Wiki](https://jruk8.github.io/JFlyspeed/) · [GitHub](https://github.com/jruk8/JFlyspeed)
+### [Wiki](https://jruk8.github.io/JFlySpeed/) · [GitHub](https://github.com/jruk8/JFlySpeed)
 
 </div>
 
@@ -65,7 +65,7 @@ restores the configured defaults. Full table and examples live in
 # Configuration
 
 First start generates `config.yml`, `messages.yml` and `sounds.yml` in
-`plugins/JFlyspeed/`:
+`plugins/JFlySpeed/`:
 
 - `speed` » default fly/walk speeds restored by `reset`.
 - `commands` » the `/flyspeed`, `/walkspeed`, `/speed` root toggles
@@ -91,8 +91,8 @@ Every value is documented in [configuration.md](docs/configuration.md).
 
 ### Links
 
-- [Documentation](https://jruk8.github.io/JFlyspeed/)
-- [GitHub](https://github.com/jruk8/JFlyspeed)
+- [Documentation](https://jruk8.github.io/JFlySpeed/)
+- [GitHub](https://github.com/jruk8/JFlySpeed)
 
 ## Contributing
 

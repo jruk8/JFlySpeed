@@ -60,7 +60,7 @@ public final class UpdateCheckService {
             return;
         }
         pending = new UpdateAvailable(latest.toString(), current.toString(), release.pageUrl());
-        logger.info("JFlyspeed " + latest + " is available (running " + current + "): " + release.pageUrl());
+        logger.info("JFlySpeed " + latest + " is available (running " + current + "): " + release.pageUrl());
         notifier.notifyAdmins(pending);
     }
 }

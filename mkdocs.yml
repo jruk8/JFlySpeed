@@ -1,7 +1,7 @@
-site_name: JFlyspeed
+site_name: JFlySpeed
 site_description: Fly and walk speed control for Paper servers, on a friendly 0-10 scale.
-site_url: https://jruk8.github.io/JFlyspeed/
-repo_url: https://github.com/jruk8/JFlyspeed
+site_url: https://jruk8.github.io/JFlySpeed/
+repo_url: https://github.com/jruk8/JFlySpeed
 repo_name: GitHub
 
 theme:
@@ -9,7 +9,7 @@ theme:
   language: en
   custom_dir: overrides
   # No logo or favicon yet: brand art lives in jruk8/JResources, which has no
-  # JFlyspeed assets. Add logo/favicon here plus extra.logo_light below
+  # JFlySpeed assets. Add logo/favicon here plus extra.logo_light below
   # once they exist; overrides/partials/logo.html already renders both marks.
   icon:
     repo: fontawesome/brands/github

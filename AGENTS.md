@@ -1,6 +1,6 @@
-# AGENTS.md: guide for AI agents working on JFlyspeed
+# AGENTS.md: guide for AI agents working on JFlySpeed
 
-JFlyspeed is a fly and walk speed plugin for **Paper 26.2+**, written in
+JFlySpeed is a fly and walk speed plugin for **Paper 26.2+**, written in
 **Java 25** and built with Gradle (`com.github.jruk8.plugin-conventions`,
 which supplies the Paper API, JUnit 5, Mockito, and checkstyle). Players set
 speeds on a friendly **0-10 scale** (`/flyspeed 7`); admins can target anyone

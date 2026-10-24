@@ -28,7 +28,7 @@ public final class ModrinthUpdateHttp implements UpdateCheckHttp {
      * @param pluginVersion the running plugin version
      */
     public ModrinthUpdateHttp(String pluginVersion) {
-        this.userAgent = "JFlyspeed/" + pluginVersion + " (update-checker)";
+        this.userAgent = "JFlySpeed/" + pluginVersion + " (update-checker)";
     }
 
     @Override

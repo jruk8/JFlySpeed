@@ -1,7 +1,7 @@
 # Configuration
 
 The plugin writes `config.yml`, `messages.yml` and `sounds.yml` into its data
-folder (`plugins/JFlyspeed/`) on first start. Edit a file and run
+folder (`plugins/JFlySpeed/`) on first start. Edit a file and run
 `/jflyspeed reload` to apply the changes without restarting the server
 (command registration is the exception — see `commands` below).
 
@@ -89,7 +89,7 @@ enough, the messages themselves never hardcode colors.
 - `enabled` - checks Modrinth for new releases on enable and on reload.
   The check runs asynchronously; findings go to the console and in-game to
   players holding `jflyspeed.reload` (on join and via `/jflyspeed version`).
-- `project-slug` - the Modrinth project slug. Placeholder until JFlyspeed
+- `project-slug` - the Modrinth project slug. Placeholder until JFlySpeed
   is published — then it must be replaced with the real slug.
 
 ## messages.yml

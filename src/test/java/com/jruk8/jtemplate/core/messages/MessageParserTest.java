@@ -84,7 +84,7 @@ class MessageParserTest {
             Component result = parser.parse(raw, Map.of());
             // After MiniMessage parsing, the result should contain the prefix text
             String resultString = PLAIN_TEXT.serialize(result);
-            assertTrue(resultString.contains("[JFlyspeed]"));
+            assertTrue(resultString.contains("[JFlySpeed]"));
         }
     }
 

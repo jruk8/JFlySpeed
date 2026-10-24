@@ -35,7 +35,7 @@ public class MessagesConfig extends OkaeriConfig {
     public static class CoreMessages extends OkaeriConfig {
 
         @Comment("Prefix starting every message (use {prefix} in other messages)")
-        private String prefix = "<#a6a6a6>[<gradient:#8fdde3:#84b8db><bold>J</bold>Flyspeed</gradient>]</#a6a6a6>";
+        private String prefix = "<#a6a6a6>[<gradient:#8fdde3:#84b8db><bold>J</bold>FlySpeed</gradient>]</#a6a6a6>";
 
         @Comment("Message sent on plugin reload (use <time> for the reload duration in ms)")
         private String reloadSuccess = "{prefix} {plain-color}Configuration reloaded in <time>ms.";
@@ -59,7 +59,7 @@ public class MessagesConfig extends OkaeriConfig {
                 + "{highlight-color}» {plain-color}Authors: <authors>";
 
         @Comment("Update notice (use <latest>, <current> and <url>)")
-        private String updateAvailable = "{prefix} {highlight-color}JFlyspeed <latest> is available "
+        private String updateAvailable = "{prefix} {highlight-color}JFlySpeed <latest> is available "
                 + "{plain-color}(running <current>): <url>";
     }
 

@@ -148,7 +148,7 @@ public class PluginConfig extends OkaeriConfig {
     public static class UpdateChecker extends OkaeriConfig {
 
         @Comment({
-                "Checks Modrinth for new JFlyspeed releases on enable and on reload.",
+                "Checks Modrinth for new JFlySpeed releases on enable and on reload.",
                 "The check runs asynchronously; findings go to the console and to",
                 "players holding jflyspeed.reload (on join and via /jflyspeed version)."
         })
@@ -156,7 +156,7 @@ public class PluginConfig extends OkaeriConfig {
 
         @Comment({
                 "Modrinth project slug used for update checks.",
-                "PLACEHOLDER: replace with the real JFlyspeed slug once published."
+                "PLACEHOLDER: replace with the real JFlySpeed slug once published."
         })
         private String projectSlug = "jflyspeed";
     }

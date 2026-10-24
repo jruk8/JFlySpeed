@@ -1,6 +1,6 @@
-# Contributing to JFlyspeed
+# Contributing to JFlySpeed
 
-Thank you for your interest in contributing to JFlyspeed! This document
+Thank you for your interest in contributing to JFlySpeed! This document
 covers the environment, coding conventions, testing expectations, commit
 style, and documentation expectations.
 
