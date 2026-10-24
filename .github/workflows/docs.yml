@@ -1,0 +1,19 @@
+name: Docs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - 'README.md'
+  workflow_dispatch:
+
+jobs:
+  build:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: jruk8/plugin-conventions/.github/workflows/docs.yml@v1.4.1
