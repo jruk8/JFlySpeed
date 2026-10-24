@@ -11,7 +11,7 @@
 # Quick Start 🚀
 
 1. Drop the jar into `plugins/` and restart the server.
-2. Run **`/flyspeed 7`**.
+2. Run **`/flyspeed 2`**.
 
 **That's it!** Your fly speed is set on a friendly 0–10 scale where
 `1.0` is normal vanilla speed. Try `/walkspeed 2 Steve`,
