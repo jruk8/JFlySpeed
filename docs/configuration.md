@@ -8,23 +8,34 @@ folder (`plugins/JFlySpeed/`) on first start. Edit a file and run
 ## config.yml
 
 ```yaml
-message-format: MINIMESSAGE
-placeholders:
-  enabled: true
-  identifier: jflyspeed
-  command: version
-  labels:
-    - jflyspeed
-    - jf
+aliases:
+  - jf
 storage:
   db-file: jflyspeed.db
 speed:
   default-fly-speed: 1.0
   default-walk-speed: 1.0
+  value-suggestions:
+    - 1.0
+    - 2.0
+    - 5.0
+    - 10.0
 commands:
-  flyspeed: true
-  walkspeed: true
-  speed: true
+  flyspeed:
+    enabled: true
+    aliases:
+      - fspeed
+      - fs
+      - fly
+  walkspeed:
+    enabled: true
+    aliases:
+      - wspeed
+      - ws
+      - walk
+  speed:
+    enabled: true
+    aliases: []
 colors:
   plain-color: '<#b8d8e0>'
   brand-color: '<#84b8db>'
@@ -32,25 +43,13 @@ colors:
   error-color: '<#e0867e>'
 update-checker:
   enabled: true
-  project-slug: jflyspeed
 ```
 
-### `message-format`
+### `aliases`
 
-Selects the text format used across the plugin: `MINIMESSAGE`
-(Adventure MiniMessage, the default) or `LEGACY` (ampersand codes).
-
-### `placeholders`
-
-Settings for the PlaceholderAPI expansion (see
-[placeholders.md](placeholders.md)):
-
-- `enabled` - whether the expansion and its listener are registered.
-- `identifier` - the placeholder prefix; `jflyspeed` produces
-  `%jflyspeed_authors_command_uses%`.
-- `command` - the subcommand whose executions are counted.
-- `labels` - the base command labels (and aliases) that count as the
-  plugin's command when followed by `command`.
+Extra labels for the `/jflyspeed` root command (shortcuts like `/jf`).
+Blanks, duplicates and the `jflyspeed` label itself are ignored. Applies
+on restart, like the command toggles.
 
 ### `storage`
 
@@ -67,35 +66,43 @@ Settings for the PlaceholderAPI expansion (see
   are no reverse speeds. Fly maps `0–1` to Bukkit `0–0.1` and `1–10` to
   Bukkit `0.1–1`; walk maps `0–1` to Bukkit `0–0.2` and `1–10` to Bukkit
   `0.2–1`. Misconfigured values are clamped into range.
+- `value-suggestions` - the defaults offered by tab-completion for speed
+  values, in order. Whole numbers display without decimals; non-finite
+  entries are dropped and out-of-range ones clamped.
 
 ### `commands`
 
-Each toggle registers (or hides) its standalone root command. The
-`/jflyspeed` subcommands always exist, so e.g. `flyspeed: false` keeps the
-feature available as `/jflyspeed flyspeed` (or `/jf flyspeed`) only.
-Toggles apply on restart: Paper registers commands once during enable and
-offers no unregister API, so `/jflyspeed reload` cannot re-register them —
-it tells you when toggles changed and a restart is needed.
+Each channel has an `enabled` toggle registering (or hiding) its
+standalone root command, plus `aliases` — extra labels for that root
+(e.g. `/fly`, `/ws`). The `/jflyspeed` subcommands always exist, so e.g.
+`flyspeed.enabled: false` keeps the feature available as
+`/jflyspeed flyspeed` (or `/jf flyspeed`) only, while the channel aliases
+stay reachable under `/jflyspeed` regardless of the toggle. Aliases
+colliding with a root name, a `/jflyspeed` subcommand or another alias are
+ignored. Toggles and aliases apply on restart: Paper registers commands
+once during enable and offers no unregister API, so `/jflyspeed reload`
+cannot re-register them — it tells you when toggles changed and a restart
+is needed.
 
 ### `colors`
 
 The message color palette. Every `messages.yml` entry uses these via
-`{plain-color}`, `{brand-color}`, `{highlight-color}` and `{error-color}`,
-resolved when the message is rendered — editing a color and reloading is
-enough, the messages themselves never hardcode colors.
+`{plain}`, `{brand}`, `{hl}` and `{error}`, resolved when the message is
+rendered — editing a color and reloading is enough, the messages
+themselves never hardcode colors.
 
 ### `update-checker`
 
-- `enabled` - checks Modrinth for new releases on enable and on reload.
-  The check runs asynchronously; findings go to the console and in-game to
-  players holding `jflyspeed.reload` (on join and via `/jflyspeed version`).
-- `project-slug` - the Modrinth project slug. Placeholder until JFlySpeed
-  is published — then it must be replaced with the real slug.
+- `enabled` - checks GitHub releases for new versions on enable and on
+  reload. The check runs asynchronously; findings go to the console and
+  in-game to players holding `jflyspeed.reload` (on join and via
+  `/jflyspeed version`). Update notices link both the GitHub release and
+  the Modrinth project page.
 
 ## messages.yml
 
-The plugin messages, in MiniMessage or legacy format depending on
-`message-format`. Every message starts with `{prefix}`, and colors come
+The plugin messages, always in MiniMessage format. Every message starts
+with `{prefix}`, and colors come
 from the `config.yml` palette:
 
 - `core.prefix` - prefix prepended via the `{prefix}` placeholder.
@@ -107,23 +114,36 @@ from the `config.yml` palette:
   (use `<syntax>` and `<description>`).
 - `core.version-success` - version command output (use `<version>` and
   `<authors>`).
-- `core.update-available` - update notice (use `<latest>`, `<current>`
-  and `<url>`).
-- `speed.set-self` / `speed.reset-self` - feedback for self-targeting
-  changes (use `<type>` and `<value>`).
+- `core.update-available` - update notice (use `<latest>`, `<current>`,
+  `<url>` and `<modrinth-url>`).
+- `speed.set-self` - feedback for self-targeting sets (use `<type>` and
+  `<value>`).
+- `speed.reset-self` - feedback for self-targeting resets (use `{mode}`
+  and `<old>`, the value before the reset).
 - `speed.set-other` / `speed.reset-other` - summary for the sender when
-  one other player is targeted (use `<type>`, `<value>` and `<targets>`).
+  one other player is targeted (use `<type>`/`<value>` for sets;
+  `{mode}`, `<targets>` and `<old>` for resets).
 - `speed.set-multiple` / `speed.reset-multiple` - summary for the sender
-  when several players are targeted (use `<type>`, `<value>`, `<count>`
-  and `<targets>`).
+  when several players are targeted (use `<type>`, `<targets>`,
+  `<count>` and `<value>` for sets; `{mode}`, `<targets>` and `<count>`
+  for resets, which omit `<old>` since targets may differ).
 - `speed.set-target` / `speed.reset-target` - notification sent to each
-  affected player (use `<type>` and `<value>`).
+  affected player (use `<type>` and `<value>` for sets; `{mode}` and
+  `<old>` for resets).
+- `speed.reset-both` - both-channels reset, to yourself and to each
+  affected player.
+- `speed.reset-both-other` / `speed.reset-both-multiple` - both-channels
+  reset summaries (use `<targets>` and `<count>` for several).
 - `speed.no-targets` - the target selector matched no players.
 - `speed.invalid` - the speed value is not a number (use `<input>`).
   Values outside the 0–10 scale are clamped silently instead of erroring.
 - `speed.console-needs-target` - console ran a speed command without a
   target.
+- `speed.console-needs-mode` - console ran `/speed` with a value instead
+  of an explicit `fly`/`walk` mode.
 - `speed.no-permission` - targeting others without `jflyspeed.other`.
+- `speed.no-mode-permission` - the sender lacks the permission for the
+  channel `/speed <value>` inferred (use `<type>` and `<permission>`).
 
 Messages can embed PlaceholderAPI placeholders (`%player_name%`) when
 PlaceholderAPI is installed.

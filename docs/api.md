@@ -45,7 +45,7 @@ Commands are Paper-native Brigadier nodes registered through
 
 The config classes are okaeri-configs. For a small option, add a field to an
 existing config class; for a coherent new section, add a nested static class
-and give it a field in the parent (see `PluginConfig.Placeholders` for the
+and give it a field in the parent (see `PluginConfig.Speed` for the
 pattern). The section will be created in the yaml file automatically and
 reloaded by `ConfigRegistrar` on `/jflyspeed reload`.
 
@@ -58,15 +58,16 @@ reloaded by `ConfigRegistrar` on `/jflyspeed reload`.
 
 Give your feature its own stat key and a small service class around
 `SqliteStorage` (like `CommandUsageTracker`), then inject that service where
-state is produced (listener, command) and consumed (placeholder).
+state is produced (command) and consumed (placeholder).
 
 ## Add a Placeholder
 
-Add a switch case to `AuthorsCommandUsageExpansion.onRequest()`:
+Add a branch to `SpeedUsageExpansion.onRequest()`:
 
 ```java
-case "my_stat" -> player == null ? null
-        : String.valueOf(tracker.playerUses(player.getUniqueId()));
+if ("my_stat".equals(params)) {
+    return selfUses(player, tracker::playerUses);
+}
 ```
 
 Provider the value through an injected service and store it in SQLite if it
@@ -78,20 +79,20 @@ PlaceholderAPI via `getPlaceholders()`.
 If you do not need PAPI in your plugin:
 
 1. Delete the `core.placeholders` package.
-2. Delete the `placeholders` section from `PluginConfig` and remove the wiring
-   block in `JTemplatePlugin.setupStorageAndPlaceholders()`.
-3. Remove `PlaceholderAPI` from `paper-plugin.yml` (soft-depend) -- or keep it if
-   your messages use `%otherplugin_...%` placeholders.
+2. Remove the usage tracker wiring in `JTemplatePlugin`
+   (`setupStorageAndPlaceholders()` and the `CommandsRegistrar` argument).
+3. Remove `PlaceholderAPI` from `paper-plugin.yml` (`dependencies`) -- or keep
+   it if your messages use `%otherplugin_...%` placeholders.
 
 ## Modules Reference
 
 | Package | Key classes |
 | --- | --- |
 | `core.commands` | `CommandsRegistrar`, `UserCommandsRegistrar`, `AdminCommandsRegistrar`, `SpeedCommandsRegistrar`, `CommandContext` |
-| `core.commands.speed` | `FlySpeedCommand`, `WalkSpeedCommand`, `SpeedCommand`, `SpeedService`, `SpeedExecutor`, `SpeedValues`, `TargetSelector`, `SelectorSuggestions` |
+| `core.commands.speed` | `FlySpeedCommand`, `WalkSpeedCommand`, `SpeedCommand`, `SpeedArgumentNodes`, `SpeedService`, `SpeedExecutor`, `SpeedValues`, `SpeedType`, `TargetSelector`, `SelectorSuggestions`, `ValueSuggestions` |
 | `core.configs` | `ConfigRegistrar`, `PluginConfig` |
 | `core.messages` | `MessageBootstrap`, `Messenger`, `MessageParser` |
 | `core.sounds` | `SoundPlayer`, `SoundsConfig` |
-| `core.placeholders` | `PlaceholdersBootstrap`, `CommandUsageTracker`, `AuthorsCommandUsageListener`, `AuthorsCommandUsageExpansion` |
+| `core.placeholders` | `PlaceholdersBootstrap`, `CommandUsageTracker`, `SpeedUsageExpansion` |
 | `core.storage` | `StorageBootstrap`, `SqliteStorage` |
-| `core.update` | `UpdateCheckerBootstrap`, `UpdateCheckService`, `ModrinthUpdateHttp`, `UpdateCheckNotifier`, `UpdateCheckJoinListener` |
+| `core.update` | `UpdateCheckerBootstrap`, `UpdateCheckService`, `GitHubReleaseHttp`, `UpdateCheckNotifier`, `UpdateCheckJoinListener` |
