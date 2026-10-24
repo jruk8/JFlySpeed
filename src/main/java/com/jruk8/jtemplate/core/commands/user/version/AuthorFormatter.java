@@ -1,21 +1,26 @@
 package com.jruk8.jtemplate.core.commands.user.version;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Business logic class for formatting author lists.
  * Follows clean architecture principles - pure formatting logic with no dependencies on framework types.
+ * Known authors link to their pages; unknown names render as-is.
  */
 public class AuthorFormatter {
+
+    private static final Map<String, String> AUTHOR_LINKS = Map.of(
+            "jruk", "https://github.com/jruk8");
 
     /**
      * Formats a single author name.
      *
      * @param author the author name
-     * @return the formatted author name (unchanged)
+     * @return the author name, linked when a URL is known
      */
     public String formatSingleAuthor(String author) {
-        return author;
+        return linked(author);
     }
 
     /**
@@ -26,7 +31,7 @@ public class AuthorFormatter {
      * @return formatted string like "MyAuthor <gray>and</gray> MyOther"
      */
     public String formatTwoAuthors(String firstAuthor, String secondAuthor) {
-        return firstAuthor + " <gray>and</gray> " + secondAuthor;
+        return linked(firstAuthor) + " <gray>and</gray> " + linked(secondAuthor);
     }
 
     /**
@@ -44,7 +49,7 @@ public class AuthorFormatter {
         StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < authors.size(); i++) {
-            String author = authors.get(i);
+            String author = linked(authors.get(i));
 
             if (i == 0) {
                 result.append(author);
@@ -60,6 +65,14 @@ public class AuthorFormatter {
         return result.toString();
     }
 
+    private static String linked(String author) {
+        String url = AUTHOR_LINKS.get(author);
+        if (url == null) {
+            return author;
+        }
+        return "<click:open_url:'" + url + "'><hover:show_text:'" + url + "'>" + author + "</hover></click>";
+    }
+
     /**
      * Formats authors list based on the number of authors.
      *
@@ -73,7 +86,7 @@ public class AuthorFormatter {
 
         int count = authors.size();
         if (count == 1) {
-            return authors.getFirst();
+            return linked(authors.getFirst());
         }
         else if (count == 2) {
             return formatTwoAuthors(authors.get(0), authors.get(1));

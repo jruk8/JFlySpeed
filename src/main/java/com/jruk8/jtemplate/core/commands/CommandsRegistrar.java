@@ -9,6 +9,8 @@ import com.jruk8.jtemplate.core.commands.speed.SpeedCommandsRegistrar;
 import com.jruk8.jtemplate.core.commands.speed.SpeedExecutor;
 import com.jruk8.jtemplate.core.commands.speed.WalkSpeedCommand;
 import com.jruk8.jtemplate.core.commands.user.UserCommandsRegistrar;
+import com.jruk8.jtemplate.core.commands.user.help.HelpCommand;
+import com.mojang.brigadier.Command;
 import com.jruk8.jtemplate.core.configs.PluginConfig;
 import com.jruk8.jtemplate.core.placeholders.CommandUsageTracker;
 import com.jruk8.jtemplate.core.update.UpdateCheckService;
@@ -70,7 +72,12 @@ public class CommandsRegistrar implements Bootstrap {
             var commands = pluginConfig.getCommands();
             var hubAliases = rootAliases();
             var suggestions = pluginConfig.getSpeed().getValueSuggestions();
-            new UserCommandsRegistrar(root, commandContext, pluginMeta, commands, updateChecks).register();
+            var help = new HelpCommand(commandContext, pluginMeta.getVersion());
+            root.executes(context -> {
+                help.showHelp(context.getSource(), null);
+                return Command.SINGLE_SUCCESS;
+            });
+            new UserCommandsRegistrar(root, commandContext, pluginMeta, updateChecks, help).register();
             new AdminCommandsRegistrar(root, commandContext, reloader, pluginConfig).register();
             new SpeedCommandsRegistrar(
                     root, commandContext, speedExecutor, usageTracker, commands, suggestions).register();

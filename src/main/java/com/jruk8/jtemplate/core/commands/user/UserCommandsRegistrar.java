@@ -5,7 +5,6 @@ import com.jruk8.jtemplate.core.commands.CommandContext;
 import com.jruk8.jtemplate.core.commands.user.help.HelpCommand;
 import com.jruk8.jtemplate.core.commands.user.version.AuthorFormatter;
 import com.jruk8.jtemplate.core.commands.user.version.VersionCommand;
-import com.jruk8.jtemplate.core.configs.PluginConfig;
 import com.jruk8.jtemplate.core.update.UpdateCheckService;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -19,30 +18,24 @@ public class UserCommandsRegistrar implements Bootstrap {
     private final LiteralArgumentBuilder<CommandSourceStack> root;
     private final CommandContext ctx;
     private final PluginMeta pluginMeta;
-    private final PluginConfig.Commands commands;
     private final UpdateCheckService updateChecks;
+    private final HelpCommand help;
 
     public UserCommandsRegistrar(LiteralArgumentBuilder<CommandSourceStack> root,
                                  CommandContext commandContext,
                                  PluginMeta pluginMeta,
-                                 PluginConfig.Commands commands,
-                                 UpdateCheckService updateChecks) {
+                                 UpdateCheckService updateChecks,
+                                 HelpCommand help) {
         this.root = root;
         this.ctx = commandContext;
         this.pluginMeta = pluginMeta;
-        this.commands = commands;
         this.updateChecks = updateChecks;
+        this.help = help;
     }
 
     @Override
     public void register() {
-        root.then(new HelpCommand(
-                ctx,
-                commands.getFlyspeed().isEnabled(),
-                commands.getWalkspeed().isEnabled(),
-                commands.getSpeed().isEnabled(),
-                pluginMeta.getVersion()
-        ).node());
+        root.then(help.node());
         root.then(new VersionCommand(new AuthorFormatter(), ctx, pluginMeta, updateChecks).node());
     }
 }

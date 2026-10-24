@@ -8,35 +8,23 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Help subcommand that lists the plugin's commands, optionally filtered by a search query.
  * <p>
- * Every sender may run it; entries are filtered by permission. The standalone
- * root entries mirror the toggles captured at registration time.
+ * Every sender may run it; entries are filtered by permission. Entries use
+ * the main {@code /jfs} alias and never duplicate the standalone roots.
+ * The bare {@code /jflyspeed} root shows this same listing.
  */
 public class HelpCommand {
 
     private final CommandContext ctx;
-    private final boolean flyspeedRoot;
-    private final boolean walkspeedRoot;
-    private final boolean speedRoot;
     private final String version;
 
-    public HelpCommand(
-            CommandContext ctx,
-            boolean flyspeedRoot,
-            boolean walkspeedRoot,
-            boolean speedRoot,
-            String version
-    ) {
+    public HelpCommand(CommandContext ctx, String version) {
         this.ctx = ctx;
-        this.flyspeedRoot = flyspeedRoot;
-        this.walkspeedRoot = walkspeedRoot;
-        this.speedRoot = speedRoot;
         this.version = version;
     }
 
@@ -58,7 +46,13 @@ public class HelpCommand {
                         }));
     }
 
-    private void showHelp(CommandSourceStack sender, String query) {
+    /**
+     * Shows the help listing, optionally filtered by a search query.
+     *
+     * @param sender the sender to show the listing to
+     * @param query the search query, may be null or blank
+     */
+    public void showHelp(CommandSourceStack sender, String query) {
         ctx.playHelp(sender);
         ctx.sendMessage(sender, m -> m.getCore().getHelpHeader(), Map.of("version", version));
         HelpEntry.matching(entries(), query).stream()
@@ -71,37 +65,22 @@ public class HelpCommand {
     }
 
     private List<HelpEntry> entries() {
-        List<HelpEntry> entries = new ArrayList<>(List.of(
-                new HelpEntry("/jflyspeed help [query]", "Shows this help menu."),
-                new HelpEntry("/jflyspeed version", "Shows the plugin version.", SpeedPermissions.VERSION),
-                new HelpEntry("/jflyspeed flyspeed <speed|reset> [targets]", "Sets fly speed (0-10, empty resets).",
-                        SpeedPermissions.FLY),
-                new HelpEntry("/jflyspeed walkspeed <speed|reset> [targets]", "Sets walk speed (0-10, empty resets).",
-                        SpeedPermissions.WALK),
-                new HelpEntry("/jflyspeed speed fly|walk <speed|reset> [targets]",
-                        "Sets one speed (0-10, empty resets).",
-                        SpeedPermissions.FLY, SpeedPermissions.WALK),
-                new HelpEntry("/jflyspeed speed <speed> [targets]",
+        return List.of(
+                new HelpEntry("/jfs help [query]", "Shows this help menu."),
+                new HelpEntry("/jfs version", "Shows the plugin version.", SpeedPermissions.VERSION),
+                new HelpEntry("/jfs flyspeed [<speed>|reset] [targets]",
+                        "Sets fly speed (0-10, empty resets).", SpeedPermissions.FLY),
+                new HelpEntry("/jfs walkspeed [<speed>|reset] [targets]",
+                        "Sets walk speed (0-10, empty resets).", SpeedPermissions.WALK),
+                new HelpEntry("/jfs speed <speed> [targets]",
                         "Sets both speeds (0-10, needs both permissions).",
                         SpeedPermissions.FLY, SpeedPermissions.WALK),
-                new HelpEntry("/jflyspeed speed reset [targets]", "Resets both speeds (needs both permissions).",
+                new HelpEntry("/jfs speed fly|walk [<speed>|reset] [targets]",
+                        "Sets one speed (0-10, empty resets).",
                         SpeedPermissions.FLY, SpeedPermissions.WALK),
-                new HelpEntry("/jflyspeed reload", "Reloads the plugin configuration.", SpeedPermissions.RELOAD)
-        ));
-        if (flyspeedRoot) {
-            entries.add(new HelpEntry("/flyspeed <speed|reset> [targets]", "Sets fly speed (0-10, empty resets).",
-                    SpeedPermissions.FLY));
-        }
-        if (walkspeedRoot) {
-            entries.add(new HelpEntry("/walkspeed <speed|reset> [targets]", "Sets walk speed (0-10, empty resets).",
-                    SpeedPermissions.WALK));
-        }
-        if (speedRoot) {
-            entries.add(new HelpEntry("/speed <speed> [targets]", "Sets both speeds (0-10, needs both permissions).",
-                    SpeedPermissions.FLY, SpeedPermissions.WALK));
-            entries.add(new HelpEntry("/speed fly|walk|reset ...", "Sets one speed, or resets both (empty resets own).",
-                    SpeedPermissions.FLY, SpeedPermissions.WALK));
-        }
-        return entries;
+                new HelpEntry("/jfs speed reset [targets]",
+                        "Resets both speeds (needs both permissions).",
+                        SpeedPermissions.FLY, SpeedPermissions.WALK),
+                new HelpEntry("/jfs reload", "Reloads the plugin configuration.", SpeedPermissions.RELOAD));
     }
 }
