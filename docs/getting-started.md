@@ -3,7 +3,7 @@
 
 ## Requirements
 
-- Paper 26.2 or newer
+- Paper 26.2 or newer (Folia supported)
 - Java 25
 
 ## Installation

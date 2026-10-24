@@ -46,7 +46,8 @@ public final class UpdateCheckNotifier {
                 messages.getCore().getUpdateAvailable(),
                 Placeholder.parsed("latest", update.latest()),
                 Placeholder.parsed("current", update.current()),
-                Placeholder.parsed("url", update.url())
+                Placeholder.parsed("url", update.url()),
+                Placeholder.parsed("modrinth-url", update.modrinthUrl())
         );
     }
 }

@@ -36,7 +36,7 @@ public class UpdateCheckerBootstrap implements Bootstrap, Reloadable {
         this.pluginConfig = pluginConfig;
         this.currentVersion = plugin.getPluginMeta().getVersion();
         this.notifier = new UpdateCheckNotifier(messenger, messagesConfig);
-        this.service = new UpdateCheckService(new ModrinthUpdateHttp(currentVersion), notifier, logger);
+        this.service = new UpdateCheckService(new GitHubReleaseHttp(currentVersion), logger);
     }
 
     @Override
@@ -52,10 +52,13 @@ public class UpdateCheckerBootstrap implements Bootstrap, Reloadable {
     }
 
     private void checkAsync() {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> service.checkNow(
-                UpdateCheckSettings.fromConfig(pluginConfig.getUpdateChecker()),
-                pluginConfig.getUpdateChecker().getProjectSlug(),
-                currentVersion
-        ));
+        Bukkit.getAsyncScheduler().runNow(plugin, async -> {
+            service.checkNow(
+                    UpdateCheckSettings.fromConfig(pluginConfig.getUpdateChecker()),
+                    currentVersion
+            );
+            service.pendingUpdate().ifPresent(update ->
+                    Bukkit.getGlobalRegionScheduler().run(plugin, sync -> notifier.notifyAdmins(update)));
+        });
     }
 }

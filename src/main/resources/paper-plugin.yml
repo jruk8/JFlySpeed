@@ -2,6 +2,9 @@ name: ${name}
 version: ${version}
 main: ${main}
 api-version: "${apiVersion}"
+# The update check runs on Paper's async/global-region schedulers and every
+# command touches only its caller's thread, so the plugin is safe on Folia.
+folia-supported: true
 author: ${author}
 description: ${description}
 website: ${website}

@@ -23,65 +23,60 @@ class UpdateCheckServiceTest {
     private UpdateCheckHttp http;
 
     @Mock
-    private UpdateCheckNotifier notifier;
-
-    @Mock
     private Logger logger;
 
     private UpdateCheckService service() {
-        return new UpdateCheckService(http, notifier, logger);
+        return new UpdateCheckService(http, logger);
     }
 
-    private ModrinthRelease release(String number) {
-        return new ModrinthRelease(number, "https://modrinth.com/plugin/jflyspeed");
+    private GitHubRelease release(String number) {
+        return new GitHubRelease(number, "https://github.com/jruk8/JFlySpeed/releases/tag/v" + number);
     }
 
     @Test
-    @DisplayName("should store and announce a newer release")
+    @DisplayName("should store a newer release as pending for the caller to announce")
     void shouldKeepPendingUpdate() throws Exception {
-        when(http.fetchLatest("jflyspeed")).thenReturn(Optional.of(release("1.4.0")));
+        when(http.fetchLatest()).thenReturn(Optional.of(release("1.4.0")));
         var checked = service();
 
-        checked.checkNow(new UpdateCheckSettings(true), "jflyspeed", "1.2.0");
+        checked.checkNow(new UpdateCheckSettings(true), "1.2.0");
 
         var pending = checked.pendingUpdate();
         assertTrue(pending.isPresent());
         assertEquals("1.4.0", pending.get().latest());
         assertEquals("1.2.0", pending.get().current());
-        verify(notifier).notifyAdmins(any(UpdateAvailable.class));
     }
 
     @Test
     @DisplayName("should stay silent when disabled")
     void shouldStaySilentWhenDisabled() throws Exception {
-        service().checkNow(new UpdateCheckSettings(false), "jflyspeed", "1.2.0");
+        service().checkNow(new UpdateCheckSettings(false), "1.2.0");
 
-        verify(http, never()).fetchLatest(any());
+        verify(http, never()).fetchLatest();
         assertTrue(service().pendingUpdate().isEmpty());
     }
 
     @Test
     @DisplayName("should stay silent when current")
     void shouldStaySilentWhenCurrent() throws Exception {
-        when(http.fetchLatest("jflyspeed")).thenReturn(Optional.of(release("1.2.0")));
+        when(http.fetchLatest()).thenReturn(Optional.of(release("1.2.0")));
         var checked = service();
 
-        checked.checkNow(new UpdateCheckSettings(true), "jflyspeed", "1.2.0");
+        checked.checkNow(new UpdateCheckSettings(true), "1.2.0");
 
         assertTrue(checked.pendingUpdate().isEmpty());
-        verify(notifier, never()).notifyAdmins(any());
     }
 
     @Test
     @DisplayName("should log and clear the pending update on failure")
     void shouldClearPendingOnFailure() throws Exception {
-        when(http.fetchLatest("jflyspeed"))
+        when(http.fetchLatest())
                 .thenReturn(Optional.of(release("1.4.0")))
                 .thenThrow(new RuntimeException("boom"));
         var checked = service();
-        checked.checkNow(new UpdateCheckSettings(true), "jflyspeed", "1.2.0");
+        checked.checkNow(new UpdateCheckSettings(true), "1.2.0");
 
-        checked.checkNow(new UpdateCheckSettings(true), "jflyspeed", "1.2.0");
+        checked.checkNow(new UpdateCheckSettings(true), "1.2.0");
 
         assertTrue(checked.pendingUpdate().isEmpty());
         verify(logger).warning(any(String.class));

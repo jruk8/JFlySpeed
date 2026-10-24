@@ -4,20 +4,21 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * Update check engine: fetches the latest Modrinth release and notifies
- * when a newer version exists. Only Bukkit and JDK types are referenced
- * besides the notifier, so the engine stays easy to unit test.
+ * Update check engine: fetches the latest GitHub release and stores a
+ * newer version as pending. Only JDK types are referenced, so the engine
+ * stays easy to unit test; the caller broadcasts the pending update on
+ * the main thread.
  */
 public final class UpdateCheckService {
 
+    private static final String MODRINTH_SLUG = "jflyspeed";
+
     private final UpdateCheckHttp http;
-    private final UpdateCheckNotifier notifier;
     private final Logger logger;
     private volatile UpdateAvailable pending;
 
-    public UpdateCheckService(UpdateCheckHttp http, UpdateCheckNotifier notifier, Logger logger) {
+    public UpdateCheckService(UpdateCheckHttp http, Logger logger) {
         this.http = http;
-        this.notifier = notifier;
         this.logger = logger;
     }
 
@@ -32,20 +33,21 @@ public final class UpdateCheckService {
 
     /**
      * Runs one check against the current version. Blocking: call off the
-     * main thread. Failures log once and leave no pending update.
+     * main thread. A found update is stored as pending and logged; the
+     * caller announces it to players on the main thread. Failures log
+     * once and leave no pending update.
      *
      * @param settings the checker toggles
-     * @param slug the Modrinth project slug
      * @param currentVersion the running plugin version
      */
-    public void checkNow(UpdateCheckSettings settings, String slug, String currentVersion) {
+    public void checkNow(UpdateCheckSettings settings, String currentVersion) {
         pending = null;
         if (!settings.enabled()) {
             return;
         }
-        ModrinthRelease release;
+        GitHubRelease release;
         try {
-            Optional<ModrinthRelease> fetched = http.fetchLatest(slug);
+            Optional<GitHubRelease> fetched = http.fetchLatest();
             if (fetched.isEmpty()) {
                 return;
             }
@@ -59,8 +61,12 @@ public final class UpdateCheckService {
         if (!latest.isNewerThan(current)) {
             return;
         }
-        pending = new UpdateAvailable(latest.toString(), current.toString(), release.pageUrl());
+        pending = new UpdateAvailable(
+                latest.toString(), current.toString(), release.pageUrl(), modrinthPageUrl());
         logger.info("JFlySpeed " + latest + " is available (running " + current + "): " + release.pageUrl());
-        notifier.notifyAdmins(pending);
+    }
+
+    private static String modrinthPageUrl() {
+        return "https://modrinth.com/plugin/" + MODRINTH_SLUG;
     }
 }

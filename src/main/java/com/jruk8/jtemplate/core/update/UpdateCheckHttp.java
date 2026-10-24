@@ -8,11 +8,10 @@ import java.util.Optional;
 public interface UpdateCheckHttp {
 
     /**
-     * Fetches the newest release for a project slug.
+     * Fetches the newest release from the update host.
      *
-     * @param slug the project slug on the update host
      * @return the newest release, or empty when none is published
      * @throws Exception when the request or response fails
      */
-    Optional<ModrinthRelease> fetchLatest(String slug) throws Exception;
+    Optional<GitHubRelease> fetchLatest() throws Exception;
 }
