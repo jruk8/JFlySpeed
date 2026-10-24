@@ -102,7 +102,14 @@ class TargetSelectorTest {
         var targets = TargetSelector.fromSelector(source, selector, ctx);
 
         assertTrue(targets.isEmpty());
-        verify(ctx).error(eq(source), any(Function.class), any(Map.class));
+        var selectorCaptor = ArgumentCaptor.forClass(Function.class);
+        var tagsCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(ctx).error(eq(source), selectorCaptor.capture(), tagsCaptor.capture());
+        assertEquals(SpeedPermissions.OTHER, tagsCaptor.getValue().get("permission"));
+        @SuppressWarnings("unchecked")
+        Function<MessagesConfig, String> fn = (Function<MessagesConfig, String>) selectorCaptor.getValue();
+        var messages = new MessagesConfig();
+        assertEquals(messages.getCore().getNoPermission(), fn.apply(messages));
     }
 
     @Test

@@ -66,7 +66,8 @@ public final class TargetSelector {
             return Optional.empty();
         }
         if (targetsOthers(source, targets) && !source.getSender().hasPermission(SpeedPermissions.OTHER)) {
-            ctx.error(source, m -> m.getSpeed().getNoPermission(), Map.of());
+            var tags = Map.of("permission", SpeedPermissions.OTHER);
+            ctx.error(source, m -> m.getCore().getNoPermission(), tags);
             return Optional.empty();
         }
         return Optional.of(targets);

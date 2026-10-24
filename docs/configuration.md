@@ -120,6 +120,7 @@ brackets are raw MiniMessage, and `\n` breaks the line:
   `{authors}`; linked author names arrive pre-formatted).
 - `core.updateAvailable` - update notice (use `{latest}`, `{current}`,
   `{url}` and `{modrinth-url}`).
+- `core.noPermission` - the sender lacks a permission (use `{permission}`).
 - `speed.setSelf` - feedback for self-targeting sets (use `{type}`,
   `{value}` and `{old}`).
 - `speed.resetSelf` - feedback for self-targeting resets (use `{mode}`
@@ -150,7 +151,6 @@ brackets are raw MiniMessage, and `\n` breaks the line:
   Values outside the 0–10 scale are clamped silently instead of erroring.
 - `speed.consoleNeedsTarget` - console ran a speed command without a
   target.
-- `speed.noPermission` - targeting others without `jflyspeed.other`.
 
 Messages can embed PlaceholderAPI placeholders (`%player_name%`) when
 PlaceholderAPI is installed.

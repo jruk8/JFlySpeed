@@ -24,6 +24,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -76,6 +77,8 @@ public class CommandsRegistrar implements Bootstrap {
             var help = new HelpCommand(commandContext, pluginMeta.getVersion());
             root.executes(context -> {
                 if (!context.getSource().getSender().hasPermission(SpeedPermissions.HELP)) {
+                    var tags = Map.of("permission", SpeedPermissions.HELP);
+                    commandContext.error(context.getSource(), m -> m.getCore().getNoPermission(), tags);
                     return 0;
                 }
                 help.showHelp(context.getSource(), null);

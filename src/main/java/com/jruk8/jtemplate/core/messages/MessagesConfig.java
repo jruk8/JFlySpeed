@@ -59,6 +59,10 @@ public class MessagesConfig extends OkaeriConfig {
         @Comment("Update notice (use {latest}, {current}, {url} and {modrinth-url})")
         private String updateAvailable = "{prefix}{hl}JFlySpeed {latest} is available"
                 + "{plain} (running {hl}{current}{plain}): {url} / {modrinth-url}";
+
+        @Comment("Sent when the sender lacks a permission (use {permission})")
+        private String noPermission = "{prefix}{error}You do not have the permission "
+                + "{hl}'{permission}'{error} to use this command.";
     }
 
     @Getter
@@ -130,10 +134,6 @@ public class MessagesConfig extends OkaeriConfig {
         @Comment("Sent when console runs a speed command without a target selector")
         private String consoleNeedsTarget = "{prefix}{error}Console must specify a target. "
                 + "Usage: /\\<command> \\<speed> \\<target>";
-
-        @Comment("Sent when targeting others without the jflyspeed.other permission")
-        private String noPermission = "{prefix}{error}You need the jflyspeed.other permission "
-                + "to target other players.";
     }
 
     @Comment("Prefix prepended to every message, trailing space included")
