@@ -62,6 +62,9 @@ public class PluginConfig extends OkaeriConfig {
     })
     private Colors colors = new Colors();
 
+    @Comment("Modrinth update checker settings.")
+    private UpdateChecker updateChecker = new UpdateChecker();
+
     @Getter
     @Setter
     @SuppressWarnings("FieldMayBeFinal")
@@ -135,5 +138,24 @@ public class PluginConfig extends OkaeriConfig {
 
         @Comment("MiniMessage color tag for errors, used via {error-color}.")
         private String errorColor = "<#e0867e>";
+    }
+
+    @Getter
+    @Setter
+    @SuppressWarnings("FieldMayBeFinal")
+    public static class UpdateChecker extends OkaeriConfig {
+
+        @Comment({
+                "Checks Modrinth for new JFlyspeed releases on enable and on reload.",
+                "The check runs asynchronously; findings go to the console and to",
+                "players holding jflyspeed.reload (on join and via /jflyspeed version)."
+        })
+        private boolean enabled = true;
+
+        @Comment({
+                "Modrinth project slug used for update checks.",
+                "PLACEHOLDER: replace with the real JFlyspeed slug once published."
+        })
+        private String projectSlug = "jflyspeed";
     }
 }
