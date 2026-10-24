@@ -5,7 +5,6 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 
 import java.util.Map;
@@ -13,15 +12,14 @@ import java.util.Map;
 /**
  * Handles the raw-string -> Component pipeline:
  * 1. Internal {bracket} placeholders ({prefix}, {time}, etc.)
- * 2. Color palette placeholders ({plain-color}, ...) from config.yml
+ * 2. Color palette placeholders ({plain}, ...) from config.yml
  * 3. PlaceholderAPI %percent% placeholders (%player_name%, etc.)
- * 4. Adventure TagResolvers (for MiniMessage mode)
- * 5. MiniMessage or Legacy formatting
+ * 4. Adventure TagResolvers
+ * 5. MiniMessage formatting
  */
 public final class MessageParser {
 
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
 
     private final PluginConfig pluginConfig;
     private final MessagesConfig messagesConfig;
@@ -61,13 +59,9 @@ public final class MessageParser {
             text = PlaceholderAPI.setPlaceholders(null, text);
         }
 
-        // 5. Build final Component
-        if (pluginConfig.getMessageFormat() == MessageFormat.LEGACY) {
-            return LEGACY_SERIALIZER.deserialize(text);
-        } else {
-            // MiniMessage parses the string AND applies any extra TagResolvers passed in
-            return MINI_MESSAGE.deserialize(text, resolvers);
-        }
+        // 5. Build final Component: MiniMessage parses the string AND applies
+        // any extra TagResolvers passed in
+        return MINI_MESSAGE.deserialize(text, resolvers);
     }
 
     private String resolveColors(String text) {
@@ -76,10 +70,10 @@ public final class MessageParser {
             return text;
         }
         return text
-                .replace("{plain-color}", colors.getPlainColor())
-                .replace("{brand-color}", colors.getBrandColor())
-                .replace("{highlight-color}", colors.getHighlightColor())
-                .replace("{error-color}", colors.getErrorColor());
+                .replace("{plain}", colors.getPlainColor())
+                .replace("{brand}", colors.getBrandColor())
+                .replace("{hl}", colors.getHighlightColor())
+                .replace("{error}", colors.getErrorColor());
     }
 
     private boolean isPapiEnabled() {

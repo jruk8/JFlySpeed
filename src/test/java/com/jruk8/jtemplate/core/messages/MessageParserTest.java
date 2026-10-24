@@ -9,7 +9,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,12 +45,6 @@ class MessageParserTest {
         pluginConfig = new PluginConfig();
         messagesConfig = new MessagesConfig();
         parser = new MessageParser(pluginConfig, messagesConfig);
-    }
-
-    @AfterEach
-    void tearDown() {
-        // Reset config to defaults between tests
-        pluginConfig.setMessageFormat(MessageFormat.MINIMESSAGE);
     }
 
     @Nested
@@ -95,7 +88,7 @@ class MessageParserTest {
         @Test
         @DisplayName("should replace every color placeholder with its config tag")
         void shouldReplaceColorPlaceholders() {
-            String raw = "{plain-color}a{brand-color}b{highlight-color}c{error-color}d";
+            String raw = "{plain}a{brand}b{hl}c{error}d";
             Component result = parser.parse(raw, Map.of());
             String serialized = MINI_MESSAGE.serialize(result);
             assertTrue(serialized.contains("#b8d8e0"));
@@ -108,7 +101,7 @@ class MessageParserTest {
         @DisplayName("should follow palette changes without a parser rebuild")
         void shouldFollowPaletteChanges() {
             pluginConfig.getColors().setPlainColor("<red>");
-            Component result = parser.parse("{plain-color}Hello", Map.of());
+            Component result = parser.parse("{plain}Hello", Map.of());
             String serialized = MINI_MESSAGE.serialize(result);
             assertTrue(serialized.contains("red"));
         }
@@ -176,20 +169,9 @@ class MessageParserTest {
     class FormatSelectionTests {
 
         @Test
-        @DisplayName("should use MiniMessage format by default")
-        void shouldUseMiniMessageByDefault() {
-            pluginConfig.setMessageFormat(MessageFormat.MINIMESSAGE);
+        @DisplayName("should always use MiniMessage format")
+        void shouldAlwaysUseMiniMessage() {
             String raw = "<green>Hello</green>";
-            Component result = parser.parse(raw, Map.of());
-            String resultString = PLAIN_TEXT.serialize(result);
-            assertTrue(resultString.contains("Hello"));
-        }
-
-        @Test
-        @DisplayName("should use Legacy format when configured")
-        void shouldUseLegacyFormat() {
-            pluginConfig.setMessageFormat(MessageFormat.LEGACY);
-            String raw = "&aHello";
             Component result = parser.parse(raw, Map.of());
             String resultString = PLAIN_TEXT.serialize(result);
             assertTrue(resultString.contains("Hello"));

@@ -33,7 +33,7 @@ src/main/java/com/jruk8/jtemplate/core/
     user/                   /jflyspeed help + version (alias /jf)
     admin/reload/           /jflyspeed reload
   configs/                  Okaeri schema (PluginConfig) + ConfigRegistrar loader
-  messages/                 MiniMessage/Legacy parsing (MessageParser) + dispatch (Messenger)
+  messages/                 MiniMessage parsing (MessageParser) + dispatch (Messenger)
   sounds/                   config-driven playback (SoundPlayer, Adventure API only)
   placeholders/             PlaceholderAPI expansion counting command executions
   storage/                  raw JDBC SQLite key/value counters (jflyspeed.db)
@@ -70,9 +70,9 @@ created once and injected.
    keep tab completion working.
 5. **Messages go through the services.** All player and console text runs
    through `Messenger` and the `MessagesConfig` keys; all sounds run
-   through `SoundPlayer` and `SoundsConfig`. Preserve both MiniMessage
-   and legacy `&` codes everywhere user text is parsed. New message keys
-   ship with every sibling key covered, in the same change.
+   through `SoundPlayer` and `SoundsConfig`. Messages are strictly
+   MiniMessage. New message keys ship with every sibling key covered,
+   in the same change.
 6. **Respect the main thread.** Bukkit API calls run on the main thread;
    recurring or blocking work (the update check) stays async.
 7. **Tests are the gate.** Every behavior change comes with unit tests in
