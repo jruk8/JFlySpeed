@@ -7,6 +7,7 @@ import com.jruk8.jtemplate.core.commands.speed.SpeedService;
 import com.jruk8.jtemplate.core.configs.ConfigRegistrar;
 import com.jruk8.jtemplate.core.messages.MessageBootstrap;
 import com.jruk8.jtemplate.core.messages.Messenger;
+import com.jruk8.jtemplate.core.placeholders.CommandUsageTracker;
 import com.jruk8.jtemplate.core.placeholders.PlaceholdersBootstrap;
 import com.jruk8.jtemplate.core.sounds.SoundPlayer;
 import com.jruk8.jtemplate.core.storage.StorageBootstrap;
@@ -62,11 +63,11 @@ public final class JTemplatePlugin extends JavaPlugin {
         updateChecker.register();
         reloader.register(updateChecker);
 
-        // Initialize commands
-        setupCommands(reloader, configRegistrar, messenger, soundPlayer, updateChecker);
+        // Initialize storage and placeholders first: commands record usage stats
+        CommandUsageTracker usageTracker = setupStorageAndPlaceholders(logger, reloader, configRegistrar);
 
-        // Initialize storage and placeholders
-        setupStorageAndPlaceholders(logger, reloader, configRegistrar);
+        // Initialize commands
+        setupCommands(reloader, configRegistrar, messenger, soundPlayer, updateChecker, usageTracker);
 
         // Initialize bStats
         var metricsBootstrap = new MetricsBootstrap(this);
@@ -78,7 +79,8 @@ public final class JTemplatePlugin extends JavaPlugin {
             ConfigRegistrar configRegistrar,
             Messenger messenger,
             SoundPlayer soundPlayer,
-            UpdateCheckerBootstrap updateChecker
+            UpdateCheckerBootstrap updateChecker,
+            CommandUsageTracker usageTracker
     ) {
         var context = new CommandContext(
                 configRegistrar.getMessagesConfig(),
@@ -89,28 +91,22 @@ public final class JTemplatePlugin extends JavaPlugin {
         var speedExecutor = new SpeedExecutor(context, new SpeedService(configRegistrar.getPluginConfig()));
         var commandRegistrar = new CommandsRegistrar(
                 getLifecycleManager(), reloader, context, getPluginMeta(),
-                configRegistrar.getPluginConfig(), speedExecutor, updateChecker.getService());
+                configRegistrar.getPluginConfig(), speedExecutor, updateChecker.getService(), usageTracker);
         commandRegistrar.register();
     }
 
-    private void setupStorageAndPlaceholders(Logger logger, Reloader reloader, ConfigRegistrar configRegistrar) {
+    private CommandUsageTracker setupStorageAndPlaceholders(
+            Logger logger, Reloader reloader, ConfigRegistrar configRegistrar) {
         // Initialize SQLite storage
         this.storageBootstrap = new StorageBootstrap(configRegistrar.getPluginConfig(), getDataFolder(), logger);
         this.storageBootstrap.register();
         reloader.register(this.storageBootstrap);
+        var usageTracker = new CommandUsageTracker(this.storageBootstrap.getStorage());
 
-        // Initialize PlaceholderAPI placeholders (needs a healthy database)
-        if (this.storageBootstrap.getStorage() != null) {
-            var placeholdersBootstrap = new PlaceholdersBootstrap(
-                    configRegistrar.getPluginConfig(),
-                    this.storageBootstrap.getStorage(),
-                    this,
-                    logger
-            );
-            placeholdersBootstrap.register();
-            reloader.register(placeholdersBootstrap);
-        } else {
-            logger.severe("SQLite storage is unavailable; PlaceholderAPI placeholders are disabled.");
-        }
+        // Initialize PlaceholderAPI placeholders
+        var placeholdersBootstrap = new PlaceholdersBootstrap(usageTracker, this, logger);
+        placeholdersBootstrap.register();
+        reloader.register(placeholdersBootstrap);
+        return usageTracker;
     }
 }

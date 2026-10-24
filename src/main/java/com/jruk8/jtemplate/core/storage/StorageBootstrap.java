@@ -50,12 +50,11 @@ public final class StorageBootstrap implements Bootstrap, Reloadable {
         String fileName = this.pluginConfig.getStorage().getDbFile();
         File dbFile = new File(this.dataFolder, fileName);
         SqliteStorage candidate = new SqliteStorage(dbFile, this.logger);
+        this.storage = candidate;
         if (candidate.init()) {
-            this.storage = candidate;
             this.logger.info("SQLite storage ready at '" + fileName + "'.");
         } else {
-            this.storage = null;
-            this.logger.severe("SQLite storage unavailable; state-dependent features are disabled.");
+            this.logger.severe("SQLite storage unavailable; stats read as 0 and writes are ignored.");
         }
     }
 }

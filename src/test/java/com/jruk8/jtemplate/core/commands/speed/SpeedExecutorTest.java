@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -56,16 +57,35 @@ class SpeedExecutorTest {
         when(self.getName()).thenReturn("Steve");
         when(other.getName()).thenReturn("Alex");
         when(source.getSender()).thenReturn(self);
-        when(speeds.defaultScale(SpeedType.FLY)).thenReturn(SpeedValues.DEFAULT_FLY_SCALE);
 
         int result = executor().resetSpeed(source, SpeedType.FLY, List.of(self, other));
 
         assertEquals(Command.SINGLE_SUCCESS, result);
         verify(speeds).resetSpeed(self, SpeedType.FLY);
         verify(speeds).resetSpeed(other, SpeedType.FLY);
-        verify(ctx).sendReset(eq(source), any(Function.class), any(TagResolver[].class));
-        verify(ctx).notifyReset(eq(other), any(Function.class), any(TagResolver[].class));
-        verify(ctx, never()).notifyReset(eq(self), any(Function.class), any(TagResolver[].class));
+        verify(ctx).sendReset(eq(source), any(Function.class), any(Map.class), any(TagResolver[].class));
+        verify(ctx).notifyReset(eq(other), any(Function.class), any(Map.class), any(TagResolver[].class));
+        verify(ctx, never())
+                .notifyReset(eq(self), any(Function.class), any(Map.class), any(TagResolver[].class));
+    }
+
+    @Test
+    @DisplayName("should include the mode and old value on a self reset")
+    void shouldIncludeModeAndOldOnSelfReset() {
+        var selfId = UUID.randomUUID();
+        Player self = player(selfId);
+        when(source.getSender()).thenReturn(self);
+        when(speeds.currentScale(self, SpeedType.WALK)).thenReturn(5.0);
+
+        int result = executor().resetSpeed(source, SpeedType.WALK, List.of(self));
+
+        assertEquals(Command.SINGLE_SUCCESS, result);
+        verify(speeds).resetSpeed(self, SpeedType.WALK);
+        var placeholders = forClass(Map.class);
+        var resolvers = forClass(TagResolver[].class);
+        verify(ctx).sendReset(eq(source), any(Function.class), placeholders.capture(), resolvers.capture());
+        assertEquals("walk", placeholders.getValue().get("mode"));
+        assertEquals(1, resolvers.getValue().length);
     }
 
     @Test
@@ -128,14 +148,33 @@ class SpeedExecutorTest {
         var selfId = UUID.randomUUID();
         Player self = player(selfId);
         when(source.getSender()).thenReturn(self);
-        when(speeds.defaultScale(any(SpeedType.class))).thenReturn(5.5);
 
         int result = executor().resetBoth(source, List.of(self));
 
         assertEquals(Command.SINGLE_SUCCESS, result);
         verify(speeds).resetSpeed(self, SpeedType.FLY);
         verify(speeds).resetSpeed(self, SpeedType.WALK);
-        verify(ctx, times(2))
+        verify(ctx, times(1))
                 .sendReset(eq(source), any(Function.class), any(TagResolver[].class));
+        verify(ctx, never()).notifyReset(eq(self), any(Function.class), any(TagResolver[].class));
+    }
+
+    @Test
+    @DisplayName("should summarize once and notify others on a both reset")
+    void shouldSummarizeBothResetOnce() {
+        var selfId = UUID.randomUUID();
+        Player self = player(selfId);
+        Player other = player(UUID.randomUUID());
+        when(other.getName()).thenReturn("Alex");
+        when(source.getSender()).thenReturn(self);
+
+        int result = executor().resetBoth(source, List.of(self, other));
+
+        assertEquals(Command.SINGLE_SUCCESS, result);
+        verify(ctx, times(1))
+                .sendReset(eq(source), any(Function.class), any(TagResolver[].class));
+        verify(ctx, never()).notifyReset(eq(self), any(Function.class), any(TagResolver[].class));
+        verify(ctx, times(1))
+                .notifyReset(eq(other), any(Function.class), any(TagResolver[].class));
     }
 }

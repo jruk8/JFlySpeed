@@ -5,6 +5,7 @@ import com.jruk8.jtemplate.core.messages.Messenger;
 import com.jruk8.jtemplate.core.sounds.SoundPlayer;
 import com.jruk8.jtemplate.core.sounds.SoundsConfig;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -105,6 +106,23 @@ public record CommandContext(
     }
 
     /**
+     * Sends a reset-speed message with string placeholders to the executor and plays the reset sound.
+     * @param sender The command sender to send the message to and play the sound for.
+     * @param messageSelector Function to select the message string from {@link MessagesConfig}.
+     * @param placeholders Key-value pairs for basic text replacements (e.g. the speed mode).
+     * @param resolvers The placeholder resolvers for the message.
+     */
+    public void sendReset(
+            CommandSourceStack sender,
+            Function<MessagesConfig, String> messageSelector,
+            Map<String, String> placeholders,
+            TagResolver... resolvers
+    ) {
+        messenger.send(sender.getSender(), messageSelector.apply(messages), placeholders, resolvers);
+        soundPlayer.play(sender.getSender(), sounds.getReset());
+    }
+
+    /**
      * Sends a reset-speed message to an affected player and plays the reset sound.
      * @param target The recipient of the message and sound.
      * @param messageSelector Function to select the message string from {@link MessagesConfig}.
@@ -116,6 +134,23 @@ public record CommandContext(
             TagResolver... resolvers
     ) {
         messenger.send(target, messageSelector.apply(messages), resolvers);
+        soundPlayer.play(target, sounds.getReset());
+    }
+
+    /**
+     * Sends a reset-speed message with string placeholders to an affected player and plays the reset sound.
+     * @param target The recipient of the message and sound.
+     * @param messageSelector Function to select the message string from {@link MessagesConfig}.
+     * @param placeholders Key-value pairs for basic text replacements (e.g. the speed mode).
+     * @param resolvers The placeholder resolvers for the message.
+     */
+    public void notifyReset(
+            CommandSender target,
+            Function<MessagesConfig, String> messageSelector,
+            Map<String, String> placeholders,
+            TagResolver... resolvers
+    ) {
+        messenger.send(target, messageSelector.apply(messages), placeholders, resolvers);
         soundPlayer.play(target, sounds.getReset());
     }
 

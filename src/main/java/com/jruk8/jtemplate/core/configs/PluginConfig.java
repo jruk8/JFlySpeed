@@ -1,7 +1,6 @@
 package com.jruk8.jtemplate.core.configs;
 
 import com.jruk8.jtemplate.core.commands.speed.SpeedValues;
-import com.jruk8.jtemplate.core.messages.MessageFormat;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Header;
 import eu.okaeri.configs.annotation.Comment;
@@ -22,17 +21,10 @@ import java.util.List;
 public class PluginConfig extends OkaeriConfig {
 
     @Comment({
-            "Configures which format to use for messages.",
-            "Supported values: MINIMESSAGE, LEGACY",
-            "Default: MINIMESSAGE"
+            "Extra labels for the /jflyspeed root command (shortcuts like /jf).",
+            "Applies on restart, like the command toggles below."
     })
-    private MessageFormat messageFormat = MessageFormat.MINIMESSAGE;
-
-    @Comment({
-            "PlaceholderAPI placeholder settings.",
-            "Placeholders are exposed as %<identifier>_<name>%, e.g. %jflyspeed_authors_command_uses%."
-    })
-    private Placeholders placeholders = new Placeholders();
+    private List<String> aliases = List.of("jf");
 
     @Comment({
             "SQLite storage settings.",
@@ -41,50 +33,28 @@ public class PluginConfig extends OkaeriConfig {
     private Storage storage = new Storage();
 
     @Comment({
-            "Speed settings.",
-            "Players use a 0-10 scale where 1.0 is vanilla normal and 0.0 is frozen;",
-            "fly maps 0-1 to Bukkit 0-0.1 and 1-10 to Bukkit 0.1-1, walk maps 0-1",
-            "to Bukkit 0-0.2 and 1-10 to Bukkit 0.2-1 (no reverse speeds).",
-            "Values outside 0-10 are clamped into range silently."
+            "Speed settings. Players use a 0-10 scale where 1.0 is vanilla normal,",
+            "0.0 is frozen, and out-of-range input is clamped silently (fly maps 0-1",
+            "to Bukkit 0-0.1 and 1-10 to Bukkit 0.1-1; walk maps 0-1 to Bukkit 0-0.2",
+            "and 1-10 to Bukkit 0.2-1, with no reverse speeds)."
     })
     private Speed speed = new Speed();
 
     @Comment({
-            "Standalone root commands. Each toggle registers (or hides) its root command.",
-            "The /jflyspeed subcommands always exist, so disabling a root keeps the",
-            "feature available under /jflyspeed (alias /jf) only.",
-            "Toggles apply on restart; /jflyspeed reload reports changed toggles",
-            "instead of re-registering commands."
+            "Standalone root commands: each channel registers (or hides) its root,",
+            "with extra labels under 'aliases' (also reachable under /jflyspeed).",
+            "Applies on restart; /jflyspeed reload reports changed toggles instead."
     })
     private Commands commands = new Commands();
 
     @Comment({
-            "Color palette used by every message via {plain-color}, {brand-color},",
-            "{highlight-color} and {error-color}. Values are MiniMessage color tags."
+            "Color palette used by every message via {plain}, {brand}, {hl} and",
+            "{error}. Values are MiniMessage color tags."
     })
     private Colors colors = new Colors();
 
-    @Comment("Modrinth update checker settings.")
+    @Comment("GitHub update checker settings.")
     private UpdateChecker updateChecker = new UpdateChecker();
-
-    @Getter
-    @Setter
-    @SuppressWarnings("FieldMayBeFinal")
-    public static class Placeholders extends OkaeriConfig {
-
-        @Comment("Enables the PlaceholderAPI expansion (requires PlaceholderAPI on the server).")
-        private boolean enabled = true;
-
-        @Comment({"Identifier prefix shared by all placeholders.",
-                "Example: with 'jflyspeed', the usage placeholder is %jflyspeed_authors_command_uses%."})
-        private String identifier = "jflyspeed";
-
-        @Comment("The command that the placeholders track (without a leading slash).")
-        private String command = "version";
-
-        @Comment("Base command labels (and aliases) that count as executions of the plugin's command.")
-        private List<String> labels = List.of("jflyspeed", "jf");
-    }
 
     @Getter
     @Setter
@@ -107,6 +77,10 @@ public class PluginConfig extends OkaeriConfig {
         @Comment({"Default walk speed on the 0-10 scale, restored by 'reset'.",
                 "1.0 = vanilla normal (Bukkit 0.2); 0.0 = frozen."})
         private double defaultWalkSpeed = SpeedValues.DEFAULT_WALK_SCALE;
+
+        @Comment({"Tab-completion defaults offered for speed values, in order.",
+                "Whole numbers display without decimals."})
+        private List<Double> valueSuggestions = List.of(1.0, 2.0, 5.0, 10.0);
     }
 
     @Getter
@@ -114,14 +88,33 @@ public class PluginConfig extends OkaeriConfig {
     @SuppressWarnings("FieldMayBeFinal")
     public static class Commands extends OkaeriConfig {
 
-        @Comment("Registers the standalone /flyspeed root command.")
-        private boolean flyspeed = true;
+        @Comment("Standalone /flyspeed root command and its extra labels.")
+        private Channel flyspeed = new Channel(List.of("fspeed", "fs", "fly"));
 
-        @Comment("Registers the standalone /walkspeed root command.")
-        private boolean walkspeed = true;
+        @Comment("Standalone /walkspeed root command and its extra labels.")
+        private Channel walkspeed = new Channel(List.of("wspeed", "ws", "walk"));
 
-        @Comment("Registers the standalone /speed root command.")
-        private boolean speed = true;
+        @Comment("Standalone /speed root command.")
+        private Channel speed = new Channel(List.of());
+    }
+
+    @Getter
+    @Setter
+    @SuppressWarnings("FieldMayBeFinal")
+    public static class Channel extends OkaeriConfig {
+
+        @Comment("Registers the standalone root command for this channel.")
+        private boolean enabled = true;
+
+        @Comment("Extra labels for the root command, also reachable under /jflyspeed.")
+        private List<String> aliases = List.of();
+
+        public Channel() {
+        }
+
+        public Channel(List<String> aliases) {
+            this.aliases = aliases;
+        }
     }
 
     @Getter
@@ -129,16 +122,16 @@ public class PluginConfig extends OkaeriConfig {
     @SuppressWarnings("FieldMayBeFinal")
     public static class Colors extends OkaeriConfig {
 
-        @Comment("MiniMessage color tag for normal message bodies, used via {plain-color}.")
+        @Comment("MiniMessage color tag for normal message bodies, used via {plain}.")
         private String plainColor = "<#b8d8e0>";
 
-        @Comment("MiniMessage color tag for brand accents, used via {brand-color}.")
+        @Comment("MiniMessage color tag for brand accents, used via {brand}.")
         private String brandColor = "<#84b8db>";
 
-        @Comment("MiniMessage color tag for highlighted words, used via {highlight-color}.")
+        @Comment("MiniMessage color tag for highlighted words, used via {hl}.")
         private String highlightColor = "<#ebf1f2>";
 
-        @Comment("MiniMessage color tag for errors, used via {error-color}.")
+        @Comment("MiniMessage color tag for errors, used via {error}.")
         private String errorColor = "<#e0867e>";
     }
 
@@ -148,16 +141,10 @@ public class PluginConfig extends OkaeriConfig {
     public static class UpdateChecker extends OkaeriConfig {
 
         @Comment({
-                "Checks Modrinth for new JFlySpeed releases on enable and on reload.",
+                "Checks GitHub releases for new JFlySpeed versions on enable and on reload.",
                 "The check runs asynchronously; findings go to the console and to",
                 "players holding jflyspeed.reload (on join and via /jflyspeed version)."
         })
         private boolean enabled = true;
-
-        @Comment({
-                "Modrinth project slug used for update checks.",
-                "PLACEHOLDER: replace with the real JFlySpeed slug once published."
-        })
-        private String projectSlug = "jflyspeed";
     }
 }

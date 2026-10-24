@@ -44,9 +44,9 @@ public class ReloadCommand {
     }
 
     public void onReload(CommandSourceStack sender) {
-        boolean flyspeed = toggles().isFlyspeed();
-        boolean walkspeed = toggles().isWalkspeed();
-        boolean speed = toggles().isSpeed();
+        boolean flyspeed = toggles().getFlyspeed().isEnabled();
+        boolean walkspeed = toggles().getWalkspeed().isEnabled();
+        boolean speed = toggles().getSpeed().isEnabled();
         long start = System.currentTimeMillis();
         boolean ok = reloader.reloadAll();
         long time = System.currentTimeMillis() - start;
@@ -73,8 +73,8 @@ public class ReloadCommand {
     }
 
     private boolean togglesChanged(boolean flyspeed, boolean walkspeed, boolean speed) {
-        return toggles().isFlyspeed() != flyspeed
-                || toggles().isWalkspeed() != walkspeed
-                || toggles().isSpeed() != speed;
+        return toggles().getFlyspeed().isEnabled() != flyspeed
+                || toggles().getWalkspeed().isEnabled() != walkspeed
+                || toggles().getSpeed().isEnabled() != speed;
     }
 }

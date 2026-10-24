@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.floatThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class SpeedServiceTest {
 
@@ -68,6 +69,29 @@ class SpeedServiceTest {
 
             assertEquals(SpeedValues.MAX_SCALE, applied);
             verify(player).setWalkSpeed(floatThat(value -> Math.abs(value - 1.0f) < 1e-6));
+        }
+    }
+
+    @Nested
+    @DisplayName("currentScale()")
+    class CurrentTests {
+
+        @Test
+        @DisplayName("should read fly speed back on the user scale")
+        void shouldReadFlyScale() {
+            Player player = mock(Player.class);
+            when(player.getFlySpeed()).thenReturn(0.1f);
+
+            assertEquals(1.0, service().currentScale(player, SpeedType.FLY), 1e-6);
+        }
+
+        @Test
+        @DisplayName("should clamp an out-of-range Bukkit value into range")
+        void shouldClampNegativeBukkitValue() {
+            Player player = mock(Player.class);
+            when(player.getWalkSpeed()).thenReturn(-0.5f);
+
+            assertEquals(SpeedValues.MIN_SCALE, service().currentScale(player, SpeedType.WALK), 1e-9);
         }
     }
 }

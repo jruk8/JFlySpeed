@@ -67,26 +67,31 @@ public class HelpCommand {
         List<HelpEntry> entries = new ArrayList<>(List.of(
                 new HelpEntry("/jflyspeed help [query]", "Shows this help menu."),
                 new HelpEntry("/jflyspeed version", "Shows the plugin version.", SpeedPermissions.VERSION),
-                new HelpEntry("/jflyspeed flyspeed <speed|reset> [targets]", "Sets fly speed (0-10).",
+                new HelpEntry("/jflyspeed flyspeed <speed|reset> [targets]", "Sets fly speed (0-10, empty resets).",
                         SpeedPermissions.FLY),
-                new HelpEntry("/jflyspeed walkspeed <speed|reset> [targets]", "Sets walk speed (0-10).",
+                new HelpEntry("/jflyspeed walkspeed <speed|reset> [targets]", "Sets walk speed (0-10, empty resets).",
                         SpeedPermissions.WALK),
-                new HelpEntry("/jflyspeed speed fly|walk <speed|reset> [targets]", "Sets one speed (0-10).",
+                new HelpEntry("/jflyspeed speed fly|walk <speed|reset> [targets]",
+                        "Sets one speed (0-10, empty resets).",
+                        SpeedPermissions.FLY, SpeedPermissions.WALK),
+                new HelpEntry("/jflyspeed speed <speed> [targets]", "Sets speed for your current mode (0-10).",
                         SpeedPermissions.FLY, SpeedPermissions.WALK),
                 new HelpEntry("/jflyspeed speed reset [targets]", "Resets both speeds (needs both permissions).",
                         SpeedPermissions.FLY, SpeedPermissions.WALK),
                 new HelpEntry("/jflyspeed reload", "Reloads the plugin configuration.", SpeedPermissions.RELOAD)
         ));
         if (flyspeedRoot) {
-            entries.add(new HelpEntry("/flyspeed <speed|reset> [targets]", "Sets fly speed (0-10).",
+            entries.add(new HelpEntry("/flyspeed <speed|reset> [targets]", "Sets fly speed (0-10, empty resets).",
                     SpeedPermissions.FLY));
         }
         if (walkspeedRoot) {
-            entries.add(new HelpEntry("/walkspeed <speed|reset> [targets]", "Sets walk speed (0-10).",
+            entries.add(new HelpEntry("/walkspeed <speed|reset> [targets]", "Sets walk speed (0-10, empty resets).",
                     SpeedPermissions.WALK));
         }
         if (speedRoot) {
-            entries.add(new HelpEntry("/speed fly|walk|reset ...", "Sets speeds or resets both.",
+            entries.add(new HelpEntry("/speed <speed> [targets]", "Sets speed for your current mode (0-10).",
+                    SpeedPermissions.FLY, SpeedPermissions.WALK));
+            entries.add(new HelpEntry("/speed fly|walk|reset ...", "Sets one speed, or resets both (empty resets own).",
                     SpeedPermissions.FLY, SpeedPermissions.WALK));
         }
         return entries;

@@ -27,9 +27,8 @@
 
 `/jf` is a built-in alias for `/jflyspeed`. Speeds use the 0–10 scale (see
 the README); `reset` restores the configured defaults. The placeholders
-count how often `/jflyspeed version` is executed (per player and globally):
-run it a couple of times, install PlaceholderAPI, and try
-`%jflyspeed_authors_command_uses%` in a scoreboard or chat.
+count your speed command executions: run a few commands, install
+PlaceholderAPI, and try `%jf_uses%` in a scoreboard or chat.
 
 ## Next Steps
 

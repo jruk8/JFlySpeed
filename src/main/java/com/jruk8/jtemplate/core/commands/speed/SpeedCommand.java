@@ -2,26 +2,41 @@ package com.jruk8.jtemplate.core.commands.speed;
 
 import com.jruk8.jtemplate.core.commands.CommandContext;
 import com.jruk8.jtemplate.core.commands.SpeedPermissions;
+import com.jruk8.jtemplate.core.placeholders.CommandUsageTracker;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 
+import java.util.List;
+
 /**
- * Unified speed command: {@code /speed fly|walk <value>|reset [targets]} and
- * {@code /speed reset [targets]}.
+ * Unified speed command: {@code /speed [<value>|fly|walk|reset] ...}.
  * <p>
- * The {@code reset} branch resets both channels at once, so it requires both
- * the fly and walk permissions. The same node is registered as the standalone
- * {@code /speed} root and as the {@code speed} subcommand of {@code /jflyspeed}.
+ * A bare value sets the executor's current channel (fly while flying, walk
+ * otherwise); {@code fly}/{@code walk} pick the channel explicitly.
+ * {@code reset} resets both channels at once, so it requires both the fly
+ * and walk permissions. Running the command with no arguments resets the
+ * executor's own speeds for every permitted channel. The same node is
+ * registered as the standalone {@code /speed} root and as the
+ * {@code speed} subcommand of {@code /jflyspeed}.
  */
 public class SpeedCommand {
 
     private final CommandContext ctx;
     private final SpeedExecutor exec;
+    private final CommandUsageTracker tracker;
+    private final List<Double> suggestions;
 
-    public SpeedCommand(CommandContext ctx, SpeedExecutor exec) {
+    public SpeedCommand(
+            CommandContext ctx,
+            SpeedExecutor exec,
+            CommandUsageTracker tracker,
+            List<Double> suggestions
+    ) {
         this.ctx = ctx;
         this.exec = exec;
+        this.tracker = tracker;
+        this.suggestions = suggestions;
     }
 
     /**
@@ -32,27 +47,34 @@ public class SpeedCommand {
     public LiteralArgumentBuilder<CommandSourceStack> node() {
         return Commands.literal("speed")
                 .requires(CommandContext.requiresAnyPermission(SpeedPermissions.FLY, SpeedPermissions.WALK))
+                .executes(context -> SpeedArgumentNodes.resetPermittedSelf(
+                        context.getSource(), ctx, exec, tracker))
                 .then(flyBranch())
                 .then(walkBranch())
-                .then(resetBranch());
+                .then(resetBranch())
+                .then(SpeedArgumentNodes.autoValueArgument(ctx, exec, tracker, suggestions));
     }
 
     private LiteralArgumentBuilder<CommandSourceStack> flyBranch() {
         return Commands.literal("fly")
                 .requires(CommandContext.requiresPermission(SpeedPermissions.FLY))
-                .then(SpeedArgumentNodes.valueArgument(SpeedType.FLY, ctx, exec))
-                .then(SpeedArgumentNodes.resetLiteral(SpeedType.FLY, ctx, exec));
+                .executes(context -> SpeedArgumentNodes.resetSelf(
+                        SpeedType.FLY, context.getSource(), ctx, exec, tracker))
+                .then(SpeedArgumentNodes.resetLiteral(SpeedType.FLY, ctx, exec, tracker))
+                .then(SpeedArgumentNodes.valueArgument(SpeedType.FLY, ctx, exec, tracker, suggestions));
     }
 
     private LiteralArgumentBuilder<CommandSourceStack> walkBranch() {
         return Commands.literal("walk")
                 .requires(CommandContext.requiresPermission(SpeedPermissions.WALK))
-                .then(SpeedArgumentNodes.valueArgument(SpeedType.WALK, ctx, exec))
-                .then(SpeedArgumentNodes.resetLiteral(SpeedType.WALK, ctx, exec));
+                .executes(context -> SpeedArgumentNodes.resetSelf(
+                        SpeedType.WALK, context.getSource(), ctx, exec, tracker))
+                .then(SpeedArgumentNodes.resetLiteral(SpeedType.WALK, ctx, exec, tracker))
+                .then(SpeedArgumentNodes.valueArgument(SpeedType.WALK, ctx, exec, tracker, suggestions));
     }
 
     private LiteralArgumentBuilder<CommandSourceStack> resetBranch() {
-        return SpeedArgumentNodes.resetBothLiteral(ctx, exec)
+        return SpeedArgumentNodes.resetBothLiteral(ctx, exec, tracker)
                 .requires(CommandContext.requiresPermission(SpeedPermissions.FLY, SpeedPermissions.WALK));
     }
 }

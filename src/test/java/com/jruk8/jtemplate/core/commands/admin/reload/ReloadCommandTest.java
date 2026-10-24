@@ -66,7 +66,7 @@ class ReloadCommandTest {
     void shouldAskForRestartOnToggleChange() {
         var config = new PluginConfig();
         when(reloader.reloadAll()).thenAnswer(ignored -> {
-            config.getCommands().setSpeed(false);
+            config.getCommands().getSpeed().setEnabled(false);
             return true;
         });
 

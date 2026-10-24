@@ -38,9 +38,9 @@ public class UserCommandsRegistrar implements Bootstrap {
     public void register() {
         root.then(new HelpCommand(
                 ctx,
-                commands.isFlyspeed(),
-                commands.isWalkspeed(),
-                commands.isSpeed()
+                commands.getFlyspeed().isEnabled(),
+                commands.getWalkspeed().isEnabled(),
+                commands.getSpeed().isEnabled()
         ).node());
         root.then(new VersionCommand(new AuthorFormatter(), ctx, pluginMeta, updateChecks).node());
     }

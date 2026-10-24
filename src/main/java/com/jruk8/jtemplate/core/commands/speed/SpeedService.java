@@ -43,6 +43,18 @@ public class SpeedService {
     }
 
     /**
+     * Returns a player's current speed on the user-facing scale, clamped to 0-10.
+     *
+     * @param player the player to read
+     * @param type which speed channel to read
+     * @return the current speed on the user-facing scale
+     */
+    public double currentScale(Player player, SpeedType type) {
+        float bukkit = type == SpeedType.FLY ? player.getFlySpeed() : player.getWalkSpeed();
+        return SpeedValues.clampScale(SpeedValues.toScale(type, bukkit));
+    }
+
+    /**
      * Returns the configured default for a speed channel, clamped to 0-10.
      *
      * @param type which speed channel

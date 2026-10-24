@@ -13,6 +13,12 @@ configurations {
     }
 }
 
+// PlaceholderAPI ships compileOnly via plugin-conventions; tests need it too
+// to instantiate the expansion (same version as the main classpath).
+dependencies {
+    testImplementation 'me.clip:placeholderapi:2.11.6'
+}
+
 // plugin-conventions only expands plugin.yml, but JFlySpeed declares its
 // metadata (including permissions) in paper-plugin.yml, so expand the same
 // gradle.properties there.
