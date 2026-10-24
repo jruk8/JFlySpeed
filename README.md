@@ -4,7 +4,7 @@
 
 <h3>JFlySpeed is an easy-to-use fly and walk speed plugin for 26.x Paper servers.</h3>
 
-### [Wiki](https://jruk8.github.io/JFlySpeed/) · [GitHub](https://github.com/jruk8/JFlySpeed)
+### [Modrinth](https://modrinth.com/project/jflyspeed) · [Wiki](https://jruk8.github.io/JFlySpeed/) · [GitHub](https://github.com/jruk8/JFlySpeed)
 
 </div>
 
