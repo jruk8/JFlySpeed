@@ -1,61 +1,115 @@
-# Contributing
+# Contributing to JFlyspeed
 
-This file helps contributors work efficiently in this repository.
-It describes the structure, conventions and commands you must respect.
+Thank you for your interest in contributing to JFlyspeed! This document
+covers the environment, coding conventions, testing expectations, commit
+style, and documentation expectations.
 
-## Project
+## Environment
 
-JPaperTemplate is a Paper plugin template built with Java 25 and Gradle using
-the external `com.github.jruk8.plugin-conventions` plugin (see `build.gradle`).
-The plugin itself is `JTemplate`, a small but complete plugin with commands,
-configs, messages, sounds, PlaceholderAPI placeholders and SQLite storage.
+- **JDK 25** is required (Temurin recommended). Check with
+  `java -version` before anything else.
+- **Gradle** runs through the wrapper; never use a system install:
+  - `./gradlew build` (Windows: `.\gradlew.bat build`) is the full
+    gate: unit tests plus both checkstyle tasks. Run it before
+    finishing any change.
+  - `./gradlew test` runs only the tests while iterating; narrow to
+    one suite with `./gradlew test --tests
+    "com.jruk8.jtemplate.core.speed.MyTest"`.
+  - The plugin jar lands in `build/libs/`.
+- **Test server:** there is no committed test server. Spin up a local
+  [Paper 26.2+](https://papermc.io/downloads/paper) server, drop the
+  built jar into `plugins/`, and restart. PlaceholderAPI is optional
+  and only needed to exercise the `%jflyspeed_...%` placeholders.
+  Say what you verified live versus in unit tests, and never present
+  an unrunnable check as green.
 
-Before writing code, read `README.md` and `docs/api.md`. They document the
-module layout and the "how to extend" flows.
+## Coding Conventions
 
-## Build & test
+- **Java 25** is the target. Use modern language features (records,
+  switch expressions, pattern matching) where appropriate.
+- **Checkstyle** is enforced by `build`. Key rules:
+  - 4-space indentation, no tabs.
+  - Lines stay within 120 characters, methods within 45 lines,
+    files within 750 lines: keep classes small and focused.
+  - Braces are always required, even for one-line blocks.
+  - No star imports (including `javax.*`), no unused imports.
+- **Manual wiring:** each class receives only what it needs via its
+  constructor, and a module-level registrar (implementing
+  `Bootstrap`, optionally `Reloadable`) composes the module.
+  `JTemplatePlugin.setupCoreModules()` is the single composition
+  root. Avoid static state and singletons.
+- **Null safety:** use `@NotNull` and `@Nullable` from
+  `org.jetbrains.annotations` where nullability is not obvious.
+- **Thread safety:** Bukkit operations run on the main thread. The
+  update checker already does its HTTP work async; keep it that way.
+- **Error handling:** catch exceptions at the boundary (command
+  executors, listeners) and log them with context. Never let an
+  exception propagate to the server.
 
-```shell
-./gradlew build       # Windows: .\gradlew.bat build
+## Testing Expectations
+
+- **Logic-based tests** are required for new features. Use **JUnit 5**.
+- Tests must not require a running Minecraft server. Mock or stub
+  Bukkit dependencies where needed.
+- **Do not add runtime or integration tests.** Tests that need a live
+  server, a database, or network access will be rejected.
+- Place tests in `src/test/java/` mirroring the main package
+  structure.
+
+## Commit Message Style
+
+Use [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
 ```
 
-`build` = compile + checkstyle (`checkstyleMain`, `checkstyleTest`) + unit tests.
-Run only tests with `.\gradlew.bat test` when iterating; run `build` (a full
-`clean` build) before finishing. Note on Windows: JVM/JDK warnings on stderr
-cause non-zero PowerShell pipeline results, so check stdout for
-`BUILD SUCCESSFUL` and `$LASTEXITCODE`.
+Types:
 
-## Architecture conventions
+- `feat`: a new feature
+- `fix`: a bug fix
+- `docs`: documentation-only changes
+- `refactor`: code changes that neither fix a bug nor add a feature
+- `test`: adding or fixing tests
+- `chore`: maintenance tasks (dependencies, build config, etc.)
+- `ci`: CI and workflow changes
 
-- Base package: `com.jruk8.jtemplate.core`, with one package per module:
-  `commands`, `configs`, `messages`, `sounds`, `placeholders`, `storage`.
-- Modules are wired together manually (pseudo dependency injection): each class
-  receives only what it needs via its constructor, and a module-level
-  registrar class (implementing `Bootstrap` and optionally `Reloadable`)
-  composes them. `JTemplatePlugin.setupCoreModules()` is the composition root.
-- Config classes are okaeri-configs (`eu.okaeri.configs.OkaeriConfig`) with
-  Lombok `@Getter`/`@Setter`; sub-config objects are nested classes inside the
-  parent config. Configs are loaded by `ConfigRegistrar` and reloaded via
-  `Reloader`.
-- Commands are Paper-native Brigadier nodes (`Commands.literal`/`Commands.argument`) exposing `node()`, registered via `LifecycleEvents.COMMANDS`.
-- Placeholders use PlaceholderAPI 2.11.x (`PlaceholderExpansion.onRequest`).
-- Storage is raw JDBC against SQLite; the runtime driver is provided by the
-  server (the plugin only declares it as `compileOnly`/`testImplementation`)
-  — never add it as `implementation` unless you change that strategy.
-- Avoid static state and singletons: getters/instances are created once and
-  injected.
+Example:
 
-## Style (enforced by checkstyle)
+```
+feat(commands): accept vanilla selectors as speed targets
+```
 
-- Max 45 lines per method, max 120 chars per line, max 750 lines per file.
-- No star imports (including `javax.*`), no unused imports, braces required.
-- Classes and methods small and focused; `var` for local variables is normal.
-- `main` classes are in `com.jruk8.jtemplate.core.*`; tests mirror the same
-  package paths under `src/test/java/com/jruk8/jtemplate/core`.
+Describe the change only: no phases, agent, session, or other
+process remarks in commit messages. Keep many small commits rather
+than one big one, and never push or tag unless asked.
 
-## Database
+## Documentation Expectations
 
-The SQLite file defaults to `jtemplate.db` in the plugin's data folder and is
-configured under `storage.db-file`. Schema tables: `player_stats` (per-player
-counters) and `global_stats` (server-wide counters). Extend `SqliteStorage`
-with new stat keys instead of adding ad-hoc tables.
+- Update `docs/` when adding or changing user-facing features.
+- Update `docs/commands.md` for new commands.
+- Update `docs/configuration.md` for new configuration options.
+- Update `docs/permissions.md` for new permissions.
+- Register new pages in the `mkdocs.yml` nav so they appear on the
+  site.
+- Keep documentation accurate and concise, and keep `README.md`
+  short: it links to the docs, it does not duplicate them.
+
+## Pull Request Guidelines
+
+1. **Branch** from `main` with a descriptive name (e.g.
+   `feat/speed-limits`). Never commit directly on `main`.
+2. **Commit** using the style above. Squash fixup commits before
+   submitting.
+3. **Test**: ensure `./gradlew test` passes.
+4. **Build**: ensure `./gradlew build` passes with zero warnings.
+5. **Document**: update the relevant docs.
+6. **Describe**: write a clear PR description explaining what and why.
+7. **Review**: respond to feedback promptly. CI must pass before merge.
+
+## Code of Conduct
+
+Be respectful and constructive in all interactions. Harassment or
+discriminatory behavior of any kind will not be tolerated.
