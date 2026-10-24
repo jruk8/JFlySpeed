@@ -1,4 +1,35 @@
 # Changelog
+## [1.2.0] - 2026-10-24
+
+### Features
+
+- Opt-out bStats metrics toggle
+
+> Add a metrics.enabled flag (default true) following the sibling
+> convention: anonymous open-source statistics with no personal data,
+> read once at startup so disabling needs a restart.
+
+- Toggle fly mode via /fly and /jfs fly
+
+> /fly with no arguments toggles the own fly mode; on/off sets it
+> explicitly, optionally for other targets. A bare selector toggles the
+> whole group (off when everyone can already fly, otherwise on).
+> Targeting others needs jflyspeed.other plus the new jflyspeed.fly
+> node. The fly and walk labels move from the speed aliases to the new
+> command, which is root level by default with its own toggle.
+
+- /speed value follows the executor current mode
+
+> Revert the both-channels value mode: a bare /speed value sets the
+> channel matching the executor flight state (fly while flying, walk
+> otherwise) with a runtime permission check, and console must name the
+> mode explicitly. The both-set executor and its messages are gone.
+
+
+### Miscellaneous
+
+- Update for v1.1.0 [skip ci]
+
 ## [1.1.0] - 2026-10-24
 
 ### Features
