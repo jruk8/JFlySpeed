@@ -28,9 +28,8 @@
   `/jflyspeed` (alias `/jf`) always works.
 - **Reloadable** » `/jflyspeed reload` re-reads every config and re-opens
   storage and placeholders without a restart.
-- **Also for serious deployment** » MiniMessage messages, config-driven
-  sounds, PlaceholderAPI placeholders, SQLite counters, and an async
-  GitHub update checker.
+- **Also for serious deployment** » MiniMessage, sounds, PAPI placeholders,
+  and an SQLite counter.
 
 ### Requirements
 
@@ -48,7 +47,7 @@
 | `/speed <speed> [targets]` | Set speed for your current mode (flying → fly, else walk). |
 | `/speed fly\|walk [<speed>\|reset] [targets]` | Set or reset one speed channel. |
 | `/speed reset [targets]` | Reset both fly and walk speed. |
-| `/jflyspeed <help\|version\|reload>` | Help, version, and config reload (alias `/jf`). |
+| `/jflyspeed <help\|version\|reload>` | Help, version, and config reload (alias `/jfs`). |
 
 An omitted target means yourself; console must always name one. No
 arguments resets your own speed, and `reset` restores the configured
