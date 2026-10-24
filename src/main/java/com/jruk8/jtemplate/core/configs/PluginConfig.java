@@ -137,7 +137,7 @@ public class PluginConfig extends OkaeriConfig {
         private String highlightColor = "<#ebf1f2>";
 
         @Comment("MiniMessage color tag for errors, used via {error}.")
-        private String errorColor = "<#e0867e>";
+        private String errorColor = "<#415ad9>";
     }
 
     @Getter

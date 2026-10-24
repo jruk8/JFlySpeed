@@ -2,6 +2,7 @@ package com.jruk8.jtemplate.core.commands;
 
 import com.jruk8.jtemplate.core.Bootstrap;
 import com.jruk8.jtemplate.core.Reloader;
+import com.jruk8.jtemplate.core.commands.SpeedPermissions;
 import com.jruk8.jtemplate.core.commands.admin.AdminCommandsRegistrar;
 import com.jruk8.jtemplate.core.commands.speed.FlySpeedCommand;
 import com.jruk8.jtemplate.core.commands.speed.SpeedCommand;
@@ -74,6 +75,9 @@ public class CommandsRegistrar implements Bootstrap {
             var suggestions = pluginConfig.getSpeed().getValueSuggestions();
             var help = new HelpCommand(commandContext, pluginMeta.getVersion());
             root.executes(context -> {
+                if (!context.getSource().getSender().hasPermission(SpeedPermissions.HELP)) {
+                    return 0;
+                }
                 help.showHelp(context.getSource(), null);
                 return Command.SINGLE_SUCCESS;
             });

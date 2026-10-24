@@ -30,6 +30,11 @@ public final class SpeedPermissions {
     public static final String RELOAD = "jflyspeed.reload";
 
     /**
+     * View the plugin help listing. Entries are filtered by permission.
+     */
+    public static final String HELP = "jflyspeed.help";
+
+    /**
      * View the plugin version.
      */
     public static final String VERSION = "jflyspeed.version";

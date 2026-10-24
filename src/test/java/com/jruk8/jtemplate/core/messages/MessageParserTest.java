@@ -92,7 +92,7 @@ class MessageParserTest {
             assertTrue(serialized.contains("#b8d8e0"));
             assertTrue(serialized.contains("#84b8db"));
             assertTrue(serialized.contains("#ebf1f2"));
-            assertTrue(serialized.contains("#e0867e"));
+            assertTrue(serialized.contains("#415ad9"));
         }
 
         @Test

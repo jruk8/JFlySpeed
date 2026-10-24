@@ -14,9 +14,10 @@ import java.util.Map;
 /**
  * Help subcommand that lists the plugin's commands, optionally filtered by a search query.
  * <p>
- * Every sender may run it; entries are filtered by permission. Entries use
- * the main {@code /jfs} alias and never duplicate the standalone roots.
- * The bare {@code /jflyspeed} root shows this same listing.
+ * Senders with {@code jflyspeed.help} may run it (everyone by default);
+ * entries are filtered by permission. Entries use the main {@code /jfs}
+ * alias and never duplicate the standalone roots. The bare
+ * {@code /jflyspeed} root shows this same listing.
  */
 public class HelpCommand {
 
@@ -35,6 +36,7 @@ public class HelpCommand {
      */
     public LiteralArgumentBuilder<CommandSourceStack> node() {
         return Commands.literal("help")
+                .requires(CommandContext.requiresPermission(SpeedPermissions.HELP))
                 .executes(context -> {
                     showHelp(context.getSource(), null);
                     return Command.SINGLE_SUCCESS;

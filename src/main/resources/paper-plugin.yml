@@ -31,6 +31,9 @@ permissions:
   jflyspeed.reload:
     description: Reload the JFlySpeed configuration.
     default: op
+  jflyspeed.help:
+    description: View the JFlySpeed help listing.
+    default: true
   jflyspeed.version:
     description: View the JFlySpeed version.
     default: true
