@@ -56,6 +56,12 @@ public class PluginConfig extends OkaeriConfig {
     })
     private Commands commands = new Commands();
 
+    @Comment({
+            "Color palette used by every message via {plain-color}, {brand-color},",
+            "{highlight-color} and {error-color}. Values are MiniMessage color tags."
+    })
+    private Colors colors = new Colors();
+
     @Getter
     @Setter
     @SuppressWarnings("FieldMayBeFinal")
@@ -111,5 +117,23 @@ public class PluginConfig extends OkaeriConfig {
 
         @Comment("Registers the standalone /speed root command.")
         private boolean speed = true;
+    }
+
+    @Getter
+    @Setter
+    @SuppressWarnings("FieldMayBeFinal")
+    public static class Colors extends OkaeriConfig {
+
+        @Comment("MiniMessage color tag for normal message bodies, used via {plain-color}.")
+        private String plainColor = "<#b8d8e0>";
+
+        @Comment("MiniMessage color tag for brand accents, used via {brand-color}.")
+        private String brandColor = "<#84b8db>";
+
+        @Comment("MiniMessage color tag for highlighted words, used via {highlight-color}.")
+        private String highlightColor = "<#ebf1f2>";
+
+        @Comment("MiniMessage color tag for errors, used via {error-color}.")
+        private String errorColor = "<#e0867e>";
     }
 }
