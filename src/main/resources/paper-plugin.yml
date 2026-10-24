@@ -1,0 +1,25 @@
+name: ${name}
+version: ${version}
+main: ${main}
+api-version: "${apiVersion}"
+author: ${author}
+description: ${description}
+website: ${website}
+softdepend:
+  - PlaceholderAPI
+permissions:
+  jflyspeed.other:
+    description: Target other players with the speed commands (needs the matching speed permission too).
+    default: op
+  jflyspeed.flyspeed:
+    description: Change fly speed via flyspeed and speed fly.
+    default: op
+  jflyspeed.walkspeed:
+    description: Change walk speed via walkspeed and speed walk.
+    default: op
+  jflyspeed.reload:
+    description: Reload the JFlySpeed configuration.
+    default: op
+  jflyspeed.version:
+    description: View the JFlySpeed version.
+    default: true
