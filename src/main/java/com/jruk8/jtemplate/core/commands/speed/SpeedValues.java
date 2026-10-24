@@ -47,16 +47,6 @@ public final class SpeedValues {
     }
 
     /**
-     * Returns whether a scale value is usable (a real number from 0 to 10).
-     *
-     * @param scale the user-facing value to check
-     * @return {@code true} when the value is within range
-     */
-    public static boolean isValid(double scale) {
-        return !Double.isNaN(scale) && scale >= MIN_SCALE && scale <= MAX_SCALE;
-    }
-
-    /**
      * Converts a user-facing scale value to Bukkit's 0..1 range.
      *
      * @param type which speed channel (the vanilla pivot differs per channel)

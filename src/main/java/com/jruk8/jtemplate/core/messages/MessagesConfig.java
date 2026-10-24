@@ -100,10 +100,6 @@ public class MessagesConfig extends OkaeriConfig {
         private String invalid = "{prefix} {error-color}'<input>' is not a number. "
                 + "Use a value between 0 and 10.";
 
-        @Comment("Sent when the speed value is outside the 0-10 scale (use <input>)")
-        private String outOfRange = "{prefix} {error-color}'<input>' is out of range. "
-                + "Use a value between 0 and 10.";
-
         @Comment("Sent when console runs a speed command without a target selector")
         private String consoleNeedsTarget = "{prefix} {error-color}Run this from in game "
                 + "or specify a target player.";

@@ -145,12 +145,12 @@ public final class SpeedArgumentNodes {
                     Placeholder.parsed("input", input));
             return null;
         }
-        if (SpeedValues.isValid(scale)) {
-            return scale;
+        if (!Double.isFinite(scale)) {
+            ctx.error(source,
+                    m -> m.getSpeed().getInvalid(),
+                    Placeholder.parsed("input", input));
+            return null;
         }
-        ctx.error(source,
-                m -> m.getSpeed().getOutOfRange(),
-                Placeholder.parsed("input", SpeedValues.format(scale)));
-        return null;
+        return SpeedValues.clampScale(scale);
     }
 }

@@ -120,8 +120,7 @@ from the `config.yml` palette:
   affected player (use `<type>` and `<value>`).
 - `speed.no-targets` - the target selector matched no players.
 - `speed.invalid` - the speed value is not a number (use `<input>`).
-- `speed.out-of-range` - the speed value is outside the 0–10 scale
-  (use `<input>`).
+  Values outside the 0–10 scale are clamped silently instead of erroring.
 - `speed.console-needs-target` - console ran a speed command without a
   target.
 - `speed.no-permission` - targeting others without `jflyspeed.other`.

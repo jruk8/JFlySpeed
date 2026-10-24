@@ -20,7 +20,7 @@
 # Features
 
 - **0–10 speed scale** » `1.0` is vanilla normal, `0.0` is frozen, `10`
-  is the Bukkit maximum; out-of-range values are rejected with an error.
+  is the Bukkit maximum; values outside 0–10 are clamped silently.
 - **Vanilla selectors** » `@p`, `@a`, `@r`, `@s` plus player names, with
   custom tab completion (selectors first, your own name first).
 - **Flexible roots** » `/flyspeed`, `/walkspeed` and `/speed` can each be

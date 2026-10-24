@@ -45,7 +45,7 @@ public class PluginConfig extends OkaeriConfig {
             "Players use a 0-10 scale where 1.0 is vanilla normal and 0.0 is frozen;",
             "fly maps 0-1 to Bukkit 0-0.1 and 1-10 to Bukkit 0.1-1, walk maps 0-1",
             "to Bukkit 0-0.2 and 1-10 to Bukkit 0.2-1 (no reverse speeds).",
-            "Values outside 0-10 are rejected with an error; the defaults below are clamped."
+            "Values outside 0-10 are clamped into range silently."
     })
     private Speed speed = new Speed();
 

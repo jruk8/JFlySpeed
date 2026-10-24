@@ -5,33 +5,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpeedValuesTest {
 
     private static final double DELTA = 1e-6;
-
-    @Nested
-    @DisplayName("isValid()")
-    class ValidityTests {
-
-        @Test
-        @DisplayName("should accept the 0-10 range including its bounds")
-        void shouldAcceptBounds() {
-            assertTrue(SpeedValues.isValid(0.0));
-            assertTrue(SpeedValues.isValid(5.5));
-            assertTrue(SpeedValues.isValid(10.0));
-        }
-
-        @Test
-        @DisplayName("should reject out-of-range values and NaN")
-        void shouldRejectOutsideRange() {
-            assertFalse(SpeedValues.isValid(-0.1));
-            assertFalse(SpeedValues.isValid(10.1));
-            assertFalse(SpeedValues.isValid(Double.NaN));
-        }
-    }
 
     @Nested
     @DisplayName("toBukkit() / toScale()")

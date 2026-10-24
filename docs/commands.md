@@ -27,8 +27,8 @@ Examples:
 
 - **`<speed>`** is a number on the 0–10 scale, where `1.0` is vanilla
   normal speed and `0.0` is frozen (see the README).
-  Non-numeric input and out-of-range values are rejected with their own
-  errors. **`reset`** restores the configured default instead.
+  Non-numeric input is rejected with an error; values outside 0–10 are
+  clamped silently. **`reset`** restores the configured default instead.
 - **`[targets]`** accepts vanilla selectors (`@p`, `@a`, `@r`, `@s`) and
   player names. An omitted selector means yourself; console must always name
   a target. A selector matching nobody reports an error instead of failing
