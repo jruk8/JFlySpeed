@@ -29,7 +29,7 @@ public class MessagesConfig extends OkaeriConfig {
     public static class CoreMessages extends OkaeriConfig {
 
         @Comment("Prefix appended before messages (use {prefix} in other messages)")
-        private String prefix = "<gray>[<gradient:#5e42f4:#b742f4>JTemplate</gradient>]</gray> <gray>»</gray> ";
+        private String prefix = "<gray>[<gradient:#5e42f4:#b742f4>JFlySpeed</gradient>]</gray> <gray>»</gray> ";
 
         @Comment("Message sent on plugin reload")
         private String reloadSuccess = "{prefix}<green>Configuration successfully reloaded in <time>ms!</green>";

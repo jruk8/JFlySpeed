@@ -39,7 +39,7 @@ public final class AuthorsCommandUsageListener implements Listener {
 
     /**
      * Returns whether a raw command message is an execution of a tracked
-     * command, e.g. {@code "/jtemplate authors"} or {@code "/jt authors"}.
+     * command, e.g. {@code "/jflyspeed version"} or {@code "/jf version"}.
      * Upper/lower case is ignored.
      *
      * @param message the event message (starts with {@code /})

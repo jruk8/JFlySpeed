@@ -10,7 +10,7 @@ import java.util.List;
  * The template PlaceholderAPI expansion.
  * <p>
  * The {@code identifier} (placeholder prefix) is configurable and defaults to
- * {@code jtemplate}. Add new placeholder names as additional switch cases.
+ * {@code jflyspeed}. Add new placeholder names as additional switch cases.
  */
 public final class AuthorsCommandUsageExpansion extends PlaceholderExpansion {
 

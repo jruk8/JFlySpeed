@@ -30,7 +30,7 @@ public class PluginConfig extends OkaeriConfig {
 
     @Comment({
             "PlaceholderAPI placeholder settings.",
-            "Placeholders are exposed as %<identifier>_<name>%, e.g. %jtemplate_authors_command_uses%."
+            "Placeholders are exposed as %<identifier>_<name>%, e.g. %jflyspeed_authors_command_uses%."
     })
     private Placeholders placeholders = new Placeholders();
 
@@ -65,14 +65,14 @@ public class PluginConfig extends OkaeriConfig {
         private boolean enabled = true;
 
         @Comment({"Identifier prefix shared by all placeholders.",
-                "Example: with 'jtemplate', the authors placeholder is %jtemplate_authors_command_uses%."})
-        private String identifier = "jtemplate";
+                "Example: with 'jflyspeed', the usage placeholder is %jflyspeed_authors_command_uses%."})
+        private String identifier = "jflyspeed";
 
-        @Comment("The command that the template placeholders track (without a leading slash).")
-        private String command = "authors";
+        @Comment("The command that the placeholders track (without a leading slash).")
+        private String command = "version";
 
         @Comment("Base command labels (and aliases) that count as executions of the plugin's command.")
-        private List<String> labels = List.of("jtemplate", "jt");
+        private List<String> labels = List.of("jflyspeed", "jf");
     }
 
     @Getter
@@ -81,7 +81,7 @@ public class PluginConfig extends OkaeriConfig {
     public static class Storage extends OkaeriConfig {
 
         @Comment("Name of the SQLite database file created in the plugin's data folder.")
-        private String dbFile = "jtemplate.db";
+        private String dbFile = "jflyspeed.db";
     }
 
     @Getter
