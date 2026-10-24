@@ -5,8 +5,16 @@ api-version: "${apiVersion}"
 author: ${author}
 description: ${description}
 website: ${website}
-softdepend:
-  - PlaceholderAPI
+# Paper's loader ignores Bukkit's legacy softdepend key (and without a declared
+# relationship PlaceholderAPI's classes are invisible to this plugin), so the
+# optional dependency is declared here: load after PAPI when it is present and
+# join its classpath so the expansion classes resolve.
+dependencies:
+  server:
+    PlaceholderAPI:
+      load: AFTER
+      required: false
+      join-classpath: true
 permissions:
   jflyspeed.other:
     description: Target other players with the speed commands (needs the matching speed permission too).
