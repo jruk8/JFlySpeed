@@ -30,7 +30,7 @@ src/main/java/com/jruk8/jtemplate/core/
   Bootstrap/Reloadable      registrar contracts; Reloader re-runs every Reloadable
   commands/                 Paper Brigadier nodes (Commands.literal/argument) + registrars
     speed/                  /flyspeed, /walkspeed, /speed: parsing, selectors, execution
-    user/                   /jflyspeed help + version (alias /jf)
+    user/                   /jflyspeed help + version (aliases /jfs, /jf)
     admin/reload/           /jflyspeed reload
   configs/                  Okaeri schema (PluginConfig) + ConfigRegistrar loader
   messages/                 MiniMessage parsing (MessageParser) + dispatch (Messenger)
@@ -71,7 +71,8 @@ created once and injected.
 5. **Messages go through the services.** All player and console text runs
    through `Messenger` and the `MessagesConfig` keys; all sounds run
    through `SoundPlayer` and `SoundsConfig`. Messages are strictly
-   MiniMessage. New message keys ship with every sibling key covered,
+   MiniMessage: plugin placeholders use `{braces}`, angle brackets are
+   raw MiniMessage. New message keys ship with every sibling key covered,
    in the same change.
 6. **Respect the main thread.** Bukkit API calls run on the main thread;
    recurring or blocking work (the update check) stays async.

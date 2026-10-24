@@ -12,13 +12,14 @@ and SQLite storage -- all wired without a DI framework.
 - **Selectors** -- vanilla `@p`, `@a`, `@r`, `@s` plus player names, with
   custom tab completion (selectors first, your own name first).
 - **Flexible roots** -- `/flyspeed`, `/walkspeed` and `/speed` can each be
-  toggled independently; `/jflyspeed` (alias `/jf`) always works.
+  toggled independently; `/jflyspeed` (aliases `/jfs`, `/jf`) always works.
 - **Small modules** -- one package per concern, each self-contained and easy
   to delete or extend.
 - **Manual wiring** - a registrar per module (`Bootstrap`) composes services;
   `JTemplatePlugin` is the single composition root.
-- **Placeholders** - a PlaceholderAPI expansion counting command executions,
-  with a configurable identifier.
+- **Placeholders** - a PlaceholderAPI expansion (`%jf_uses%`,
+  `%jf_fly_uses%`, `%jf_walk_uses%`, plus per-player variants) counting
+  command executions.
 - **SQLite storage** -- generic per-player / global counters in
   `jflyspeed.db`, driven by the server's bundled JDBC driver.
 - **Reloadable** -- `/jflyspeed reload` re-reads every config and re-opens

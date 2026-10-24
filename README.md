@@ -15,7 +15,7 @@
 
 **That's it!** Your fly speed is set on a friendly 0–10 scale where
 `1.0` is normal vanilla speed. Try `/walkspeed 2 Steve`,
-`/speed fly reset @a`, or `/jf help` for the rest.
+`/speed fly reset @a`, or `/jfs help` for the rest.
 
 # Features
 
@@ -25,7 +25,7 @@
   custom tab completion (selectors first, your own name first).
 - **Flexible roots** » `/flyspeed`, `/walkspeed` and `/speed` can each be
   toggled independently, with configurable aliases (`/fly`, `/ws`, ...);
-  `/jflyspeed` (alias `/jf`) always works.
+  `/jflyspeed` (alias `/jfs`) always works.
 - **Reloadable** » `/jflyspeed reload` re-reads every config and re-opens
   storage and placeholders without a restart.
 - **Also for serious deployment** » MiniMessage, sounds, PAPI placeholders,
@@ -44,7 +44,7 @@
 | --- | --- |
 | `/flyspeed [<speed>\|reset] [targets]` | Set or reset fly speed (aliases `/fspeed`, `/fs`, `/fly`). |
 | `/walkspeed [<speed>\|reset] [targets]` | Set or reset walk speed (aliases `/wspeed`, `/ws`, `/walk`). |
-| `/speed <speed> [targets]` | Set speed for your current mode (flying → fly, else walk). |
+| `/speed <speed> [targets]` | Set both fly and walk speed. |
 | `/speed fly\|walk [<speed>\|reset] [targets]` | Set or reset one speed channel. |
 | `/speed reset [targets]` | Reset both fly and walk speed. |
 | `/jflyspeed <help\|version\|reload>` | Help, version, and config reload (alias `/jfs`). |
@@ -63,6 +63,7 @@ defaults (`1`, `2`, `5`, `10`). Full table and examples live in
 | `jflyspeed.walkspeed` | Change walk speed. | OP |
 | `jflyspeed.other` | Target other players (needs the matching speed permission too). | OP |
 | `jflyspeed.reload` | Use `/jflyspeed reload`. | OP |
+| `jflyspeed.help` | Use `/jflyspeed help` (entries are permission-filtered). | Everyone |
 | `jflyspeed.version` | Use `/jflyspeed version`. | Everyone |
 
 # Configuration
@@ -70,13 +71,14 @@ defaults (`1`, `2`, `5`, `10`). Full table and examples live in
 First start generates `config.yml`, `messages.yml` and `sounds.yml` in
 `plugins/JFlySpeed/`:
 
+- `updateChecker` » the async GitHub update check (console log,
+  join notice, `/version` line).
+- `aliases` » extra labels for the `/jflyspeed` root (restart to apply).
+- `storage` » the SQLite database file.
 - `speed` » default fly/walk speeds restored by `reset`.
 - `commands` » the `/flyspeed`, `/walkspeed`, `/speed` root toggles
   (restart to apply).
-- `aliases` » extra labels for the `/jflyspeed` root (restart to apply).
 - `colors` » the shared message color palette.
-- `update-checker` » the async GitHub update check (console log,
-  join notice, `/version` line).
 - `messages.yml` / `sounds.yml` » every message and the sound played
   for each feedback event.
 

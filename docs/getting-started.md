@@ -25,7 +25,7 @@
 /jflyspeed version
 ```
 
-`/jf` is a built-in alias for `/jflyspeed`. Speeds use the 0–10 scale (see
+`/jfs` is the main alias for `/jflyspeed` (`/jf` also works). Speeds use the 0–10 scale (see
 the README); `reset` restores the configured defaults. The placeholders
 count your speed command executions: run a few commands, install
 PlaceholderAPI, and try `%jf_uses%` in a scoreboard or chat.
