@@ -8,7 +8,7 @@
 
 </div>
 
-# Quick Start 🚀
+# Quick Start 🏃
 
 1. Drop the jar into `plugins/` and restart the server.
 2. Run **`/flyspeed 2`**.
