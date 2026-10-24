@@ -2,6 +2,8 @@ package com.jruk8.jtemplate.core.commands.user.version;
 
 import com.jruk8.jtemplate.core.commands.CommandContext;
 import com.jruk8.jtemplate.core.commands.SpeedPermissions;
+import com.jruk8.jtemplate.core.update.UpdateAvailable;
+import com.jruk8.jtemplate.core.update.UpdateCheckService;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -19,11 +21,18 @@ public class VersionCommand {
     private final AuthorFormatter authorFormatter;
     private final CommandContext ctx;
     private final PluginMeta pluginMeta;
+    private final UpdateCheckService updateChecks;
 
-    public VersionCommand(AuthorFormatter authorFormatter, CommandContext ctx, PluginMeta pluginMeta) {
+    public VersionCommand(
+            AuthorFormatter authorFormatter,
+            CommandContext ctx,
+            PluginMeta pluginMeta,
+            UpdateCheckService updateChecks
+    ) {
         this.authorFormatter = authorFormatter;
         this.ctx = ctx;
         this.pluginMeta = pluginMeta;
+        this.updateChecks = updateChecks;
     }
 
     /**
@@ -50,6 +59,19 @@ public class VersionCommand {
                 m -> m.getCore().getVersionSuccess(),
                 Placeholder.parsed("version", version),
                 Placeholder.parsed("authors", authors)
+        );
+        if (sender.getSender().hasPermission(SpeedPermissions.RELOAD)) {
+            updateChecks.pendingUpdate().ifPresent(update -> sendUpdateNotice(sender, update));
+        }
+    }
+
+    private void sendUpdateNotice(CommandSourceStack sender, UpdateAvailable update) {
+        ctx.sendMessage(
+                sender,
+                m -> m.getCore().getUpdateAvailable(),
+                Placeholder.parsed("latest", update.latest()),
+                Placeholder.parsed("current", update.current()),
+                Placeholder.parsed("url", update.url())
         );
     }
 }

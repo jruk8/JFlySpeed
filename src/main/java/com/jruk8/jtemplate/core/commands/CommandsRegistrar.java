@@ -10,6 +10,7 @@ import com.jruk8.jtemplate.core.commands.speed.SpeedExecutor;
 import com.jruk8.jtemplate.core.commands.speed.WalkSpeedCommand;
 import com.jruk8.jtemplate.core.commands.user.UserCommandsRegistrar;
 import com.jruk8.jtemplate.core.configs.PluginConfig;
+import com.jruk8.jtemplate.core.update.UpdateCheckService;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
@@ -33,19 +34,22 @@ public class CommandsRegistrar implements Bootstrap {
     private final PluginMeta pluginMeta;
     private final PluginConfig pluginConfig;
     private final SpeedExecutor speedExecutor;
+    private final UpdateCheckService updateChecks;
 
     public CommandsRegistrar(LifecycleEventManager<Plugin> lifecycle,
                              Reloader reloader,
                              CommandContext commandContext,
                              PluginMeta pluginMeta,
                              PluginConfig pluginConfig,
-                             SpeedExecutor speedExecutor) {
+                             SpeedExecutor speedExecutor,
+                             UpdateCheckService updateChecks) {
         this.lifecycle = lifecycle;
         this.reloader = reloader;
         this.commandContext = commandContext;
         this.pluginMeta = pluginMeta;
         this.pluginConfig = pluginConfig;
         this.speedExecutor = speedExecutor;
+        this.updateChecks = updateChecks;
     }
 
     @Override
@@ -53,7 +57,7 @@ public class CommandsRegistrar implements Bootstrap {
         lifecycle.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             var root = Commands.literal("jflyspeed");
             var commands = pluginConfig.getCommands();
-            new UserCommandsRegistrar(root, commandContext, pluginMeta, commands).register();
+            new UserCommandsRegistrar(root, commandContext, pluginMeta, commands, updateChecks).register();
             new AdminCommandsRegistrar(root, commandContext, reloader, pluginConfig).register();
             new SpeedCommandsRegistrar(root, commandContext, speedExecutor).register();
             event.registrar().register(root.build(), "JFlySpeed commands", List.of("jf"));

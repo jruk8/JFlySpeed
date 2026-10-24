@@ -6,6 +6,7 @@ import com.jruk8.jtemplate.core.commands.user.help.HelpCommand;
 import com.jruk8.jtemplate.core.commands.user.version.AuthorFormatter;
 import com.jruk8.jtemplate.core.commands.user.version.VersionCommand;
 import com.jruk8.jtemplate.core.configs.PluginConfig;
+import com.jruk8.jtemplate.core.update.UpdateCheckService;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.configuration.PluginMeta;
@@ -19,15 +20,18 @@ public class UserCommandsRegistrar implements Bootstrap {
     private final CommandContext ctx;
     private final PluginMeta pluginMeta;
     private final PluginConfig.Commands commands;
+    private final UpdateCheckService updateChecks;
 
     public UserCommandsRegistrar(LiteralArgumentBuilder<CommandSourceStack> root,
                                  CommandContext commandContext,
                                  PluginMeta pluginMeta,
-                                 PluginConfig.Commands commands) {
+                                 PluginConfig.Commands commands,
+                                 UpdateCheckService updateChecks) {
         this.root = root;
         this.ctx = commandContext;
         this.pluginMeta = pluginMeta;
         this.commands = commands;
+        this.updateChecks = updateChecks;
     }
 
     @Override
@@ -38,6 +42,6 @@ public class UserCommandsRegistrar implements Bootstrap {
                 commands.isWalkspeed(),
                 commands.isSpeed()
         ).node());
-        root.then(new VersionCommand(new AuthorFormatter(), ctx, pluginMeta).node());
+        root.then(new VersionCommand(new AuthorFormatter(), ctx, pluginMeta, updateChecks).node());
     }
 }

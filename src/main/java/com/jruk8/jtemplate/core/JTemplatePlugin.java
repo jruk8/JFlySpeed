@@ -10,6 +10,7 @@ import com.jruk8.jtemplate.core.messages.Messenger;
 import com.jruk8.jtemplate.core.placeholders.PlaceholdersBootstrap;
 import com.jruk8.jtemplate.core.sounds.SoundPlayer;
 import com.jruk8.jtemplate.core.storage.StorageBootstrap;
+import com.jruk8.jtemplate.core.update.UpdateCheckerBootstrap;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -50,8 +51,19 @@ public final class JTemplatePlugin extends JavaPlugin {
         // Initialize sound player
         var soundPlayer = new SoundPlayer(logger);
 
+        // Initialize update checker
+        var updateChecker = new UpdateCheckerBootstrap(
+                this,
+                configRegistrar.getPluginConfig(),
+                messenger,
+                configRegistrar.getMessagesConfig(),
+                logger
+        );
+        updateChecker.register();
+        reloader.register(updateChecker);
+
         // Initialize commands
-        setupCommands(reloader, configRegistrar, messenger, soundPlayer);
+        setupCommands(reloader, configRegistrar, messenger, soundPlayer, updateChecker);
 
         // Initialize storage and placeholders
         setupStorageAndPlaceholders(logger, reloader, configRegistrar);
@@ -65,7 +77,8 @@ public final class JTemplatePlugin extends JavaPlugin {
             Reloader reloader,
             ConfigRegistrar configRegistrar,
             Messenger messenger,
-            SoundPlayer soundPlayer
+            SoundPlayer soundPlayer,
+            UpdateCheckerBootstrap updateChecker
     ) {
         var context = new CommandContext(
                 configRegistrar.getMessagesConfig(),
@@ -76,7 +89,7 @@ public final class JTemplatePlugin extends JavaPlugin {
         var speedExecutor = new SpeedExecutor(context, new SpeedService(configRegistrar.getPluginConfig()));
         var commandRegistrar = new CommandsRegistrar(
                 getLifecycleManager(), reloader, context, getPluginMeta(),
-                configRegistrar.getPluginConfig(), speedExecutor);
+                configRegistrar.getPluginConfig(), speedExecutor, updateChecker.getService());
         commandRegistrar.register();
     }
 
