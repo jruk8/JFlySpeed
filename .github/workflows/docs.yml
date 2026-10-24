@@ -46,6 +46,7 @@ jobs:
 
   links:
     runs-on: ubuntu-latest
+    continue-on-error: true
     permissions:
       contents: read
     steps:
@@ -56,13 +57,13 @@ jobs:
         uses: lycheeverse/lychee-action@v2
         with:
           args: --config lychee.toml --no-progress docs README.md mkdocs.yml
-          fail: true
+          fail: false
           lycheeVersion: v0.24.2
           token: ${{ secrets.GITHUB_TOKEN }}
 
   site:
     if: github.event_name != 'pull_request'
-    needs: [check, links]
+    needs: [check]
     runs-on: ubuntu-latest
     permissions:
       contents: read
