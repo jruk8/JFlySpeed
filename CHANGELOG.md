@@ -1,4 +1,18 @@
 # Changelog
+## [1.1.0] - 2026-10-24
+
+### Features
+
+- Single reusable no-permission message
+
+> Replace the other-targeting message and the silent bare-root denial
+> with one core.noPermission key naming the missing node.
+
+
+### Miscellaneous
+
+- Update for v1.0.0 [skip ci]
+
 ## [1.0.0] - 2026-10-24
 
 ### Bug Fixes
