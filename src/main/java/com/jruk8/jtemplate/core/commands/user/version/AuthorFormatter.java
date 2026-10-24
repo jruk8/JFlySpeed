@@ -1,4 +1,4 @@
-package com.jruk8.jtemplate.core.commands.user.authors;
+package com.jruk8.jtemplate.core.commands.user.version;
 
 import java.util.List;
 

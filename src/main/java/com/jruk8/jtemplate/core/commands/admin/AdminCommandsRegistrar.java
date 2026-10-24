@@ -4,23 +4,28 @@ import com.jruk8.jtemplate.core.Bootstrap;
 import com.jruk8.jtemplate.core.Reloader;
 import com.jruk8.jtemplate.core.commands.CommandContext;
 import com.jruk8.jtemplate.core.commands.admin.reload.ReloadCommand;
-import org.incendo.cloud.annotations.AnnotationParser;
-import org.incendo.cloud.paper.util.sender.Source;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 
+/**
+ * Registers all admin subcommands on the plugin's root command node.
+ */
 public class AdminCommandsRegistrar implements Bootstrap {
 
-    private final AnnotationParser<Source> annotationParser;
-    private final Reloader reloader;
+    private final LiteralArgumentBuilder<CommandSourceStack> root;
     private final CommandContext ctx;
+    private final Reloader reloader;
 
-    public AdminCommandsRegistrar(AnnotationParser<Source> annotationParser, CommandContext ctx, Reloader reloader) {
-        this.annotationParser = annotationParser;
-        this.reloader = reloader;
+    public AdminCommandsRegistrar(LiteralArgumentBuilder<CommandSourceStack> root,
+                                  CommandContext ctx,
+                                  Reloader reloader) {
+        this.root = root;
         this.ctx = ctx;
+        this.reloader = reloader;
     }
 
     @Override
     public void register() {
-        annotationParser.parse(new ReloadCommand(reloader, ctx));
+        root.then(new ReloadCommand(reloader, ctx).node());
     }
 }

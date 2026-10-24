@@ -1,6 +1,6 @@
 package com.jruk8.jtemplate.core.commands.user;
 
-import com.jruk8.jtemplate.core.commands.user.authors.AuthorFormatter;
+import com.jruk8.jtemplate.core.commands.user.version.AuthorFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

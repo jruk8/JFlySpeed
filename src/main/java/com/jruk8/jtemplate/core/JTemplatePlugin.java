@@ -2,6 +2,8 @@ package com.jruk8.jtemplate.core;
 
 import com.jruk8.jtemplate.core.commands.CommandContext;
 import com.jruk8.jtemplate.core.commands.CommandsRegistrar;
+import com.jruk8.jtemplate.core.commands.speed.SpeedExecutor;
+import com.jruk8.jtemplate.core.commands.speed.SpeedService;
 import com.jruk8.jtemplate.core.configs.ConfigRegistrar;
 import com.jruk8.jtemplate.core.messages.MessageBootstrap;
 import com.jruk8.jtemplate.core.messages.Messenger;
@@ -9,11 +11,6 @@ import com.jruk8.jtemplate.core.placeholders.PlaceholdersBootstrap;
 import com.jruk8.jtemplate.core.sounds.SoundPlayer;
 import com.jruk8.jtemplate.core.storage.StorageBootstrap;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.incendo.cloud.annotations.AnnotationParser;
-import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.paper.PaperCommandManager;
-import org.incendo.cloud.paper.util.sender.Source;
-import org.incendo.cloud.paper.util.sender.PaperSimpleSenderMapper;
 
 import java.util.logging.Logger;
 
@@ -70,18 +67,16 @@ public final class JTemplatePlugin extends JavaPlugin {
             Messenger messenger,
             SoundPlayer soundPlayer
     ) {
-        var commandManager = PaperCommandManager.builder(PaperSimpleSenderMapper.simpleSenderMapper())
-                .executionCoordinator(ExecutionCoordinator.simpleCoordinator())
-                .buildOnEnable(this);
-        var annotationParser = new AnnotationParser<>(commandManager, Source.class);
         var context = new CommandContext(
                 configRegistrar.getMessagesConfig(),
                 configRegistrar.getSoundsConfig(),
                 messenger,
                 soundPlayer
         );
+        var speedExecutor = new SpeedExecutor(context, new SpeedService(configRegistrar.getPluginConfig()));
         var commandRegistrar = new CommandsRegistrar(
-                commandManager, annotationParser, reloader, context, getPluginMeta());
+                getLifecycleManager(), reloader, context, getPluginMeta(),
+                configRegistrar.getPluginConfig(), speedExecutor);
         commandRegistrar.register();
     }
 

@@ -37,8 +37,8 @@ public class MessagesConfig extends OkaeriConfig {
         @Comment("Message sent on help command")
         private String helpHeader = "\n{prefix}<#b742f4>Available commands:</#b742f4>";
 
-        @Comment("Format for author command success")
-        private String authorSuccess = "{prefix}Version <version>\n<white>» <gray>Authors:</gray> <authors>";
+        @Comment("Format for version command success (use <version> and <authors>)")
+        private String versionSuccess = "{prefix}Version <version>\n<white>» <gray>Authors:</gray> <authors>";
 
         @Comment("Format for each help entry (use <syntax> and <description>)")
         private String helpEntryFormat = "<white>» <gray><syntax></gray> - <description></white>";
