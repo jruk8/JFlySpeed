@@ -26,7 +26,7 @@ class SpeedServiceTest {
         void shouldSetFlySpeed() {
             Player player = mock(Player.class);
 
-            service().setSpeed(player, SpeedType.FLY, 5.5);
+            service().setSpeed(player, SpeedType.FLY, 1.0);
 
             verify(player).setFlySpeed(floatThat(value -> Math.abs(value - 0.1f) < 1e-6));
         }

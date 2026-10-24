@@ -26,7 +26,7 @@ public class SpeedService {
      * @param scale the user-facing value (0 to 10)
      */
     public void setSpeed(Player player, SpeedType type, double scale) {
-        apply(player, type, SpeedValues.toBukkit(scale));
+        apply(player, type, SpeedValues.toBukkit(type, scale));
     }
 
     /**
@@ -38,7 +38,7 @@ public class SpeedService {
      */
     public double resetSpeed(Player player, SpeedType type) {
         double def = defaultScale(type);
-        apply(player, type, SpeedValues.toBukkit(def));
+        apply(player, type, SpeedValues.toBukkit(type, def));
         return def;
     }
 

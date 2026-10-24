@@ -42,8 +42,9 @@ public class PluginConfig extends OkaeriConfig {
 
     @Comment({
             "Speed settings.",
-            "Players use a 0-10 scale, converted linearly to Bukkit's -1..1 range",
-            "(bukkit = scale / 5 - 1, so 0 -> -1, 5 -> 0 and 10 -> 1).",
+            "Players use a 0-10 scale where 1.0 is vanilla normal and 0.0 is frozen;",
+            "fly maps 0-1 to Bukkit 0-0.1 and 1-10 to Bukkit 0.1-1, walk maps 0-1",
+            "to Bukkit 0-0.2 and 1-10 to Bukkit 0.2-1 (no reverse speeds).",
             "Values outside 0-10 are rejected with an error; the defaults below are clamped."
     })
     private Speed speed = new Speed();
@@ -100,11 +101,11 @@ public class PluginConfig extends OkaeriConfig {
     public static class Speed extends OkaeriConfig {
 
         @Comment({"Default fly speed on the 0-10 scale, restored by 'reset'.",
-                "Vanilla equivalent: 5.5 (= Bukkit 0.1)."})
+                "1.0 = vanilla normal (Bukkit 0.1); 0.0 = frozen."})
         private double defaultFlySpeed = SpeedValues.DEFAULT_FLY_SCALE;
 
         @Comment({"Default walk speed on the 0-10 scale, restored by 'reset'.",
-                "Vanilla equivalent: 6.0 (= Bukkit 0.2)."})
+                "1.0 = vanilla normal (Bukkit 0.2); 0.0 = frozen."})
         private double defaultWalkSpeed = SpeedValues.DEFAULT_WALK_SCALE;
     }
 

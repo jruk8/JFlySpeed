@@ -38,24 +38,44 @@ class SpeedValuesTest {
     class ConversionTests {
 
         @Test
-        @DisplayName("should map 0, 5 and 10 to -1, 0 and 1")
-        void shouldMapAnchorPoints() {
-            assertEquals(-1.0f, SpeedValues.toBukkit(0.0), DELTA);
-            assertEquals(0.0f, SpeedValues.toBukkit(5.0), DELTA);
-            assertEquals(1.0f, SpeedValues.toBukkit(10.0), DELTA);
+        @DisplayName("should map fly 0, 1 and 10 to Bukkit 0, 0.1 and 1")
+        void shouldMapFlyAnchorPoints() {
+            assertEquals(0.0f, SpeedValues.toBukkit(SpeedType.FLY, 0.0), DELTA);
+            assertEquals(0.1f, SpeedValues.toBukkit(SpeedType.FLY, 1.0), DELTA);
+            assertEquals(1.0f, SpeedValues.toBukkit(SpeedType.FLY, 10.0), DELTA);
+        }
+
+        @Test
+        @DisplayName("should map walk 0, 1 and 10 to Bukkit 0, 0.2 and 1")
+        void shouldMapWalkAnchorPoints() {
+            assertEquals(0.0f, SpeedValues.toBukkit(SpeedType.WALK, 0.0), DELTA);
+            assertEquals(0.2f, SpeedValues.toBukkit(SpeedType.WALK, 1.0), DELTA);
+            assertEquals(1.0f, SpeedValues.toBukkit(SpeedType.WALK, 10.0), DELTA);
+        }
+
+        @Test
+        @DisplayName("should interpolate both segments of each channel")
+        void shouldInterpolateSegments() {
+            assertEquals(0.05f, SpeedValues.toBukkit(SpeedType.FLY, 0.5), DELTA);
+            assertEquals(0.55f, SpeedValues.toBukkit(SpeedType.FLY, 5.5), DELTA);
+            assertEquals(0.1f, SpeedValues.toBukkit(SpeedType.WALK, 0.5), DELTA);
+            assertEquals(0.6f, SpeedValues.toBukkit(SpeedType.WALK, 5.5), DELTA);
         }
 
         @Test
         @DisplayName("should map the vanilla defaults to Bukkit 0.1 and 0.2")
         void shouldMapVanillaDefaults() {
-            assertEquals(0.1f, SpeedValues.toBukkit(SpeedValues.DEFAULT_FLY_SCALE), DELTA);
-            assertEquals(0.2f, SpeedValues.toBukkit(SpeedValues.DEFAULT_WALK_SCALE), DELTA);
+            assertEquals(0.1f, SpeedValues.toBukkit(SpeedType.FLY, SpeedValues.DEFAULT_FLY_SCALE), DELTA);
+            assertEquals(0.2f, SpeedValues.toBukkit(SpeedType.WALK, SpeedValues.DEFAULT_WALK_SCALE), DELTA);
         }
 
         @Test
-        @DisplayName("should round-trip through both directions")
+        @DisplayName("should round-trip through both directions per channel")
         void shouldRoundTrip() {
-            assertEquals(7.25, SpeedValues.toScale(SpeedValues.toBukkit(7.25)), DELTA);
+            assertEquals(7.25, SpeedValues.toScale(SpeedType.FLY, SpeedValues.toBukkit(SpeedType.FLY, 7.25)), DELTA);
+            assertEquals(7.25, SpeedValues.toScale(SpeedType.WALK, SpeedValues.toBukkit(SpeedType.WALK, 7.25)), DELTA);
+            assertEquals(0.25, SpeedValues.toScale(SpeedType.FLY, SpeedValues.toBukkit(SpeedType.FLY, 0.25)), DELTA);
+            assertEquals(0.75, SpeedValues.toScale(SpeedType.WALK, SpeedValues.toBukkit(SpeedType.WALK, 0.75)), DELTA);
         }
     }
 
