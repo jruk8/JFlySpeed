@@ -7,8 +7,8 @@ and SQLite storage -- all wired without a DI framework.
 
 ## Key Features
 
-- **0-10 speed scale** -- players type `/flyspeed 7`, converted linearly to
-  Bukkit's `-1..1` range; out-of-range values are rejected with an error.
+- **0-10 speed scale** -- `1.0` is vanilla normal, `0.0` is frozen,
+  `10` is the Bukkit maximum; out-of-range values are rejected with an error.
 - **Selectors** -- vanilla `@p`, `@a`, `@r`, `@s` plus player names, with
   custom tab completion (selectors first, your own name first).
 - **Flexible roots** -- `/flyspeed`, `/walkspeed` and `/speed` can each be

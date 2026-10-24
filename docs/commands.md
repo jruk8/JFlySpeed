@@ -25,7 +25,8 @@ Examples:
 /speed reset @p            # reset the nearest player's fly and walk speed
 ```
 
-- **`<speed>`** is a number on the 0–10 scale (see the README).
+- **`<speed>`** is a number on the 0–10 scale, where `1.0` is vanilla
+  normal speed and `0.0` is frozen (see the README).
   Non-numeric input and out-of-range values are rejected with their own
   errors. **`reset`** restores the configured default instead.
 - **`[targets]`** accepts vanilla selectors (`@p`, `@a`, `@r`, `@s`) and

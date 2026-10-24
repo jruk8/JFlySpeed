@@ -13,13 +13,14 @@
 1. Drop the jar into `plugins/` and restart the server.
 2. Run **`/flyspeed 7`**.
 
-**That's it!** Your fly speed is set on a friendly 0–10 scale. Try
-`/walkspeed 6 Steve`, `/speed fly reset @a`, or `/jf help` for the rest.
+**That's it!** Your fly speed is set on a friendly 0–10 scale where
+`1.0` is normal vanilla speed. Try `/walkspeed 2 Steve`,
+`/speed fly reset @a`, or `/jf help` for the rest.
 
 # Features
 
-- **0–10 speed scale** » Players type `/flyspeed 7`, converted linearly to
-  Bukkit's `-1..1` range; out-of-range values are rejected with an error.
+- **0–10 speed scale** » `1.0` is vanilla normal, `0.0` is frozen, `10`
+  is the Bukkit maximum; out-of-range values are rejected with an error.
 - **Vanilla selectors** » `@p`, `@a`, `@r`, `@s` plus player names, with
   custom tab completion (selectors first, your own name first).
 - **Flexible roots** » `/flyspeed`, `/walkspeed` and `/speed` can each be

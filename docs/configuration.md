@@ -1,7 +1,7 @@
 # Configuration
 
 The plugin writes `config.yml`, `messages.yml` and `sounds.yml` into its data
-folder (`plugins/JFlySpeed/`) on first start. Edit a file and run
+folder (`plugins/JFlyspeed/`) on first start. Edit a file and run
 `/jflyspeed reload` to apply the changes without restarting the server
 (command registration is the exception — see `commands` below).
 
@@ -19,8 +19,8 @@ placeholders:
 storage:
   db-file: jflyspeed.db
 speed:
-  default-fly-speed: 5.5
-  default-walk-speed: 6.0
+  default-fly-speed: 1.0
+  default-walk-speed: 1.0
 commands:
   flyspeed: true
   walkspeed: true
@@ -62,9 +62,11 @@ Settings for the PlaceholderAPI expansion (see
 ### `speed`
 
 - `default-fly-speed` / `default-walk-speed` - the values `reset` restores,
-  on the user-facing 0–10 scale (`bukkit = scale / 5 - 1`, so `0 → -1`,
-  `5 → 0`, `10 → 1`). The defaults `5.5`/`6.0` are the vanilla equivalents
-  of Bukkit `0.1`/`0.2`. Misconfigured values are clamped into range.
+  on the user-facing 0–10 scale. `1.0` is vanilla normal on both channels,
+  `0.0` is frozen (Bukkit `0`), `10` is the Bukkit maximum (`1.0`); there
+  are no reverse speeds. Fly maps `0–1` to Bukkit `0–0.1` and `1–10` to
+  Bukkit `0.1–1`; walk maps `0–1` to Bukkit `0–0.2` and `1–10` to Bukkit
+  `0.2–1`. Misconfigured values are clamped into range.
 
 ### `commands`
 
