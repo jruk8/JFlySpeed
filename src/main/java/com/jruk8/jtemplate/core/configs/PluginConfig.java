@@ -1,5 +1,6 @@
 package com.jruk8.jtemplate.core.configs;
 
+import com.jruk8.jtemplate.core.commands.speed.SpeedValues;
 import com.jruk8.jtemplate.core.messages.MessageFormat;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Header;
@@ -39,6 +40,22 @@ public class PluginConfig extends OkaeriConfig {
     })
     private Storage storage = new Storage();
 
+    @Comment({
+            "Speed settings.",
+            "Players use a 0-10 scale, converted linearly to Bukkit's -1..1 range",
+            "(bukkit = scale / 5 - 1, so 0 -> -1, 5 -> 0 and 10 -> 1).",
+            "Values outside 0-10 are rejected with an error; the defaults below are clamped."
+    })
+    private Speed speed = new Speed();
+
+    @Comment({
+            "Standalone root commands. Each toggle registers (or hides) its root command.",
+            "The /jflyspeed subcommands always exist, so disabling a root keeps the",
+            "feature available under /jflyspeed (alias /jf) only.",
+            "Toggles apply on restart; /jflyspeed reload does not re-register commands."
+    })
+    private Commands commands = new Commands();
+
     @Getter
     @Setter
     @SuppressWarnings("FieldMayBeFinal")
@@ -65,5 +82,34 @@ public class PluginConfig extends OkaeriConfig {
 
         @Comment("Name of the SQLite database file created in the plugin's data folder.")
         private String dbFile = "jtemplate.db";
+    }
+
+    @Getter
+    @Setter
+    @SuppressWarnings("FieldMayBeFinal")
+    public static class Speed extends OkaeriConfig {
+
+        @Comment({"Default fly speed on the 0-10 scale, restored by 'reset'.",
+                "Vanilla equivalent: 5.5 (= Bukkit 0.1)."})
+        private double defaultFlySpeed = SpeedValues.DEFAULT_FLY_SCALE;
+
+        @Comment({"Default walk speed on the 0-10 scale, restored by 'reset'.",
+                "Vanilla equivalent: 6.0 (= Bukkit 0.2)."})
+        private double defaultWalkSpeed = SpeedValues.DEFAULT_WALK_SCALE;
+    }
+
+    @Getter
+    @Setter
+    @SuppressWarnings("FieldMayBeFinal")
+    public static class Commands extends OkaeriConfig {
+
+        @Comment("Registers the standalone /flyspeed root command.")
+        private boolean flyspeed = true;
+
+        @Comment("Registers the standalone /walkspeed root command.")
+        private boolean walkspeed = true;
+
+        @Comment("Registers the standalone /speed root command.")
+        private boolean speed = true;
     }
 }
