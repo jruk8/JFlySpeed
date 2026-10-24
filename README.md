@@ -79,6 +79,7 @@ plugs it into the plugin.
 | `core.sounds` | Config-driven sound playback. |
 | `core.placeholders` | PlaceholderAPI expansion that counts command executions. |
 | `core.storage` | Generic SQLite key/value storage (`jflyspeed.db`). |
+| `core.update` | Async Modrinth update checker (console + join + `/version` notices). |
 
 ## Build, test, checkstyle
 

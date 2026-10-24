@@ -25,6 +25,14 @@ commands:
   flyspeed: true
   walkspeed: true
   speed: true
+colors:
+  plain-color: '<#b8d8e0>'
+  brand-color: '<#84b8db>'
+  highlight-color: '<#ebf1f2>'
+  error-color: '<#e0867e>'
+update-checker:
+  enabled: true
+  project-slug: jflyspeed
 ```
 
 ### `message-format`
@@ -63,30 +71,58 @@ Settings for the PlaceholderAPI expansion (see
 Each toggle registers (or hides) its standalone root command. The
 `/jflyspeed` subcommands always exist, so e.g. `flyspeed: false` keeps the
 feature available as `/jflyspeed flyspeed` (or `/jf flyspeed`) only.
-Toggles apply on restart; `/jflyspeed reload` does not re-register commands.
+Toggles apply on restart: Paper registers commands once during enable and
+offers no unregister API, so `/jflyspeed reload` cannot re-register them —
+it tells you when toggles changed and a restart is needed.
+
+### `colors`
+
+The message color palette. Every `messages.yml` entry uses these via
+`{plain-color}`, `{brand-color}`, `{highlight-color}` and `{error-color}`,
+resolved when the message is rendered — editing a color and reloading is
+enough, the messages themselves never hardcode colors.
+
+### `update-checker`
+
+- `enabled` - checks Modrinth for new releases on enable and on reload.
+  The check runs asynchronously; findings go to the console and in-game to
+  players holding `jflyspeed.reload` (on join and via `/jflyspeed version`).
+- `project-slug` - the Modrinth project slug. Placeholder until JFlyspeed
+  is published — then it must be replaced with the real slug.
 
 ## messages.yml
 
 The plugin messages, in MiniMessage or legacy format depending on
-`message-format`:
+`message-format`. Every message starts with `{prefix}`, and colors come
+from the `config.yml` palette:
 
 - `core.prefix` - prefix prepended via the `{prefix}` placeholder.
-- `core.reload-success` - message after a successful reload (use `<time>`).
+- `core.reload-success` / `core.reload-failure` - reload outcome
+  (use `<time>`).
+- `core.reload-restart-required` - shown when command toggles changed and
+  need a restart to apply.
 - `core.help-header` / `core.help-entry-format` - help command layout
   (use `<syntax>` and `<description>`).
 - `core.version-success` - version command output (use `<version>` and
   `<authors>`).
+- `core.update-available` - update notice (use `<latest>`, `<current>`
+  and `<url>`).
 - `speed.set-self` / `speed.reset-self` - feedback for self-targeting
   changes (use `<type>` and `<value>`).
-- `speed.set-sender` / `speed.reset-sender` - summary for the sender when
-  others are targeted (use `<type>`, `<value>` and `<targets>`).
+- `speed.set-other` / `speed.reset-other` - summary for the sender when
+  one other player is targeted (use `<type>`, `<value>` and `<targets>`).
+- `speed.set-multiple` / `speed.reset-multiple` - summary for the sender
+  when several players are targeted (use `<type>`, `<value>`, `<count>`
+  and `<targets>`).
 - `speed.set-target` / `speed.reset-target` - notification sent to each
   affected player (use `<type>` and `<value>`).
-- `speed.invalid-speed` - rejected out-of-range value (use `<input>`).
-- `speed.console-requires-target` - console ran a speed command without a
+- `speed.no-targets` - the target selector matched no players.
+- `speed.invalid` - the speed value is not a number (use `<input>`).
+- `speed.out-of-range` - the speed value is outside the 0–10 scale
+  (use `<input>`).
+- `speed.console-needs-target` - console ran a speed command without a
   target.
-- `speed.missing-other-permission` - targeting others without
-  `jflyspeed.other`.
+- `speed.no-permission` - targeting others without `jflyspeed.other`.
 
 Messages can embed PlaceholderAPI placeholders (`%player_name%`) when
 PlaceholderAPI is installed.
@@ -97,8 +133,14 @@ Sound effects for command feedback. Each entry supports `enabled`, a
 namespaced `sound` key, `pitch` and `volume`
 ([sound explorer](https://mudkipdev.github.io/minecraft-sound-explorer/)):
 
-- `success-sound` - played on successful commands.
-- `error-sound` - played on failed commands.
+- `neutral` - neutral feedback for speed changes, heard by the executor
+  and every affected player.
+- `reset` - feedback for speed resets, heard by the executor and every
+  affected player.
+- `reload` - played when the configuration is reloaded.
+- `help` - played when the help menu is shown.
+- `error` - played on failed commands (invalid input, missing permission,
+  failed reload).
 
 ## Storage (SQLite)
 

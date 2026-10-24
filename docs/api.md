@@ -94,3 +94,4 @@ If you do not need PAPI in your plugin:
 | `core.sounds` | `SoundPlayer`, `SoundsConfig` |
 | `core.placeholders` | `PlaceholdersBootstrap`, `CommandUsageTracker`, `AuthorsCommandUsageListener`, `AuthorsCommandUsageExpansion` |
 | `core.storage` | `StorageBootstrap`, `SqliteStorage` |
+| `core.update` | `UpdateCheckerBootstrap`, `UpdateCheckService`, `ModrinthUpdateHttp`, `UpdateCheckNotifier`, `UpdateCheckJoinListener` |

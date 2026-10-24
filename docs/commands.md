@@ -12,7 +12,7 @@ speed commands additionally exist as standalone roots (`/flyspeed`,
 | `/speed fly\|walk <speed\|reset> [targets]` | Set or reset one speed channel. | `jflyspeed.flyspeed` / `jflyspeed.walkspeed` |
 | `/speed reset [targets]` | Reset both fly and walk speed. | `jflyspeed.flyspeed` + `jflyspeed.walkspeed` |
 | `/jflyspeed help [query]` | Shows the in-game command list. | — (entries are permission-filtered) |
-| `/jflyspeed version` | Shows the plugin version and authors. | `jflyspeed.version` |
+| `/jflyspeed version` | Shows the plugin version and authors (plus a pending update notice for `jflyspeed.reload` holders). | `jflyspeed.version` |
 | `/jflyspeed reload` | Reloads all configuration files. | `jflyspeed.reload` |
 
 Examples:
@@ -25,12 +25,13 @@ Examples:
 /speed reset @p            # reset the nearest player's fly and walk speed
 ```
 
-- **`<speed>`** is a number on the 0–10 scale (see the README); values
-  outside the scale are rejected with an error. **`reset`** restores the
-  configured default instead.
+- **`<speed>`** is a number on the 0–10 scale (see the README).
+  Non-numeric input and out-of-range values are rejected with their own
+  errors. **`reset`** restores the configured default instead.
 - **`[targets]`** accepts vanilla selectors (`@p`, `@a`, `@r`, `@s`) and
   player names. An omitted selector means yourself; console must always name
-  a target. Targeting anyone but yourself needs `jflyspeed.other` plus the
+  a target. A selector matching nobody reports an error instead of failing
+  silently. Targeting anyone but yourself needs `jflyspeed.other` plus the
   relevant speed permission.
 - **`/speed reset`** resets both channels at once, so it needs both
   `jflyspeed.flyspeed` and `jflyspeed.walkspeed`.
@@ -40,8 +41,11 @@ Examples:
 - **`help`** supports an optional query argument that filters the listed
   commands (`/jflyspeed help reset`).
 - **`reload`** re-reads `config.yml`, `messages.yml` and `sounds.yml`, then
-  reopens the SQLite database and re-registers the placeholders with the new
-  settings. It does not re-register commands: root toggles apply on restart.
+  reopens the SQLite database, re-registers the placeholders with the new
+  settings, and re-runs the update check. A failed reload reports an error
+  instead of success. It does not re-register commands: Paper offers no
+  unregister API, so changed root toggles apply on restart and `reload`
+  says so when it detects a change.
 
 Speeds are applied straight to the player and are not persisted — they behave
 exactly like vanilla across relogs and restarts.
