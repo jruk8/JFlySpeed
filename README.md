@@ -2,7 +2,7 @@
 
 ![JFlySpeed banner](https://raw.githubusercontent.com/jruk8/JFlySpeed/main/docs/assets/banner-1280x640.png)
 
-<h3>JFlySpeed is a modern fly and walk speed plugin for 26.x Paper servers.</h3>
+<h3>Modern 26.x plugin for /flyspeed and /walkspeed.</h3>
 
 ### [Modrinth](https://modrinth.com/project/jflyspeed) · [Wiki](https://jruk8.github.io/JFlySpeed/) · [GitHub](https://github.com/jruk8/JFlySpeed)
 
