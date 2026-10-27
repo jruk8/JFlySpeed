@@ -1,4 +1,27 @@
 # Changelog
+## [1.4.0] - 2026-10-27
+
+### Bug Fixes
+
+- Make docs deploy not depend on links pass
+
+
+### Documentation
+
+- Update README.md
+
+
+### Features
+
+- Print a startup banner on enable
+
+> Brand-tinted title plus Modrinth, Discord and GitHub bullets.
+
+
+### Miscellaneous
+
+- Update for v1.3.0 [skip ci]
+
 ## [1.3.0] - 2026-10-24
 
 ### Documentation
